@@ -167,7 +167,9 @@ const PlayerControls = ({
     const [container, setContainer] = useState<HTMLElement | null>(null);
     const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number | null>(null);
     const [sleepTimerEnd, setSleepTimerEnd] = useState<number | null>(null);
+    const [sleepTimerRemaining, setSleepTimerRemaining] = useState<number | null>(null);
     const sleepTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const sleepTimerTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const { data: session } = useSession(item.Id, showStats);
     const { config } = useConfig();
 
@@ -287,24 +289,40 @@ const PlayerControls = ({
             clearTimeout(sleepTimerRef.current);
             sleepTimerRef.current = null;
         }
+        if (sleepTimerTickRef.current) {
+            clearInterval(sleepTimerTickRef.current);
+            sleepTimerTickRef.current = null;
+        }
         if (minutes === null) {
             setSleepTimerMinutes(null);
             setSleepTimerEnd(null);
+            setSleepTimerRemaining(null);
             return;
         }
         const endTime = Date.now() + minutes * 60 * 1000;
         setSleepTimerMinutes(minutes);
         setSleepTimerEnd(endTime);
+        setSleepTimerRemaining(minutes);
+        sleepTimerTickRef.current = setInterval(() => {
+            const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 60000));
+            setSleepTimerRemaining(remaining);
+        }, 30000);
         sleepTimerRef.current = setTimeout(() => {
             player?.pause();
             setSleepTimerMinutes(null);
             setSleepTimerEnd(null);
+            setSleepTimerRemaining(null);
+            if (sleepTimerTickRef.current) {
+                clearInterval(sleepTimerTickRef.current);
+                sleepTimerTickRef.current = null;
+            }
         }, minutes * 60 * 1000);
     }, [player]);
 
     useEffect(() => {
         return () => {
             if (sleepTimerRef.current) clearTimeout(sleepTimerRef.current);
+            if (sleepTimerTickRef.current) clearInterval(sleepTimerTickRef.current);
         };
     }, []);
 
@@ -843,9 +861,9 @@ const PlayerControls = ({
                                     title="Sleep Timer"
                                 >
                                     <Timer size={20} className={sleepTimerMinutes ? 'text-amber-400' : ''} />
-                                    {sleepTimerEnd && (
+                                    {sleepTimerRemaining !== null && (
                                         <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-black rounded-full px-1 font-bold leading-tight">
-                                            {Math.max(0, Math.ceil((sleepTimerEnd - Date.now()) / 60000))}m
+                                            {sleepTimerRemaining}m
                                         </span>
                                     )}
                                 </Button>
