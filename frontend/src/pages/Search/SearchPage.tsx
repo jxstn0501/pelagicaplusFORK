@@ -166,7 +166,7 @@ const SearchPage = () => {
         useMeiliForThisFilter ? isMeiliLoading : isJellyfinLoading
     )) || ((typeFilter === 'all' || typeFilter === 'seerr') && isSeerrLoading && !isUnauthorized);
 
-    const error = (useMeiliForThisFilter ? meiliError : null) || jellyfinError;
+    const error = useMeiliForThisFilter ? meiliError : jellyfinError;
 
     const handleAuthorize = async (e: React.FormEvent) => {
         e.preventDefault();
