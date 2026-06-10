@@ -12,20 +12,40 @@ function extractDominantColor(src: string): Promise<string | null> {
                 canvas.height = 40;
                 const ctx = canvas.getContext('2d');
                 if (!ctx) return resolve(null);
-                ctx.drawImage(img, 0, img.height * 0.3, img.width * 0.5, img.height * 0.7, 0, 0, 40, 40);
+                ctx.drawImage(
+                    img,
+                    0,
+                    img.height * 0.3,
+                    img.width * 0.5,
+                    img.height * 0.7,
+                    0,
+                    0,
+                    40,
+                    40
+                );
                 const data = ctx.getImageData(0, 0, 40, 40).data;
 
-                let r = 0, g = 0, b = 0, count = 0;
+                let r = 0,
+                    g = 0,
+                    b = 0,
+                    count = 0;
                 for (let i = 0; i < data.length; i += 16) {
                     // Skip near-black and near-white pixels
-                    const pr = data[i], pg = data[i + 1], pb = data[i + 2];
+                    const pr = data[i],
+                        pg = data[i + 1],
+                        pb = data[i + 2];
                     const brightness = (pr + pg + pb) / 3;
                     if (brightness > 20 && brightness < 230) {
-                        r += pr; g += pg; b += pb; count++;
+                        r += pr;
+                        g += pg;
+                        b += pb;
+                        count++;
                     }
                 }
                 if (count === 0) return resolve(null);
-                resolve(`${Math.round(r / count)},${Math.round(g / count)},${Math.round(b / count)}`);
+                resolve(
+                    `${Math.round(r / count)},${Math.round(g / count)},${Math.round(b / count)}`
+                );
             } catch {
                 resolve(null);
             }

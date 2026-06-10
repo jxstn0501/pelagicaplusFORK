@@ -18,13 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import {
-    Loader2,
-    Film,
-    Tv,
-    Settings,
-    Info,
-} from 'lucide-react';
+import { Loader2, Film, Tv, Settings, Info } from 'lucide-react';
 import { getUsername, getPassword, setPassword } from '@/utils/localstorageCredentials';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { toast } from 'sonner';
@@ -41,23 +35,35 @@ interface SeerrRequestDialogProps {
 const getStatusDetails = (status?: number) => {
     switch (status) {
         case 2:
-            return { text: 'Pending Approval', color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' };
+            return {
+                text: 'Pending Approval',
+                color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+            };
         case 3:
-            return { text: 'Processing', color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' };
+            return {
+                text: 'Processing',
+                color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+            };
         case 4:
-            return { text: 'Partially Available', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' };
+            return {
+                text: 'Partially Available',
+                color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+            };
         case 5:
-            return { text: 'Available', color: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20' };
+            return {
+                text: 'Available',
+                color: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20',
+            };
         default:
             return null;
     }
 };
 
-export default function SeerrRequestDialog({ 
-    item, 
-    trigger, 
-    open: controlledOpen, 
-    onOpenChange: controlledOnOpenChange 
+export default function SeerrRequestDialog({
+    item,
+    trigger,
+    open: controlledOpen,
+    onOpenChange: controlledOnOpenChange,
 }: SeerrRequestDialogProps) {
     const [localOpen, setLocalOpen] = useState(false);
     const open = controlledOpen !== undefined ? controlledOpen : localOpen;
@@ -118,7 +124,9 @@ export default function SeerrRequestDialog({
         });
         if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
-            throw new Error(errData.error || errData.message || `Request failed: ${response.statusText}`);
+            throw new Error(
+                errData.error || errData.message || `Request failed: ${response.statusText}`
+            );
         }
         return response.json();
     };
@@ -142,15 +150,19 @@ export default function SeerrRequestDialog({
                 }
 
                 // 2. Fetch admin service settings (Radarr/Sonarr)
-                const settingsPath = item.mediaType === 'movie' ? '/api/seerr/settings/radarr' : '/api/seerr/settings/sonarr';
+                const settingsPath =
+                    item.mediaType === 'movie'
+                        ? '/api/seerr/settings/radarr'
+                        : '/api/seerr/settings/sonarr';
                 try {
                     const serversList = await fetchSeerr(settingsPath);
                     if (Array.isArray(serversList) && serversList.length > 0) {
                         setServers(serversList);
                         setHasAdminAccess(true);
-                        
+
                         // Select default server
-                        const defaultSrv = serversList.find((s: any) => s.isDefault) || serversList[0];
+                        const defaultSrv =
+                            serversList.find((s: any) => s.isDefault) || serversList[0];
                         setSelectedServerId(String(defaultSrv.id));
                     }
                 } catch {
@@ -181,13 +193,15 @@ export default function SeerrRequestDialog({
             const srvType = item.mediaType === 'movie' ? 'radarr' : 'sonarr';
             try {
                 const data = await fetchSeerr(`/api/seerr/service/${srvType}/${selectedServerId}`);
-                
+
                 // Set profiles
                 const profilesList = data.profiles || [];
                 setProfiles(profilesList);
                 if (profilesList.length > 0) {
                     const serverObj = servers.find((s: any) => String(s.id) === selectedServerId);
-                    const defaultProfile = profilesList.find((p: any) => p.id === serverObj?.activeProfileId) || profilesList[0];
+                    const defaultProfile =
+                        profilesList.find((p: any) => p.id === serverObj?.activeProfileId) ||
+                        profilesList[0];
                     if (defaultProfile) {
                         setSelectedProfileId(String(defaultProfile.id));
                     }
@@ -252,9 +266,9 @@ export default function SeerrRequestDialog({
     const title = item.title || item.name || 'No Title';
 
     const handleSeasonToggle = (seasonNum: number) => {
-        setSelectedSeasons(prev =>
+        setSelectedSeasons((prev) =>
             prev.includes(seasonNum)
-                ? prev.filter(s => s !== seasonNum)
+                ? prev.filter((s) => s !== seasonNum)
                 : [...prev, seasonNum].sort((a, b) => a - b)
         );
     };
@@ -292,22 +306,32 @@ export default function SeerrRequestDialog({
             <DialogContent className="w-full max-w-[calc(100vw-2rem)] md:max-w-2xl max-h-[85vh] !flex !flex-col p-6 overflow-hidden">
                 <DialogHeader className="shrink-0 mb-4">
                     <DialogTitle className="flex items-center gap-2 text-xl font-bold">
-                        {isTv ? <Tv className="h-5 w-5 text-primary" /> : <Film className="h-5 w-5 text-primary" />}
+                        {isTv ? (
+                            <Tv className="h-5 w-5 text-primary" />
+                        ) : (
+                            <Film className="h-5 w-5 text-primary" />
+                        )}
                         {title}
-                        {year && <span className="text-muted-foreground font-normal">({year})</span>}
+                        {year && (
+                            <span className="text-muted-foreground font-normal">({year})</span>
+                        )}
                     </DialogTitle>
-                    <DialogDescription className="hidden">Request options for {title}</DialogDescription>
+                    <DialogDescription className="hidden">
+                        Request options for {title}
+                    </DialogDescription>
                 </DialogHeader>
 
                 {isUnauthorized ? (
                     <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full gap-4 py-8 text-left">
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                            Your Jellyfin password is required to retrieve request options from Seerr. 
-                            Enter your password below to authorize requests.
+                            Your Jellyfin password is required to retrieve request options from
+                            Seerr. Enter your password below to authorize requests.
                         </p>
                         <form onSubmit={handleSavePassword} className="flex flex-col gap-4 mt-2">
                             <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-semibold text-muted-foreground">Jellyfin Password</label>
+                                <label className="text-xs font-semibold text-muted-foreground">
+                                    Jellyfin Password
+                                </label>
                                 <Input
                                     type="password"
                                     placeholder="Enter password"
@@ -318,12 +342,14 @@ export default function SeerrRequestDialog({
                                 />
                             </div>
                             <div className="flex justify-end gap-3 mt-2">
-                                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setOpen(false)}
+                                >
                                     Cancel
                                 </Button>
-                                <Button type="submit">
-                                    Authorize
-                                </Button>
+                                <Button type="submit">Authorize</Button>
                             </div>
                         </form>
                     </div>
@@ -345,12 +371,17 @@ export default function SeerrRequestDialog({
                             )}
                             <div className="flex-1 flex flex-col min-w-0">
                                 {statusObj && (
-                                    <Badge variant="outline" className={`w-fit mb-2 font-medium px-2 py-0.5 border ${statusObj.color}`}>
+                                    <Badge
+                                        variant="outline"
+                                        className={`w-fit mb-2 font-medium px-2 py-0.5 border ${statusObj.color}`}
+                                    >
                                         {statusObj.text}
                                     </Badge>
                                 )}
                                 <p className="text-sm text-muted-foreground line-clamp-4 leading-relaxed">
-                                    {item.overview || details?.overview || 'No description available.'}
+                                    {item.overview ||
+                                        details?.overview ||
+                                        'No description available.'}
                                 </p>
                             </div>
                         </div>
@@ -362,12 +393,24 @@ export default function SeerrRequestDialog({
                                 {isTv && details?.seasons && (
                                     <div className="flex flex-col gap-2">
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className="text-sm font-semibold text-foreground">Select Seasons</span>
+                                            <span className="text-sm font-semibold text-foreground">
+                                                Select Seasons
+                                            </span>
                                             <div className="flex gap-2">
-                                                <Button size="sm" variant="ghost" className="h-7 text-xs px-2" onClick={selectAllSeasons}>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="h-7 text-xs px-2"
+                                                    onClick={selectAllSeasons}
+                                                >
                                                     Select All
                                                 </Button>
-                                                <Button size="sm" variant="ghost" className="h-7 text-xs px-2 text-red-500 hover:text-red-600" onClick={clearAllSeasons}>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="h-7 text-xs px-2 text-red-500 hover:text-red-600"
+                                                    onClick={clearAllSeasons}
+                                                >
                                                     Clear All
                                                 </Button>
                                             </div>
@@ -376,12 +419,16 @@ export default function SeerrRequestDialog({
                                             {details.seasons
                                                 .filter((s: any) => s.seasonNumber > 0)
                                                 .map((s: any) => {
-                                                    const isChecked = selectedSeasons.includes(s.seasonNumber);
+                                                    const isChecked = selectedSeasons.includes(
+                                                        s.seasonNumber
+                                                    );
                                                     return (
                                                         <div
                                                             key={s.seasonNumber}
                                                             className={`flex items-center gap-2.5 p-2 rounded-md border transition-colors cursor-pointer hover:bg-muted/30 select-none ${isChecked ? 'bg-primary/5 border-primary/20' : 'bg-card border-border'}`}
-                                                            onClick={() => handleSeasonToggle(s.seasonNumber)}
+                                                            onClick={() =>
+                                                                handleSeasonToggle(s.seasonNumber)
+                                                            }
                                                         >
                                                             <Checkbox
                                                                 checked={isChecked}
@@ -426,7 +473,10 @@ export default function SeerrRequestDialog({
                                                     checked={is4k}
                                                     onCheckedChange={(val) => setIs4k(!!val)}
                                                 />
-                                                <label htmlFor="request-4k" className="text-sm font-medium cursor-pointer">
+                                                <label
+                                                    htmlFor="request-4k"
+                                                    className="text-sm font-medium cursor-pointer"
+                                                >
                                                     Request in 4K Quality
                                                 </label>
                                             </div>
@@ -435,15 +485,25 @@ export default function SeerrRequestDialog({
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                     {/* Server selection */}
                                                     <div className="flex flex-col gap-1.5">
-                                                        <label className="text-xs font-semibold text-muted-foreground">Server</label>
-                                                        <Select value={selectedServerId} onValueChange={setSelectedServerId}>
+                                                        <label className="text-xs font-semibold text-muted-foreground">
+                                                            Server
+                                                        </label>
+                                                        <Select
+                                                            value={selectedServerId}
+                                                            onValueChange={setSelectedServerId}
+                                                        >
                                                             <SelectTrigger className="w-full">
                                                                 <SelectValue placeholder="Select Server" />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 {servers.map((srv) => (
-                                                                    <SelectItem key={srv.id} value={String(srv.id)}>
-                                                                        {srv.name} {srv.isDefault && '(Default)'}
+                                                                    <SelectItem
+                                                                        key={srv.id}
+                                                                        value={String(srv.id)}
+                                                                    >
+                                                                        {srv.name}{' '}
+                                                                        {srv.isDefault &&
+                                                                            '(Default)'}
                                                                     </SelectItem>
                                                                 ))}
                                                             </SelectContent>
@@ -452,14 +512,22 @@ export default function SeerrRequestDialog({
 
                                                     {/* Quality Profile selection */}
                                                     <div className="flex flex-col gap-1.5">
-                                                        <label className="text-xs font-semibold text-muted-foreground">Quality Profile</label>
-                                                        <Select value={selectedProfileId} onValueChange={setSelectedProfileId}>
+                                                        <label className="text-xs font-semibold text-muted-foreground">
+                                                            Quality Profile
+                                                        </label>
+                                                        <Select
+                                                            value={selectedProfileId}
+                                                            onValueChange={setSelectedProfileId}
+                                                        >
                                                             <SelectTrigger className="w-full">
                                                                 <SelectValue placeholder="Select Profile" />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 {profiles.map((p) => (
-                                                                    <SelectItem key={p.id} value={String(p.id)}>
+                                                                    <SelectItem
+                                                                        key={p.id}
+                                                                        value={String(p.id)}
+                                                                    >
                                                                         {p.name}
                                                                     </SelectItem>
                                                                 ))}
@@ -470,14 +538,24 @@ export default function SeerrRequestDialog({
                                                     {/* Root Folder selection */}
                                                     {rootFolders.length > 0 && (
                                                         <div className="flex flex-col gap-1.5 sm:col-span-2">
-                                                            <label className="text-xs font-semibold text-muted-foreground">Root Path</label>
-                                                            <Select value={selectedRootFolder} onValueChange={setSelectedRootFolder}>
+                                                            <label className="text-xs font-semibold text-muted-foreground">
+                                                                Root Path
+                                                            </label>
+                                                            <Select
+                                                                value={selectedRootFolder}
+                                                                onValueChange={
+                                                                    setSelectedRootFolder
+                                                                }
+                                                            >
                                                                 <SelectTrigger className="w-full">
                                                                     <SelectValue placeholder="Select Root Path" />
                                                                 </SelectTrigger>
                                                                 <SelectContent>
                                                                     {rootFolders.map((rf) => (
-                                                                        <SelectItem key={rf.path} value={rf.path}>
+                                                                        <SelectItem
+                                                                            key={rf.path}
+                                                                            value={rf.path}
+                                                                        >
                                                                             {rf.path}
                                                                         </SelectItem>
                                                                     ))}
@@ -491,7 +569,8 @@ export default function SeerrRequestDialog({
                                             {!hasAdminAccess && (
                                                 <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-1">
                                                     <Info className="h-3.5 w-3.5" />
-                                                    Advanced server selection requires admin privileges on Seerr.
+                                                    Advanced server selection requires admin
+                                                    privileges on Seerr.
                                                 </p>
                                             )}
                                         </div>
@@ -502,12 +581,21 @@ export default function SeerrRequestDialog({
 
                         {/* Actions footer */}
                         <div className="shrink-0 flex justify-end gap-3 mt-2">
-                            <Button variant="outline" onClick={() => setOpen(false)} disabled={submitting}>
+                            <Button
+                                variant="outline"
+                                onClick={() => setOpen(false)}
+                                disabled={submitting}
+                            >
                                 Cancel
                             </Button>
                             <Button
                                 onClick={handleSubmit}
-                                disabled={submitting || isAlreadyAvailable || isPending || (isTv && selectedSeasons.length === 0)}
+                                disabled={
+                                    submitting ||
+                                    isAlreadyAvailable ||
+                                    isPending ||
+                                    (isTv && selectedSeasons.length === 0)
+                                }
                                 className="px-6"
                             >
                                 {submitting ? (

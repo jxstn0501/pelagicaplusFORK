@@ -42,7 +42,7 @@ export function useSearchItems(searchTerm: string, options?: UseSearchItemsOptio
                 throw err;
             }
         },
-        enabled: (options?.enabled !== false) && searchTerm.trim().length > 0,
+        enabled: options?.enabled !== false && searchTerm.trim().length > 0,
         staleTime: 1000 * 60 * 5, // 5 minutes
         gcTime: 1000 * 60 * 10, // 10 minutes
         ...getRetryConfig(),

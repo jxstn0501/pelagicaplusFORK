@@ -62,16 +62,16 @@ const NextEpisodeOverlay = ({ nextItem, onPlay, onDismiss }: NextEpisodeOverlayP
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Button
-                            variant="default"
-                            className="flex-1 gap-2"
-                            onClick={onPlay}
-                        >
+                        <Button variant="default" className="flex-1 gap-2" onClick={onPlay}>
                             <SkipForward className="w-4 h-4" />
                             Jetzt schauen
                         </Button>
 
-                        <div className="relative flex-shrink-0 w-10 h-10 cursor-pointer" onClick={onDismiss} title="Abbrechen">
+                        <div
+                            className="relative flex-shrink-0 w-10 h-10 cursor-pointer"
+                            onClick={onDismiss}
+                            title="Abbrechen"
+                        >
                             <svg width="40" height="40" className="rotate-[-90deg]">
                                 <circle
                                     cx="20"

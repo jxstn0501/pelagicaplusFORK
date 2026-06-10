@@ -4,7 +4,10 @@ interface LazyRowProps {
     placeholderHeight?: string;
 }
 
-export const LazyRow = ({ children, placeholderHeight = '280px' }: PropsWithChildren<LazyRowProps>) => {
+export const LazyRow = ({
+    children,
+    placeholderHeight = '280px',
+}: PropsWithChildren<LazyRowProps>) => {
     const [isIntersected, setIsIntersected] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
@@ -24,7 +27,9 @@ export const LazyRow = ({ children, placeholderHeight = '280px' }: PropsWithChil
 
         const currentRef = ref.current;
         if (currentRef) observer.observe(currentRef);
-        return () => { if (currentRef) observer.unobserve(currentRef); };
+        return () => {
+            if (currentRef) observer.unobserve(currentRef);
+        };
     }, [isIntersected]);
 
     return (

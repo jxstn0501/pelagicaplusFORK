@@ -14,9 +14,7 @@ const ShuffleButton = ({ seriesId }: ShuffleButtonProps) => {
     const queryClient = useQueryClient();
     const [triggered, setTriggered] = useState(false);
 
-    const { data: episode, isFetching } = useRandomEpisode(
-        triggered ? seriesId : undefined
-    );
+    const { data: episode, isFetching } = useRandomEpisode(triggered ? seriesId : undefined);
 
     useEffect(() => {
         if (triggered && !isFetching && episode) {
@@ -32,12 +30,7 @@ const ShuffleButton = ({ seriesId }: ShuffleButtonProps) => {
     };
 
     return (
-        <Button
-            variant="outline"
-            className="w-fit"
-            onClick={handleClick}
-            disabled={isFetching}
-        >
+        <Button variant="outline" className="w-fit" onClick={handleClick} disabled={isFetching}>
             <Shuffle className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
             Zufällige Folge
         </Button>

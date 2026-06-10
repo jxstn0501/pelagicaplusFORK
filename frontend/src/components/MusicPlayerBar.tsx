@@ -163,10 +163,13 @@ const MusicPlayerBar = () => {
                         <>
                             <div className="flex flex-1 flex-col items-center justify-center gap-6">
                                 <img
-                                    src={getPrimaryImageUrl(currentTrack.albumId || currentTrack.id, {
-                                        width: 400,
-                                        height: 400,
-                                    })}
+                                    src={getPrimaryImageUrl(
+                                        currentTrack.albumId || currentTrack.id,
+                                        {
+                                            width: 400,
+                                            height: 400,
+                                        }
+                                    )}
                                     alt="Album cover"
                                     className="rounded-lg w-full max-w-sm aspect-square object-cover shadow-2xl"
                                 />
@@ -201,28 +204,49 @@ const MusicPlayerBar = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className={cn("hover:scale-110 active:scale-90 transition-transform duration-200", shuffle ? 'text-brand' : 'text-muted-foreground')}
+                            className={cn(
+                                'hover:scale-110 active:scale-90 transition-transform duration-200',
+                                shuffle ? 'text-brand' : 'text-muted-foreground'
+                            )}
                             onClick={toggleShuffle}
                         >
                             <Shuffle />
                         </Button>
-                        <Button variant="ghost" size="icon-lg" className="hover:scale-110 active:scale-90 transition-transform duration-200" onClick={skipPrevious}>
+                        <Button
+                            variant="ghost"
+                            size="icon-lg"
+                            className="hover:scale-110 active:scale-90 transition-transform duration-200"
+                            onClick={skipPrevious}
+                        >
                             <SkipBack className="h-8 w-8" />
                         </Button>
-                        <Button variant="default" size="icon-lg" className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out" onClick={togglePlayPause}>
+                        <Button
+                            variant="default"
+                            size="icon-lg"
+                            className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
+                            onClick={togglePlayPause}
+                        >
                             {isPlaying ? (
                                 <Pause className="h-8 w-8" />
                             ) : (
                                 <Play className="h-8 w-8" />
                             )}
                         </Button>
-                        <Button variant="ghost" size="icon-lg" className="hover:scale-110 active:scale-90 transition-transform duration-200" onClick={skipNext}>
+                        <Button
+                            variant="ghost"
+                            size="icon-lg"
+                            className="hover:scale-110 active:scale-90 transition-transform duration-200"
+                            onClick={skipNext}
+                        >
                             <SkipForward className="h-8 w-8" />
                         </Button>
                         <Button
                             variant="ghost"
                             size="icon"
-                            className={cn("hover:scale-110 active:scale-90 transition-transform duration-200", repeat ? 'text-brand' : 'text-muted-foreground')}
+                            className={cn(
+                                'hover:scale-110 active:scale-90 transition-transform duration-200',
+                                repeat ? 'text-brand' : 'text-muted-foreground'
+                            )}
                             onClick={() => setRepeat(!repeat)}
                         >
                             <Repeat2 />
@@ -286,7 +310,10 @@ const MusicPlayerBar = () => {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className={cn("cursor-pointer hover:scale-110 active:scale-90 transition-transform duration-200", shuffle ? 'text-brand' : 'text-muted-foreground')}
+                                className={cn(
+                                    'cursor-pointer hover:scale-110 active:scale-90 transition-transform duration-200',
+                                    shuffle ? 'text-brand' : 'text-muted-foreground'
+                                )}
                                 onClick={toggleShuffle}
                             >
                                 <Shuffle />
@@ -299,7 +326,12 @@ const MusicPlayerBar = () => {
                             >
                                 <SkipBack />
                             </Button>
-                            <Button variant="default" size="icon-lg" className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out cursor-pointer" onClick={togglePlayPause}>
+                            <Button
+                                variant="default"
+                                size="icon-lg"
+                                className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out cursor-pointer"
+                                onClick={togglePlayPause}
+                            >
                                 {isPlaying ? <Pause /> : <Play />}
                             </Button>
                             <Button
@@ -313,7 +345,10 @@ const MusicPlayerBar = () => {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className={cn("cursor-pointer hover:scale-110 active:scale-90 transition-transform duration-200", repeat ? 'text-brand' : 'text-muted-foreground')}
+                                className={cn(
+                                    'cursor-pointer hover:scale-110 active:scale-90 transition-transform duration-200',
+                                    repeat ? 'text-brand' : 'text-muted-foreground'
+                                )}
                                 onClick={() => setRepeat(!repeat)}
                             >
                                 <Repeat2 />

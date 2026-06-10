@@ -145,7 +145,10 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                 className="max-w-full"
                 title={
                     allLink ? (
-                        <Link to={allLink} className="flex items-center gap-1 group cursor-pointer w-fit hover:text-primary transition-colors">
+                        <Link
+                            to={allLink}
+                            className="flex items-center gap-1 group cursor-pointer w-fit hover:text-primary transition-colors"
+                        >
                             <h2 className="text-2xl font-bold">{title}</h2>
                             <ChevronRight className="w-7 h-7 opacity-50 group-hover:opacity-100 transition-opacity" />
                         </Link>
@@ -179,10 +182,13 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                           ))
                         : Array.from({ length: 5 }).map((_, index) => (
                               <div key={index} className="w-36 lg:w-44 2xl:w-52">
-                                  <Skeleton className={isSquare 
-                                      ? "w-36 h-36 lg:w-44 lg:h-44 2xl:w-52 2xl:h-52 rounded-md mb-2" 
-                                      : "w-36 h-54 lg:w-44 lg:h-64 2xl:w-52 2xl:h-80 rounded-md mb-2"
-                                  } />
+                                  <Skeleton
+                                      className={
+                                          isSquare
+                                              ? 'w-36 h-36 lg:w-44 lg:h-44 2xl:w-52 2xl:h-52 rounded-md mb-2'
+                                              : 'w-36 h-54 lg:w-44 lg:h-64 2xl:w-52 2xl:h-80 rounded-md mb-2'
+                                      }
+                                  />
                                   <Skeleton className="w-32 lg:w-40 2xl:w-48 h-4 mb-1" />
                                   <Skeleton className="w-20 lg:w-24 2xl:w-28 h-3" />
                               </div>

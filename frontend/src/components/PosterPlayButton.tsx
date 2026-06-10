@@ -103,9 +103,7 @@ const PosterPlayButton = ({ item, itemId }: PosterPlayButtonProps) => {
                     id: track.Id || '',
                     title: track.Name || '',
                     artist:
-                        track.ArtistItems?.[0]?.Name ||
-                        item?.ArtistItems?.[0]?.Name ||
-                        'Unknown',
+                        track.ArtistItems?.[0]?.Name || item?.ArtistItems?.[0]?.Name || 'Unknown',
                     albumId: id,
                     albumName: item?.Name || '',
                 }));
@@ -116,15 +114,19 @@ const PosterPlayButton = ({ item, itemId }: PosterPlayButtonProps) => {
             }
 
             if (type === 'Audio') {
-                loadQueue([
-                    {
-                        id: id || '',
-                        title: item?.Name || '',
-                        artist: item?.AlbumArtist || item?.Artists?.[0] || 'Unknown',
-                        albumId: item?.AlbumId || '',
-                        albumName: item?.Album || '',
-                    }
-                ], 0, true);
+                loadQueue(
+                    [
+                        {
+                            id: id || '',
+                            title: item?.Name || '',
+                            artist: item?.AlbumArtist || item?.Artists?.[0] || 'Unknown',
+                            albumId: item?.AlbumId || '',
+                            albumName: item?.Album || '',
+                        },
+                    ],
+                    0,
+                    true
+                );
                 return;
             }
 

@@ -29,9 +29,7 @@ const EpisodeCardImage = memo(
                     alt={episode.Name || ''}
                     className={cn(
                         'w-full h-full object-cover rounded-md transform-gpu will-change-transform z-10 poster-image',
-                        isLoaded
-                            ? 'blur-0 opacity-100 scale-100'
-                            : 'blur-md opacity-40 scale-95',
+                        isLoaded ? 'blur-0 opacity-100 scale-100' : 'blur-md opacity-40 scale-95',
                         isLoaded && 'group-hover:opacity-90 group-hover:scale-105'
                     )}
                     onLoad={() => setIsLoaded(true)}
@@ -69,7 +67,11 @@ const EpisodeComponent = memo(
                   : 0;
 
         return (
-            <Link to={`/item/${episode.Id}`} key={episode.Id} className={'group ' + (className ?? '')}>
+            <Link
+                to={`/item/${episode.Id}`}
+                key={episode.Id}
+                className={'group ' + (className ?? '')}
+            >
                 <div className="relative w-full aspect-video rounded-md overflow-hidden">
                     {imageError ? (
                         <div className="w-full h-full bg-muted flex items-center justify-center rounded-md">
