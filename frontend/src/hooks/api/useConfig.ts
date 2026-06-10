@@ -319,7 +319,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'items',
-            title: 'Favorites',
+            title: 'Favoriten',
             items: {
                 isFavorite: true,
                 limit: 10,
@@ -335,7 +335,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'streamystatsRecommended',
-            title: 'Recommended Movies',
+            title: 'Empfohlene Filme',
             recommendationType: 'Movie',
             limit: 20,
             showSimilarity: true,
@@ -343,7 +343,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'streamystatsRecommended',
-            title: 'Recommended Series',
+            title: 'Empfohlene Serien',
             recommendationType: 'Series',
             limit: 20,
             showSimilarity: true,
@@ -356,7 +356,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'items',
-            title: 'Recently Released Movies',
+            title: 'Kürzlich erschienene Filme',
             items: {
                 sortBy: ['PremiereDate'],
                 sortOrder: 'Descending',
@@ -367,7 +367,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'items',
-            title: 'Recently Released Series',
+            title: 'Kürzlich erschienene Serien',
             items: {
                 sortBy: ['PremiereDate'],
                 sortOrder: 'Descending',
@@ -378,7 +378,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'items',
-            title: 'Top Rated Movies',
+            title: 'Bestbewertete Filme',
             items: {
                 sortBy: ['CommunityRating'],
                 sortOrder: 'Descending',
@@ -389,7 +389,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'items',
-            title: 'Top Rated Series',
+            title: 'Bestbewertete Serien',
             items: {
                 sortBy: ['CommunityRating'],
                 sortOrder: 'Descending',
@@ -400,7 +400,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'items',
-            title: 'Popular Movies',
+            title: 'Beliebte Filme',
             items: {
                 sortBy: ['PlayCount'],
                 sortOrder: 'Descending',
@@ -411,7 +411,7 @@ const DEFAULT_CONFIG: AppConfig = {
         },
         {
             type: 'items',
-            title: 'Popular Series',
+            title: 'Beliebte Serien',
             items: {
                 sortBy: ['PlayCount'],
                 sortOrder: 'Descending',
