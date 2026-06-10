@@ -221,13 +221,14 @@ const SectionEditor = ({
                             { value: 'genres', label: 'Genres' },
                             { value: 'libraries', label: 'Libraries' },
                             { value: 'studios', label: 'Studios' },
+                            { value: 'moodBar', label: 'Mood Filter' },
                         ]}
                         value={editedSection.type}
                         onChange={(value) => {
                             setEditedSection({
                                 ...editedSection,
                                 type: value as HomeScreenSection['type'],
-                            });
+                            } as HomeScreenSection);
                         }}
                     />
 

@@ -10,7 +10,6 @@ import {
     AudioLines,
     SkipForward,
     Subtitles,
-    Dot,
     Info,
     Minimize,
     SkipBack,
@@ -37,9 +36,8 @@ import {
 import { formatPlayTime, ticksToReadableTime, ticksToSeconds, getEndsAt } from '@/utils/timeConversion';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import NextEpisodeOverlay from '@/components/NextEpisodeOverlay';
-import { getPrimaryImageUrl, getTrickplayImageUrl, getLogoUrl, getItemImageUrl } from '@/utils/jellyfinUrls';
+import { getTrickplayImageUrl, getLogoUrl, getItemImageUrl } from '@/utils/jellyfinUrls';
 import { useReportPlaybackProgress } from '@/hooks/api/usePlaybackProgress';
 import { getRuntimePlaybackStats, type RuntimePlaybackStats } from '@/utils/playbackStats';
 import { useSession } from '@/hooks/api/useSession';
