@@ -4,6 +4,8 @@
     "audioTracks": "Audio Tracks",
     "subtitles": "Subtitles",
     "off": "Off",
+    "quality": "Quality",
+    "auto": "Auto",
     "playNextItem": "Play Next Item",
     "upNext": "Next episode in {{seconds}} seconds",
     "startNow": "Start Now",

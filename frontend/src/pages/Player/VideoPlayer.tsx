@@ -18,7 +18,7 @@ interface VideoPlayerProps {
     startTicks: number;
     subtitles?: SubtitleTrack[];
     onReady?: (player: VideoJsPlayer) => void;
-    isAudioSwitchRef: React.MutableRefObject<boolean>;
+    resumePositionRef: React.MutableRefObject<boolean>;
     subtitleTrackIndex: number | null;
 }
 
@@ -28,7 +28,7 @@ const VideoPlayer = ({
     startTicks,
     subtitles,
     onReady,
-    isAudioSwitchRef,
+    resumePositionRef,
     subtitleTrackIndex,
 }: VideoPlayerProps) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -120,9 +120,9 @@ const VideoPlayer = ({
 
         let seekTo: number | null = null;
 
-        if (isAudioSwitchRef.current) {
+        if (resumePositionRef.current) {
             seekTo = player.currentTime() || null;
-            isAudioSwitchRef.current = false;
+            resumePositionRef.current = false;
         }
 
         player.pause();
@@ -130,11 +130,16 @@ const VideoPlayer = ({
         player.load();
 
         if (seekTo !== null) {
-            player.currentTime(seekTo);
+            const target = seekTo;
+            // Seek once the new source's metadata is available; seeking
+            // immediately after load() is silently dropped by some browsers
+            player.one('loadedmetadata', () => {
+                player.currentTime(target);
+            });
         }
 
         player.play()?.catch(console.error);
-    }, [src, isAudioSwitchRef]);
+    }, [src, resumePositionRef]);
 
     useEffect(() => {
         if (!playerRef.current) return;

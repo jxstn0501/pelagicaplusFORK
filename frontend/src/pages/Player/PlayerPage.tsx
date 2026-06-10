@@ -12,6 +12,11 @@ import { useMediaSegments } from '@/hooks/api/useMediaSegments';
 import { useAdjacentItems } from '@/hooks/api/useAdjacentItems';
 import { getUserId } from '@/utils/localstorageCredentials';
 import { getLastAudioLanguage, getLastSubtitleLanguage } from '@/utils/localstorageLastlanguage';
+import {
+    getStoredVideoQualityId,
+    getVideoQualityOption,
+    setStoredVideoQualityId,
+} from '@/utils/videoQualityOptions';
 import { useUserConfiguration } from '@/hooks/api/playbackPreferences/useUserConfiguration';
 import { usePlayerItem } from '@/hooks/api/usePlayerItem';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
@@ -93,6 +98,7 @@ const PlayerPage = () => {
         const saved = localStorage.getItem('playerSubtitleOffset');
         return saved ? parseInt(saved, 10) : 0;
     });
+    const [videoQualityId, setVideoQualityId] = useState<string>(getStoredVideoQualityId);
 
     useEffect(() => {
         localStorage.setItem('playerSubtitleSize', subtitleSize.toString());
@@ -106,7 +112,7 @@ const PlayerPage = () => {
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
     const [playSessionId, setPlaySessionId] = useState<string>(generateRandomId());
-    const isAudioSwitchRef = useRef(false);
+    const resumePositionRef = useRef(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const {
         data: adjacentItems,
@@ -143,7 +149,7 @@ const PlayerPage = () => {
         queueMicrotask(() => {
             hasUserSelectedAudioRef.current = false;
             hasUserSelectedSubtitleRef.current = false;
-            isAudioSwitchRef.current = false;
+            resumePositionRef.current = false;
 
             setPlayer(null);
             setAudioTrackIndex(resolvedAudio.index);
@@ -254,10 +260,18 @@ const PlayerPage = () => {
     }, [startTicks]);
 
     const handleAudioTrackChange = (index: number) => {
-        isAudioSwitchRef.current = true;
+        resumePositionRef.current = true;
         hasUserSelectedAudioRef.current = true;
         setPlaySessionId(generateRandomId());
         setAudioTrackIndex(index);
+    };
+
+    const handleVideoQualityChange = (qualityId: string) => {
+        if (qualityId === videoQualityId) return;
+        resumePositionRef.current = true;
+        setStoredVideoQualityId(qualityId);
+        setPlaySessionId(generateRandomId());
+        setVideoQualityId(qualityId);
     };
 
     const handleSubtitleTrackChange = (index: number | null) => {
@@ -325,6 +339,15 @@ const PlayerPage = () => {
         return <p>Item not found</p>;
     }
 
+    const videoQuality = getVideoQualityOption(videoQualityId);
+    const streamUrl = getVideoStreamUrl(itemId!, {
+        audioStreamIndex: audioTrackIndex,
+        playSessionId: playSessionId,
+        maxWidth: videoQuality.maxWidth,
+        maxHeight: videoQuality.maxHeight,
+        videoBitrate: videoQuality.videoBitrate,
+    });
+
     return (
         <div
             ref={containerRef}
@@ -341,15 +364,12 @@ const PlayerPage = () => {
             )}
             <VideoPlayer
                 key={itemId}
-                src={getVideoStreamUrl(itemId!, {
-                    audioStreamIndex: audioTrackIndex,
-                    playSessionId: playSessionId,
-                })}
+                src={streamUrl}
                 poster={posterUrl}
                 onReady={setPlayer}
                 startTicks={item.UserData?.PlaybackPositionTicks || 0}
                 subtitles={subtitleTracks}
-                isAudioSwitchRef={isAudioSwitchRef}
+                resumePositionRef={resumePositionRef}
                 subtitleTrackIndex={subtitleTrackIndex}
             />
             <PlayerControls
@@ -363,15 +383,14 @@ const PlayerPage = () => {
                 setSubtitleSize={setSubtitleSize}
                 subtitleOffset={subtitleOffset}
                 setSubtitleOffset={setSubtitleOffset}
+                videoQualityId={videoQualityId}
+                onVideoQualityChange={handleVideoQualityChange}
                 isFullscreen={isFullscreen}
                 onFullscreenToggle={handleToggleFullscreen}
                 mediaSegments={mediaSegments}
                 previousItem={adjacentItems?.previousItem}
                 nextItem={adjacentItems?.nextItem}
-                srcUrl={getVideoStreamUrl(itemId!, {
-                    audioStreamIndex: audioTrackIndex,
-                    playSessionId: playSessionId,
-                })}
+                srcUrl={streamUrl}
                 containerRef={containerRef}
             />
         </div>
