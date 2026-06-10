@@ -4,6 +4,8 @@
   "audioTracks": "Pistes audio",
   "subtitles": "Sous-titres",
   "off": "Aucun sous-titre",
+  "quality": "Qualité",
+  "auto": "Automatique",
   "playNextItem": "Voir l'élément suivant",
   "upNext": "Épisode suivant dans {{seconds}} secondes",
   "startNow": "Démarrer maintenant",

@@ -4,6 +4,8 @@
   "audioTracks": "Ljudspår",
   "subtitles": "Undertexter",
   "off": "Av",
+  "quality": "Kvalitet",
+  "auto": "Auto",
   "playNextItem": "Spela upp nästa objekt",
   "upNext": "Nästa avsnitt om {{seconds}} sekunder",
   "startNow": "Börja nu",

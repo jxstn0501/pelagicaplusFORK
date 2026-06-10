@@ -141,6 +141,9 @@ export function getVideoStreamUrl(
     options: {
         playSessionId?: string;
         audioStreamIndex?: number;
+        maxWidth?: number;
+        maxHeight?: number;
+        videoBitrate?: number;
     }
 ) {
     try {
@@ -160,9 +163,9 @@ export function getVideoStreamUrl(
         url.searchParams.append('BreakOnNonKeyFrames', 'true');
         url.searchParams.append('RequireAvc', 'false');
 
-        url.searchParams.append('MaxWidth', '3840');
-        url.searchParams.append('MaxHeight', '2160');
-        url.searchParams.append('VideoBitrate', '80000000'); // 80 Mbps
+        url.searchParams.append('MaxWidth', (options.maxWidth ?? 3840).toString());
+        url.searchParams.append('MaxHeight', (options.maxHeight ?? 2160).toString());
+        url.searchParams.append('VideoBitrate', (options.videoBitrate ?? 80000000).toString());
         url.searchParams.append('AudioBitrate', '384000'); // 384 kbps
         url.searchParams.append('MaxFramerate', '60');
 

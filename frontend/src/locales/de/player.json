@@ -4,6 +4,8 @@
   "audioTracks": "Audiospuren",
   "subtitles": "Untertitel",
   "off": "Aus",
+  "quality": "Qualität",
+  "auto": "Automatisch",
   "playNextItem": "Nächste Episode abspielen",
   "upNext": "Nächste Episode beginnt in {{seconds}} Sekunden",
   "startNow": "Jetzt starten",
