@@ -7,6 +7,7 @@ interface MeiliSearchOptions {
     index?: string;
     itemTypes?: BaseItemKind[];
     limit?: number;
+    enabled?: boolean;
 }
 
 // MeiliSearch hit as indexed by the jellyfin-meilisearch plugin
@@ -46,7 +47,7 @@ function hitToBaseItemDto(hit: MeiliHit): BaseItemDto {
 }
 
 export function useMeiliSearch(searchTerm: string, options: MeiliSearchOptions) {
-    const { url, apiKey, index = 'jellyfin', itemTypes, limit = 50 } = options;
+    const { url, apiKey, index = 'jellyfin', itemTypes, limit = 50, enabled = true } = options;
 
     return useQuery<BaseItemDto[]>({
         queryKey: ['meiliSearch', searchTerm, index, itemTypes, limit],
@@ -75,7 +76,7 @@ export function useMeiliSearch(searchTerm: string, options: MeiliSearchOptions) 
             const data = await res.json();
             return (data.hits as MeiliHit[]).map(hitToBaseItemDto);
         },
-        enabled: searchTerm.trim().length > 0 && !!url,
+        enabled: enabled && searchTerm.trim().length > 0 && !!url,
         staleTime: 1000 * 60 * 2,
         gcTime: 1000 * 60 * 5,
     });

@@ -116,6 +116,7 @@ const SearchPage = () => {
 
     const itemTypes: BaseItemKind[] | undefined = ITEM_TYPE_FILTER_MAP[typeFilter];
     const isMeiliEnabled = !!config?.meiliSearchUrl;
+    const useMeiliForThisFilter = isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all');
 
     const {
         data: jellyfinResults,
@@ -125,11 +126,6 @@ const SearchPage = () => {
         itemTypes,
         limit: 50,
         userId: getUserId() || undefined,
-        // Skip Jellyfin search when MeiliSearch is available (for movies-tv and all)
-        // Still use Jellyfin for music, episodes, people
-        ...(isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all')
-            ? { limit: 0 }
-            : {}),
     });
 
     const {
@@ -144,12 +140,11 @@ const SearchPage = () => {
                    typeFilter === 'all' ? ['Movie', 'Series', 'Episode'] :
                    undefined,
         limit: 50,
+        enabled: useMeiliForThisFilter,
     });
 
-    // Use MeiliSearch results for movie/tv/all when enabled, else Jellyfin
-    const results = isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all')
-        ? meiliResults
-        : jellyfinResults;
+    // Use MeiliSearch results when available and configured, else Jellyfin
+    const results = useMeiliForThisFilter ? meiliResults : jellyfinResults;
 
     const { data: currentUser } = useCurrentUser();
     const {
@@ -168,12 +163,10 @@ const SearchPage = () => {
     );
 
     const isLoading = (typeFilter !== 'seerr' && (
-        isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all')
-            ? isMeiliLoading
-            : isJellyfinLoading
+        useMeiliForThisFilter ? isMeiliLoading : isJellyfinLoading
     )) || ((typeFilter === 'all' || typeFilter === 'seerr') && isSeerrLoading && !isUnauthorized);
 
-    const error = meiliError || jellyfinError;
+    const error = (useMeiliForThisFilter ? meiliError : null) || jellyfinError;
 
     const handleAuthorize = async (e: React.FormEvent) => {
         e.preventDefault();
