@@ -162,11 +162,12 @@ const HomePage = () => {
                             );
 
                         case 'recentlyAdded': {
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const sectionWithTypes = section as unknown as {
+                                types?: string[];
+                            };
                             const allowedTypes =
-                                (section as any).types !== undefined
-                                    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                      (section as any).types
+                                sectionWithTypes.types !== undefined
+                                    ? sectionWithTypes.types
                                     : ['Movie', 'Series', 'MusicAlbum'];
                             const allowedCollectionTypes = allowedTypes.flatMap((t: string) => {
                                 switch (t) {
