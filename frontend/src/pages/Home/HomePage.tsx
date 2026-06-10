@@ -7,12 +7,12 @@ import ContinueWatchingRow from './ContinueWatchingRow';
 import { useTranslation } from 'react-i18next';
 import RecommendedItemsRow from './RecommendedItemsRow';
 import GenreRecommendedRows from './GenreRecommendedRows';
-import TrailersRow from './TrailersRow';
 import NextUpRow from './NextUpRow';
 import ResumeRow from './ResumeRow';
 import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
+import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
 import LazyRow from '@/components/LazyRow';
 
@@ -212,15 +212,13 @@ const HomePage = () => {
                                 </LazyRow>
                             );
 
-                        case 'trailers':
+                        case 'moodBar':
                             return (
-                                <LazyRow key={index} placeholderHeight="320px">
-                                    <TrailersRow
-                                        title={section.title}
-                                        limit={section.limit}
-                                        types={section.types as ('Movie' | 'Series')[]}
-                                    />
-                                </LazyRow>
+                                <MoodBar
+                                    key={index}
+                                    title={section.title || 'Wie ist deine Stimmung?'}
+                                    limit={section.limit}
+                                />
                             );
 
                         case 'genreRecommended':

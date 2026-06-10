@@ -3,6 +3,7 @@ import { useSeasons } from '@/hooks/api/useSeasons';
 import { getPrimaryImageUrl, getLogoUrl } from '@/utils/jellyfinUrls';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { ImageOff, Play } from 'lucide-react';
+import ShuffleButton from '@/components/ShuffleButton';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import {
@@ -147,6 +148,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                     {t('loading')}
                                 </Button>
                             )}
+                            <ShuffleButton seriesId={item.Id || ''} />
                             <TrailerButton item={item} />
                             <FavoriteButton
                                 item={item}
