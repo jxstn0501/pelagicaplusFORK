@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 
 interface ContentAdvisoryOverlayProps {
     item: BaseItemDto | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     player?: any; // VideoJsPlayer instance
 }
 

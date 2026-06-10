@@ -42,6 +42,7 @@ const HomePage = () => {
 
     useEffect(() => {
         if (randomEnabled && !isRandomFetching && randomItem) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setRandomEnabled(false);
             navigate(`/item/${randomItem.Id}`);
         }
@@ -157,7 +158,9 @@ const HomePage = () => {
                             );
 
                         case 'recentlyAdded': {
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             const allowedTypes = (section as any).types !== undefined
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 ? (section as any).types
                                 : [
                                     'Movie',
@@ -199,7 +202,8 @@ const HomePage = () => {
                                                                 <ItemsRow
                                                                     title={title}
                                                                     allLink={`/items?title=${encodeURIComponent(title)}&config=${encodeURIComponent(JSON.stringify(itemsConfig))}`}
-                                                                    items={itemsConfig as any}
+                                                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    items={itemsConfig as any}
                                                                     detailFields={getDetailFieldsForCollectionType(
                                                                         view.CollectionType
                                                                     )}

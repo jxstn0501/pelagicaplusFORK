@@ -20,6 +20,7 @@ const ShuffleButton = ({ seriesId }: ShuffleButtonProps) => {
 
     useEffect(() => {
         if (triggered && !isFetching && episode) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTriggered(false);
             navigate(`/play/${episode.Id}`);
         }

@@ -55,6 +55,7 @@ export function useSeerrSearch(query: string, usernameFromUi?: string) {
                 const errBody = await res.json().catch(() => null);
                 const errMsg = errBody?.error || errBody?.message || res.statusText || String(res.status);
                 const error = new Error(`Seerr search failed: ${errMsg}`);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (error as any).status = res.status;
                 throw error;
             }

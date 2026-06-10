@@ -194,6 +194,7 @@ const PlayerControls = ({
 
     useEffect(() => {
         if (config.showPauseOverlay === false) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShowPauseOverlay(false);
             if (pauseTimerRef.current) {
                 clearTimeout(pauseTimerRef.current);

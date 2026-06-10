@@ -40,6 +40,7 @@ export function useDominantColor(src: string | undefined) {
 
     useEffect(() => {
         if (!src) return;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setColor(null);
         extractDominantColor(src).then(setColor);
     }, [src]);

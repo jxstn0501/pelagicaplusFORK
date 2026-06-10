@@ -570,6 +570,7 @@ const TopBar = (_props: { overlay?: boolean }) => {
 
     useEffect(() => {
         if (randomEnabled && !isRandomFetching && randomItem) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setRandomEnabled(false);
             navigate(`/item/${randomItem.Id}`);
         }

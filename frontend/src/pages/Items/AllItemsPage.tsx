@@ -33,7 +33,7 @@ const AllItemsPage = () => {
             defaultSortOrder = parsed.sortOrder as SortOrder;
         }
         libraryId = parsed.libraryId || '';
-    } catch (e) {
+    } catch {
         // ignore
     }
 

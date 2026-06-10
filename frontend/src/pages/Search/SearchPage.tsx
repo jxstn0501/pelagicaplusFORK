@@ -110,6 +110,7 @@ const SearchPage = () => {
     // Fallback if seerr is disabled but it was in the URL
     useEffect(() => {
         if (!isSeerrEnabled && typeFilter === 'seerr') {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTypeFilter('movies-tv');
         }
     }, [isSeerrEnabled, typeFilter]);
@@ -156,6 +157,7 @@ const SearchPage = () => {
     const isUnauthorized = isSeerrEnabled && (
         (debouncedQuery || typeFilter === 'seerr') && (
             !getPassword() ||
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (seerrError as any)?.status === 401 ||
             seerrError?.message?.includes('Unauthorized') ||
             seerrError?.message?.includes('401')
@@ -180,7 +182,7 @@ const SearchPage = () => {
             await queryClient.invalidateQueries({ queryKey: ['seerrSearch'] });
             toast.success('Successfully authorized Seerr!');
             setPasswordInput('');
-        } catch (err) {
+        } catch {
             toast.error('Failed to authorize. Please check your password.');
         } finally {
             setIsAuthorizing(false);

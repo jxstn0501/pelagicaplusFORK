@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import {
     Dialog,
@@ -152,7 +153,7 @@ export default function SeerrRequestDialog({
                         const defaultSrv = serversList.find((s: any) => s.isDefault) || serversList[0];
                         setSelectedServerId(String(defaultSrv.id));
                     }
-                } catch (e) {
+                } catch {
                     // Ignore error - means user is not an admin on Seerr
                     setHasAdminAccess(false);
                 }
