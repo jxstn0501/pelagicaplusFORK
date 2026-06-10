@@ -34,7 +34,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatPlayTime, ticksToReadableTime, ticksToSeconds, getEndsAt } from '@/utils/timeConversion';
+import {
+    formatPlayTime,
+    ticksToReadableTime,
+    ticksToSeconds,
+    getEndsAt,
+} from '@/utils/timeConversion';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
 import NextEpisodeOverlay from '@/components/NextEpisodeOverlay';
@@ -283,37 +288,43 @@ const PlayerControls = ({
         };
     }, []);
 
-    const handleSleepTimer = useCallback((minutes: number | null) => {
-        if (sleepTimerRef.current) {
-            clearTimeout(sleepTimerRef.current);
-            sleepTimerRef.current = null;
-        }
-        if (sleepTimerTickRef.current) {
-            clearInterval(sleepTimerTickRef.current);
-            sleepTimerTickRef.current = null;
-        }
-        if (minutes === null) {
-            setSleepTimerMinutes(null);
-            setSleepTimerRemaining(null);
-            return;
-        }
-        const endTime = Date.now() + minutes * 60 * 1000;
-        setSleepTimerMinutes(minutes);
-        setSleepTimerRemaining(minutes);
-        sleepTimerTickRef.current = setInterval(() => {
-            const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 60000));
-            setSleepTimerRemaining(remaining);
-        }, 30000);
-        sleepTimerRef.current = setTimeout(() => {
-            player?.pause();
-            setSleepTimerMinutes(null);
-            setSleepTimerRemaining(null);
+    const handleSleepTimer = useCallback(
+        (minutes: number | null) => {
+            if (sleepTimerRef.current) {
+                clearTimeout(sleepTimerRef.current);
+                sleepTimerRef.current = null;
+            }
             if (sleepTimerTickRef.current) {
                 clearInterval(sleepTimerTickRef.current);
                 sleepTimerTickRef.current = null;
             }
-        }, minutes * 60 * 1000);
-    }, [player]);
+            if (minutes === null) {
+                setSleepTimerMinutes(null);
+                setSleepTimerRemaining(null);
+                return;
+            }
+            const endTime = Date.now() + minutes * 60 * 1000;
+            setSleepTimerMinutes(minutes);
+            setSleepTimerRemaining(minutes);
+            sleepTimerTickRef.current = setInterval(() => {
+                const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 60000));
+                setSleepTimerRemaining(remaining);
+            }, 30000);
+            sleepTimerRef.current = setTimeout(
+                () => {
+                    player?.pause();
+                    setSleepTimerMinutes(null);
+                    setSleepTimerRemaining(null);
+                    if (sleepTimerTickRef.current) {
+                        clearInterval(sleepTimerTickRef.current);
+                        sleepTimerTickRef.current = null;
+                    }
+                },
+                minutes * 60 * 1000
+            );
+        },
+        [player]
+    );
 
     useEffect(() => {
         return () => {
@@ -548,13 +559,16 @@ const PlayerControls = ({
                 }}
                 onMouseMove={handleMouseMove}
             >
-                <Button variant="ghost" onClick={() => {
-                    if (window.history.state && window.history.state.idx > 0) {
-                        navigate(-1);
-                    } else {
-                        navigate(`/item/${item.Id}`, { replace: true });
-                    }
-                }}>
+                <Button
+                    variant="ghost"
+                    onClick={() => {
+                        if (window.history.state && window.history.state.idx > 0) {
+                            navigate(-1);
+                        } else {
+                            navigate(`/item/${item.Id}`, { replace: true });
+                        }
+                    }}
+                >
                     <ArrowLeft />
                 </Button>
                 <h1>{title}</h1>
@@ -856,7 +870,10 @@ const PlayerControls = ({
                                     className="cursor-pointer relative"
                                     title="Sleep Timer"
                                 >
-                                    <Timer size={20} className={sleepTimerMinutes ? 'text-amber-400' : ''} />
+                                    <Timer
+                                        size={20}
+                                        className={sleepTimerMinutes ? 'text-amber-400' : ''}
+                                    />
                                     {sleepTimerRemaining !== null && (
                                         <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-black rounded-full px-1 font-bold leading-tight">
                                             {sleepTimerRemaining}m
@@ -869,13 +886,23 @@ const PlayerControls = ({
                                 <DropdownMenuSeparator />
                                 <DropdownMenuRadioGroup
                                     value={sleepTimerMinutes?.toString() ?? 'off'}
-                                    onValueChange={(v) => handleSleepTimer(v === 'off' ? null : parseInt(v, 10))}
+                                    onValueChange={(v) =>
+                                        handleSleepTimer(v === 'off' ? null : parseInt(v, 10))
+                                    }
                                 >
                                     <DropdownMenuRadioItem value="off">Aus</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="30">30 Minuten</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="60">60 Minuten</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="90">90 Minuten</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="120">120 Minuten</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="30">
+                                        30 Minuten
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="60">
+                                        60 Minuten
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="90">
+                                        90 Minuten
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="120">
+                                        120 Minuten
+                                    </DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -936,7 +963,9 @@ const PlayerControls = ({
                                         >
                                             -
                                         </Button>
-                                        <span className="font-mono text-white">{subtitleSize}%</span>
+                                        <span className="font-mono text-white">
+                                            {subtitleSize}%
+                                        </span>
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -966,7 +995,9 @@ const PlayerControls = ({
                                         >
                                             -
                                         </Button>
-                                        <span className="font-mono text-white">{subtitleOffset}px</span>
+                                        <span className="font-mono text-white">
+                                            {subtitleOffset}px
+                                        </span>
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -974,7 +1005,9 @@ const PlayerControls = ({
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                setSubtitleOffset((prev) => Math.min(300, prev + 10));
+                                                setSubtitleOffset((prev) =>
+                                                    Math.min(300, prev + 10)
+                                                );
                                             }}
                                         >
                                             +
@@ -1065,11 +1098,16 @@ const PlayerControls = ({
                     {/* Main Content Area */}
                     <div className="flex-1 flex flex-col lg:flex-row items-center justify-between gap-12 w-full max-w-7xl mx-auto my-auto select-none">
                         {/* Left Info Panel */}
-                        <div className="flex-1 flex flex-col lg:justify-between lg:self-stretch text-left max-w-2xl py-2" onClick={(e) => e.stopPropagation()}>
+                        <div
+                            className="flex-1 flex flex-col lg:justify-between lg:self-stretch text-left max-w-2xl py-2"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <div className="flex flex-col gap-6 lg:my-auto">
                                 {/* Movie Logo / Title */}
                                 {failedLogo || !item.Id ? (
-                                    <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white">{item.Name}</h1>
+                                    <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white">
+                                        {item.Name}
+                                    </h1>
                                 ) : (
                                     <img
                                         src={getLogoUrl(item.Id)}
@@ -1085,7 +1123,10 @@ const PlayerControls = ({
                                         <span>{new Date(item.PremiereDate).getFullYear()}</span>
                                     )}
                                     {item.OfficialRating && (
-                                        <Badge variant="outline" className="border-white/20 text-white/90 font-medium rounded-xs px-2 py-0.5 bg-transparent">
+                                        <Badge
+                                            variant="outline"
+                                            className="border-white/20 text-white/90 font-medium rounded-xs px-2 py-0.5 bg-transparent"
+                                        >
                                             {getCleanRating(item.OfficialRating)}
                                         </Badge>
                                     )}
@@ -1112,17 +1153,27 @@ const PlayerControls = ({
                                 {/* Progress text details */}
                                 <div className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-white/60 font-medium tracking-wide">
                                     <span>•</span>
-                                    <span>{formatPlayTime(clampedCurrentTime)} / {formatPlayTime(duration)}</span>
+                                    <span>
+                                        {formatPlayTime(clampedCurrentTime)} /{' '}
+                                        {formatPlayTime(duration)}
+                                    </span>
                                     <span>•</span>
                                     <span>{progressPercentage.toFixed(0)}% watched</span>
                                     <span>•</span>
-                                    <span>Ends at {(() => {
-                                        const remainingTicks = (duration - clampedCurrentTime) * 10000000;
-                                        return getEndsAt(remainingTicks).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                        });
-                                    })()}</span>
+                                    <span>
+                                        Ends at{' '}
+                                        {(() => {
+                                            const remainingTicks =
+                                                (duration - clampedCurrentTime) * 10000000;
+                                            return getEndsAt(remainingTicks).toLocaleTimeString(
+                                                [],
+                                                {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                }
+                                            );
+                                        })()}
+                                    </span>
                                     <span>•</span>
                                 </div>
                             </div>
@@ -1130,9 +1181,11 @@ const PlayerControls = ({
 
                         {/* Right Disc Art Panel */}
                         {item.Id && (
-                            <div className="shrink-0 flex items-center justify-center z-20" onClick={(e) => e.stopPropagation()}>
+                            <div
+                                className="shrink-0 flex items-center justify-center z-20"
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[26rem] lg:h-[26rem] rounded-full border-[6px] border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95)] overflow-hidden bg-zinc-950 flex items-center justify-center">
-                                    
                                     {/* Spinning Disc content wrapper */}
                                     <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden animate-cd-spin">
                                         {/* Disc art: the actual disc image or fallback */}
@@ -1148,13 +1201,17 @@ const PlayerControls = ({
                                             <>
                                                 {/* Fallback generic CD design */}
                                                 <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-10" />
-                                                
+
                                                 {/* Top Crest / Studio Logo printed on fallback disc */}
                                                 <div className="absolute top-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-25 opacity-70 select-none pointer-events-none">
                                                     <div className="w-5 h-5 border border-yellow-500/40 rounded-full flex items-center justify-center bg-yellow-500/5">
-                                                        <span className="text-[5px] text-yellow-400 font-bold uppercase tracking-tighter">BD</span>
+                                                        <span className="text-[5px] text-yellow-400 font-bold uppercase tracking-tighter">
+                                                            BD
+                                                        </span>
                                                     </div>
-                                                    <span className="text-[4px] text-yellow-400/80 font-bold tracking-widest uppercase mt-0.5">PELAGICA PICTURES</span>
+                                                    <span className="text-[4px] text-yellow-400/80 font-bold tracking-widest uppercase mt-0.5">
+                                                        PELAGICA PICTURES
+                                                    </span>
                                                 </div>
 
                                                 {/* Movie Logo printed on fallback disc */}
@@ -1175,19 +1232,25 @@ const PlayerControls = ({
 
                                                 {/* DTS and Blu-ray Logos printed on fallback disc */}
                                                 <div className="absolute right-10 top-2/3 -translate-y-1/2 flex flex-col items-center gap-0.5 bg-brand/35 backdrop-blur-xs py-1.5 px-2 rounded-md border border-brand/20 max-w-[80px] text-center rotate-[6deg] z-25 select-none pointer-events-none shadow-[0_4px_6px_rgba(0,0,0,0.4)]">
-                                                    <span className="text-[9px] font-extrabold tracking-widest text-white uppercase leading-none">dts-HD</span>
-                                                    <span className="text-[6px] text-white/95 font-bold uppercase tracking-wider leading-none">Master Audio</span>
+                                                    <span className="text-[9px] font-extrabold tracking-widest text-white uppercase leading-none">
+                                                        dts-HD
+                                                    </span>
+                                                    <span className="text-[6px] text-white/95 font-bold uppercase tracking-wider leading-none">
+                                                        Master Audio
+                                                    </span>
                                                     <div className="w-10 h-px bg-white/20 my-0.5" />
-                                                    <span className="text-[8px] font-extrabold text-white uppercase tracking-wider leading-none">Blu-ray Disc</span>
+                                                    <span className="text-[8px] font-extrabold text-white uppercase tracking-wider leading-none">
+                                                        Blu-ray Disc
+                                                    </span>
                                                 </div>
                                             </>
                                         )}
                                     </div>
-                                    
+
                                     {/* Transparent outer plastic edge rim */}
                                     <div className="absolute inset-0 rounded-full border-[6px] border-white/5 pointer-events-none z-30" />
                                     <div className="absolute inset-[6px] rounded-full border border-black/40 pointer-events-none z-30" />
-                                    
+
                                     {/* Outer colored ring matching the brand */}
                                     <div className="absolute inset-0 rounded-full border-[10px] border-brand/20 pointer-events-none z-20" />
                                     <div className="absolute inset-[10px] rounded-full border border-white/10 pointer-events-none z-20" />
@@ -1208,13 +1271,15 @@ const PlayerControls = ({
                                     <div
                                         className="absolute inset-0 pointer-events-none mix-blend-screen opacity-25 z-30"
                                         style={{
-                                            background: 'conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(255,255,255,0.3) 8%, transparent 15%, transparent 40%, rgba(255,255,255,0.3) 48%, transparent 55%, transparent 90%, rgba(255,255,255,0.3) 95%, transparent 100%)',
+                                            background:
+                                                'conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(255,255,255,0.3) 8%, transparent 15%, transparent 40%, rgba(255,255,255,0.3) 48%, transparent 55%, transparent 90%, rgba(255,255,255,0.3) 95%, transparent 100%)',
                                         }}
                                     />
                                     <div
                                         className="absolute inset-0 pointer-events-none mix-blend-color-dodge opacity-20 z-30"
                                         style={{
-                                            background: 'conic-gradient(from 180deg at 50% 50%, transparent 0%, rgba(120,119,198,0.2) 12%, rgba(222,0,75,0.2) 24%, transparent 35%, transparent 70%, rgba(0,222,150,0.2) 82%, transparent 95%, transparent 100%)',
+                                            background:
+                                                'conic-gradient(from 180deg at 50% 50%, transparent 0%, rgba(120,119,198,0.2) 12%, rgba(222,0,75,0.2) 24%, transparent 35%, transparent 70%, rgba(0,222,150,0.2) 82%, transparent 95%, transparent 100%)',
                                         }}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none mix-blend-overlay z-30" />

@@ -22,7 +22,6 @@ import SourcePickerButton from '@/components/SourcePickerButton';
 import { Link } from 'react-router';
 import { Badge } from '@/components/ui/badge';
 
-
 interface MoviePageProps {
     item: BaseItemDto;
     config: AppConfig;
@@ -33,7 +32,6 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
     const [postersFailed, setPostersFailed] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
     const [failedLogo, setFailedLogo] = useState(false);
-
 
     const writers =
         item.People?.filter((person) => person.Type === 'Writer').filter((person) => person.Name) ||
@@ -51,7 +49,12 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
         item.UserData.PlaybackPositionTicks < item.RunTimeTicks;
 
     return (
-        <BaseMediaPage itemId={item.Id || ''} name={item.Name || ''} showLogo={false} topPadding={false}>
+        <BaseMediaPage
+            itemId={item.Id || ''}
+            name={item.Name || ''}
+            showLogo={false}
+            topPadding={false}
+        >
             <div className="pt-24 sm:pt-32 pb-12 px-4 sm:px-12 max-w-7xl mx-auto w-full flex flex-col gap-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">
                     {/* Left Column (Poster) */}
@@ -70,7 +73,9 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                         className={[
                                             'object-cover rounded-xl w-full h-full relative z-10',
                                             'transition-[filter,opacity] duration-700 ease-out',
-                                            isPosterLoaded ? 'blur-0 opacity-100' : 'blur-md opacity-0',
+                                            isPosterLoaded
+                                                ? 'blur-0 opacity-100'
+                                                : 'blur-md opacity-0',
                                         ].join(' ')}
                                         onLoad={() => setIsPosterLoaded(true)}
                                         onError={() => setPostersFailed(true)}
@@ -114,7 +119,8 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                             <FavoriteButton
                                 item={item}
                                 showFavoriteButton={
-                                    item.Type && config.itemPage?.favoriteButton?.includes(item.Type)
+                                    item.Type &&
+                                    config.itemPage?.favoriteButton?.includes(item.Type)
                                 }
                             />
                             <WatchListButton
@@ -173,7 +179,9 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                                 className="bg-white/5 hover:bg-white/10 border-white/5 text-foreground hover:underline transition-colors px-2.5 py-0.5"
                                                 asChild
                                             >
-                                                <Link to={`/person/${person.Id}`}>{person.Name}</Link>
+                                                <Link to={`/person/${person.Id}`}>
+                                                    {person.Name}
+                                                </Link>
                                             </Badge>
                                         ))}
                                     </div>
@@ -194,7 +202,9 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                                 className="bg-white/5 hover:bg-white/10 border-white/5 text-foreground hover:underline transition-colors px-2.5 py-0.5"
                                                 asChild
                                             >
-                                                <Link to={`/person/${person.Id}`}>{person.Name}</Link>
+                                                <Link to={`/person/${person.Id}`}>
+                                                    {person.Name}
+                                                </Link>
                                             </Badge>
                                         ))}
                                     </div>
@@ -216,7 +226,9 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                                 asChild
                                             >
                                                 {studio.Id ? (
-                                                    <Link to={`/studio/${studio.Id}?name=${encodeURIComponent(studio.Name ?? '')}`}>
+                                                    <Link
+                                                        to={`/studio/${studio.Id}?name=${encodeURIComponent(studio.Name ?? '')}`}
+                                                    >
                                                         {studio.Name}
                                                     </Link>
                                                 ) : (

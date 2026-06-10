@@ -95,7 +95,9 @@ export const SearchCommand = () => {
                 ) : !query ? (
                     history.length > 0 ? (
                         <>
-                            <CommandGroup heading={t('recent_searches', { defaultValue: 'Zuletzt gesucht' })}>
+                            <CommandGroup
+                                heading={t('recent_searches', { defaultValue: 'Zuletzt gesucht' })}
+                            >
                                 {history.map((entry) => (
                                     <CommandItem
                                         key={entry}

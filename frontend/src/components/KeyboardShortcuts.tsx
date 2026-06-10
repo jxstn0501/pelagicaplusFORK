@@ -9,7 +9,10 @@ export const KeyboardShortcuts = () => {
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
             const tag = (e.target as HTMLElement)?.tagName;
-            const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable;
+            const isEditable =
+                tag === 'INPUT' ||
+                tag === 'TEXTAREA' ||
+                (e.target as HTMLElement)?.isContentEditable;
 
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 e.preventDefault();
