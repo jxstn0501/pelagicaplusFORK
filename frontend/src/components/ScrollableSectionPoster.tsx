@@ -162,6 +162,21 @@ const ScrollableSectionPoster = ({
                 <GenreOverlay item={item} show={showGenres && item?.Type !== 'Playlist' && item?.Type !== 'MusicAlbum' && item?.Type !== 'Audio'} />
                 <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
 
+                {/* Playback progress bar */}
+                {item?.UserData?.PlaybackPositionTicks != null &&
+                    item.UserData.PlaybackPositionTicks > 0 &&
+                    item?.RunTimeTicks != null &&
+                    item.RunTimeTicks > 0 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-30 rounded-b-md overflow-hidden">
+                        <div
+                            className="h-full bg-primary rounded-b-md transition-all duration-300"
+                            style={{
+                                width: `${Math.min(100, (item.UserData.PlaybackPositionTicks / item.RunTimeTicks) * 100)}%`,
+                            }}
+                        />
+                    </div>
+                )}
+
                 {showPlayButton && (
                     <PosterPlayButton item={item} itemId={itemId} />
                 )}

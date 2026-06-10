@@ -18,10 +18,13 @@ import {
     Search,
     Settings,
     Settings2,
+    Shuffle,
     Sun,
     TriangleAlert,
     X,
 } from 'lucide-react';
+import { useRandomItem } from '@/hooks/api/useRandomItem';
+import { useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -556,6 +559,26 @@ const TopBar = (_props: { overlay?: boolean }) => {
     const effectiveTheme = getEffectiveTheme(theme);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [randomEnabled, setRandomEnabled] = useState(false);
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    const { data: randomItem, isFetching: isRandomFetching } = useRandomItem(
+        ['Movie', 'Series'],
+        randomEnabled
+    );
+
+    useEffect(() => {
+        if (randomEnabled && !isRandomFetching && randomItem) {
+            setRandomEnabled(false);
+            navigate(`/item/${randomItem.Id}`);
+        }
+    }, [randomEnabled, isRandomFetching, randomItem, navigate]);
+
+    const handleRandomClick = async () => {
+        await queryClient.invalidateQueries({ queryKey: ['random-item', ['Movie', 'Series']] });
+        setRandomEnabled(true);
+    };
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
@@ -643,6 +666,18 @@ const TopBar = (_props: { overlay?: boolean }) => {
                 </nav>
 
                 <div className="flex-1" />
+
+                {/* Random item button */}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleRandomClick}
+                    disabled={isRandomFetching}
+                    title="Zufälliger Inhalt"
+                    className="hidden md:flex"
+                >
+                    <Shuffle className={`h-4 w-4 ${isRandomFetching ? 'animate-spin' : ''}`} />
+                </Button>
 
                 {/* User menu */}
                 <UserMenu />

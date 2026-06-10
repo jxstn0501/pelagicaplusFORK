@@ -15,6 +15,10 @@ import LibrariesRow from './LibrariesRow';
 import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
 import LazyRow from '@/components/LazyRow';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRandomItem } from '@/hooks/api/useRandomItem';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -31,6 +35,36 @@ const HomePage = () => {
     const { t } = useTranslation('home');
     const { data: userViews } = useUserViews();
     const { config } = useConfig();
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const [randomEnabled, setRandomEnabled] = useState(false);
+    const { data: randomItem, isFetching: isRandomFetching } = useRandomItem(['Movie', 'Series'], randomEnabled);
+
+    useEffect(() => {
+        if (randomEnabled && !isRandomFetching && randomItem) {
+            setRandomEnabled(false);
+            navigate(`/item/${randomItem.Id}`);
+        }
+    }, [randomEnabled, isRandomFetching, randomItem, navigate]);
+
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            // Don't fire when typing in inputs
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+            if (e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                navigate('/search');
+            } else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                queryClient.invalidateQueries({ queryKey: ['random-item', ['Movie', 'Series']] });
+                setRandomEnabled(true);
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, [navigate, queryClient]);
 
     return (
         <Page
