@@ -25,13 +25,25 @@ interface SeerrCollectionDialogProps {
 const getStatusDetails = (status?: number) => {
     switch (status) {
         case 2:
-            return { text: 'Pending', color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' };
+            return {
+                text: 'Pending',
+                color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+            };
         case 3:
-            return { text: 'Processing', color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' };
+            return {
+                text: 'Processing',
+                color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+            };
         case 4:
-            return { text: 'Partially Available', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' };
+            return {
+                text: 'Partially Available',
+                color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+            };
         case 5:
-            return { text: 'Available', color: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20' };
+            return {
+                text: 'Available',
+                color: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20',
+            };
         default:
             return null;
     }
@@ -41,14 +53,16 @@ const CollectionMovieItem = ({
     movie,
     isChecked,
     onToggle,
-    requestable
+    requestable,
 }: {
     movie: any;
     isChecked: boolean;
     onToggle: () => void;
     requestable: boolean;
 }) => {
-    const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w185${movie.posterPath}` : null;
+    const posterUrl = movie.posterPath
+        ? `https://image.tmdb.org/t/p/w185${movie.posterPath}`
+        : null;
     const title = movie.title || 'No Title';
     const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : '';
     const statusDetails = getStatusDetails(movie.mediaInfo?.status);
@@ -90,7 +104,10 @@ const CollectionMovieItem = ({
 
                 {/* Status Badge (top-right) */}
                 {statusDetails && (
-                    <Badge variant="secondary" className={`absolute top-1.5 right-1.5 z-30 font-medium text-[9px] px-1 py-0.2 border shadow-sm ${statusDetails.color}`}>
+                    <Badge
+                        variant="secondary"
+                        className={`absolute top-1.5 right-1.5 z-30 font-medium text-[9px] px-1 py-0.2 border shadow-sm ${statusDetails.color}`}
+                    >
                         {statusDetails.text}
                     </Badge>
                 )}
@@ -104,9 +121,7 @@ const CollectionMovieItem = ({
             <p className="mt-1 text-[11px] font-semibold line-clamp-1 text-ellipsis break-all group-hover:text-primary transition-colors leading-tight">
                 {title}
             </p>
-            <p className="text-[10px] text-muted-foreground">
-                {releaseYear}
-            </p>
+            <p className="text-[10px] text-muted-foreground">{releaseYear}</p>
         </div>
     );
 };
@@ -153,7 +168,9 @@ export default function SeerrCollectionDialog({
         });
         if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
-            throw new Error(errData.error || errData.message || `Request failed: ${response.statusText}`);
+            throw new Error(
+                errData.error || errData.message || `Request failed: ${response.statusText}`
+            );
         }
         return response.json();
     };
@@ -184,10 +201,11 @@ export default function SeerrCollectionDialog({
     }, [open, isUserLoading, collectionId, currentUser?.Name, isUnauthorized]);
 
     const title = details?.name || 'Collection';
-    const movies = details?.parts?.map((p: any) => ({
-        ...p,
-        mediaType: p.mediaType || 'movie',
-    })) || [];
+    const movies =
+        details?.parts?.map((p: any) => ({
+            ...p,
+            mediaType: p.mediaType || 'movie',
+        })) || [];
 
     const isRequestable = (movie: any) => {
         const status = movie.mediaInfo?.status;
@@ -195,7 +213,8 @@ export default function SeerrCollectionDialog({
     };
 
     const requestableMovies = movies.filter(isRequestable);
-    const allSelected = requestableMovies.length > 0 && selectedIds.length === requestableMovies.length;
+    const allSelected =
+        requestableMovies.length > 0 && selectedIds.length === requestableMovies.length;
 
     const handleSelectAllToggle = () => {
         if (allSelected) {
@@ -206,21 +225,19 @@ export default function SeerrCollectionDialog({
     };
 
     const toggleSelect = (movieId: number) => {
-        setSelectedIds(prev =>
-            prev.includes(movieId)
-                ? prev.filter(id => id !== movieId)
-                : [...prev, movieId]
+        setSelectedIds((prev) =>
+            prev.includes(movieId) ? prev.filter((id) => id !== movieId) : [...prev, movieId]
         );
     };
 
     const handleRequestSelected = async () => {
         setSubmitting(true);
         try {
-            const promises = selectedIds.map(id =>
+            const promises = selectedIds.map((id) =>
                 postSeerr('/api/seerr/request', {
                     mediaType: 'movie',
                     mediaId: id,
-                    is4k: false
+                    is4k: false,
                 })
             );
             await Promise.all(promises);
@@ -260,10 +277,12 @@ export default function SeerrCollectionDialog({
                 {isUnauthorized ? (
                     <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full gap-4 py-8 text-left">
                         <DialogHeader>
-                            <DialogTitle className="text-xl font-bold">Seerr Authentication Required</DialogTitle>
+                            <DialogTitle className="text-xl font-bold">
+                                Seerr Authentication Required
+                            </DialogTitle>
                             <DialogDescription className="text-sm text-muted-foreground mt-1">
-                                Your Jellyfin password is required to retrieve collection details from Seerr.
-                                Enter your password below to authorize requests.
+                                Your Jellyfin password is required to retrieve collection details
+                                from Seerr. Enter your password below to authorize requests.
                             </DialogDescription>
                         </DialogHeader>
                         <form
@@ -280,7 +299,9 @@ export default function SeerrCollectionDialog({
                             className="flex flex-col gap-4 mt-2"
                         >
                             <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-semibold text-muted-foreground">Jellyfin Password</label>
+                                <label className="text-xs font-semibold text-muted-foreground">
+                                    Jellyfin Password
+                                </label>
                                 <Input
                                     type="password"
                                     placeholder="Enter password"
@@ -291,12 +312,14 @@ export default function SeerrCollectionDialog({
                                 />
                             </div>
                             <div className="flex justify-end gap-3 mt-2">
-                                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => onOpenChange(false)}
+                                >
                                     Cancel
                                 </Button>
-                                <Button type="submit">
-                                    Authorize
-                                </Button>
+                                <Button type="submit">Authorize</Button>
                             </div>
                         </form>
                     </div>
@@ -315,7 +338,9 @@ export default function SeerrCollectionDialog({
                             <DialogTitle className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground line-clamp-1">
                                 {title}
                             </DialogTitle>
-                            <DialogDescription className="hidden">Movies in {title}</DialogDescription>
+                            <DialogDescription className="hidden">
+                                Movies in {title}
+                            </DialogDescription>
                         </DialogHeader>
 
                         <div className="flex-1 flex flex-col min-h-0 gap-4 text-left">
@@ -349,7 +374,9 @@ export default function SeerrCollectionDialog({
                                 </div>
 
                                 {movies.length === 0 ? (
-                                    <span className="text-sm text-muted-foreground">No movies found in this collection.</span>
+                                    <span className="text-sm text-muted-foreground">
+                                        No movies found in this collection.
+                                    </span>
                                 ) : (
                                     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 mt-2">
                                         {movies.map((movie: any) => (
@@ -368,7 +395,11 @@ export default function SeerrCollectionDialog({
 
                         {/* Footer Controls */}
                         <div className="shrink-0 flex justify-end gap-3 mt-4 border-t pt-4 bg-transparent">
-                            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>
+                            <Button
+                                variant="outline"
+                                onClick={() => onOpenChange(false)}
+                                disabled={submitting}
+                            >
                                 Close
                             </Button>
                             <Button

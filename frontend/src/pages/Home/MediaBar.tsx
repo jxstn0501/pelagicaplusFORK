@@ -221,13 +221,23 @@ const MediaBar = ({
                                             {item.Overview}
                                         </p>
                                         <div className="flex items-center gap-2">
-                                            <Button variant="default" size="lg" className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out" asChild>
+                                            <Button
+                                                variant="default"
+                                                size="lg"
+                                                className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
+                                                asChild
+                                            >
                                                 <Link to={`/play/${item.Id}`}>
                                                     <Play />
                                                     {t('play')}
                                                 </Link>
                                             </Button>
-                                            <Button variant="outline" size="lg" className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out flex items-center gap-2 bg-black/40 border-white/10 text-white hover:bg-black/60" asChild>
+                                            <Button
+                                                variant="outline"
+                                                size="lg"
+                                                className="hover:scale-105 active:scale-95 transition-transform duration-200 ease-out flex items-center gap-2 bg-black/40 border-white/10 text-white hover:bg-black/60"
+                                                asChild
+                                            >
                                                 <Link to={`/item/${item.Id}`}>
                                                     <Info className="w-5 h-5" />
                                                     {t('more_info', { defaultValue: 'More Info' })}

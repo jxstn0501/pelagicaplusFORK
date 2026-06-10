@@ -32,7 +32,9 @@ const IdentifyDialog = ({ item, trigger }: IdentifyDialogProps) => {
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [searchTitle, setSearchTitle] = useState(item.Name || '');
-    const [searchYear, setSearchYear] = useState(item.ProductionYear ? String(item.ProductionYear) : '');
+    const [searchYear, setSearchYear] = useState(
+        item.ProductionYear ? String(item.ProductionYear) : ''
+    );
     const [results, setResults] = useState<RemoteSearchResultWithId[]>([]);
     const [searching, setSearching] = useState(false);
     const [applyingId, setApplyingId] = useState<string | null>(null);
@@ -95,7 +97,9 @@ const IdentifyDialog = ({ item, trigger }: IdentifyDialogProps) => {
                 remoteSearchResult: result,
                 replaceAllImages: true,
             });
-            toast.success(t('identify_success', { defaultValue: 'Metadata updated successfully!' }));
+            toast.success(
+                t('identify_success', { defaultValue: 'Metadata updated successfully!' })
+            );
             // Invalidate query cache to reload current item detail page
             void queryClient.invalidateQueries({ queryKey: ['item', item.Id] });
             setOpen(false);
@@ -114,13 +118,19 @@ const IdentifyDialog = ({ item, trigger }: IdentifyDialogProps) => {
                 <DialogHeader>
                     <DialogTitle>{t('identify', { defaultValue: 'Identify' })}</DialogTitle>
                     <DialogDescription>
-                        {t('identify_description', { defaultValue: 'Search external providers to match and identify correct metadata.' })}
+                        {t('identify_description', {
+                            defaultValue:
+                                'Search external providers to match and identify correct metadata.',
+                        })}
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSearch} className="flex gap-4 items-end mb-4">
                     <div className="flex-1 flex flex-col gap-1.5">
-                        <Label htmlFor="searchTitle" className="text-xs font-semibold text-muted-foreground">
+                        <Label
+                            htmlFor="searchTitle"
+                            className="text-xs font-semibold text-muted-foreground"
+                        >
                             {t('title')}
                         </Label>
                         <Input
@@ -132,7 +142,10 @@ const IdentifyDialog = ({ item, trigger }: IdentifyDialogProps) => {
                         />
                     </div>
                     <div className="w-24 flex flex-col gap-1.5">
-                        <Label htmlFor="searchYear" className="text-xs font-semibold text-muted-foreground">
+                        <Label
+                            htmlFor="searchYear"
+                            className="text-xs font-semibold text-muted-foreground"
+                        >
                             {t('release_year')}
                         </Label>
                         <Input
@@ -144,7 +157,11 @@ const IdentifyDialog = ({ item, trigger }: IdentifyDialogProps) => {
                         />
                     </div>
                     <Button type="submit" disabled={searching}>
-                        {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                        {searching ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Search className="h-4 w-4" />
+                        )}
                         {t('search')}
                     </Button>
                 </form>
@@ -166,7 +183,9 @@ const IdentifyDialog = ({ item, trigger }: IdentifyDialogProps) => {
                     {!searching && results.length > 0 && (
                         <ul className="flex flex-col gap-2">
                             {results.map((result) => {
-                                const yearStr = result.ProductionYear ? ` (${result.ProductionYear})` : '';
+                                const yearStr = result.ProductionYear
+                                    ? ` (${result.ProductionYear})`
+                                    : '';
                                 const isApplying = applyingId === result.Id;
 
                                 return (
@@ -182,7 +201,9 @@ const IdentifyDialog = ({ item, trigger }: IdentifyDialogProps) => {
                                             {result.ProviderIds && (
                                                 <span className="text-xs text-muted-foreground truncate">
                                                     {Object.entries(result.ProviderIds)
-                                                        .map(([provider, id]) => `${provider}: ${id}`)
+                                                        .map(
+                                                            ([provider, id]) => `${provider}: ${id}`
+                                                        )
                                                         .join(' | ')}
                                                 </span>
                                             )}

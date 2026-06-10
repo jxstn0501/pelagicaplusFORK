@@ -420,7 +420,13 @@ const SectionEditor = ({
                                 { value: 'MusicAlbum', label: 'Music Album' },
                                 { value: 'Playlist', label: 'Playlist' },
                             ]}
-                            selected={((editedSection as any).types || ['Movie', 'Series', 'MusicAlbum']) as string[]}
+                            selected={
+                                ((editedSection as any).types || [
+                                    'Movie',
+                                    'Series',
+                                    'MusicAlbum',
+                                ]) as string[]
+                            }
                             onChange={(selected) =>
                                 setEditedSection({
                                     ...editedSection,
@@ -1093,7 +1099,8 @@ const SettingsPage = () => {
                         Seerr
                     </h2>
                     <p className="mb-2 text-sm text-muted-foreground">
-                        Configure Seerr integration to search for and request new media directly within the app.
+                        Configure Seerr integration to search for and request new media directly
+                        within the app.
                     </p>
                     <StringInput
                         label="Server URL"

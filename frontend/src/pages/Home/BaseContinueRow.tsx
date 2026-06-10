@@ -120,18 +120,18 @@ export function BaseContinueRow({
                                                       />
                                                   </div>
                                               )}
-                                               <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-30">
-                                                   <div
-                                                       className="flex items-center justify-center backdrop-blur-md bg-black/40 border border-white/15 rounded-full w-9 h-9 cursor-pointer hover:bg-black/60"
-                                                       role="button"
-                                                       onClick={(e) => {
-                                                           e.preventDefault();
-                                                           navigate(`/play/${item.Id}`);
-                                                       }}
-                                                   >
-                                                       <Play className="w-4 h-4 text-white fill-white translate-x-px" />
-                                                   </div>
-                                               </div>
+                                              <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-30">
+                                                  <div
+                                                      className="flex items-center justify-center backdrop-blur-md bg-black/40 border border-white/15 rounded-full w-9 h-9 cursor-pointer hover:bg-black/60"
+                                                      role="button"
+                                                      onClick={(e) => {
+                                                          e.preventDefault();
+                                                          navigate(`/play/${item.Id}`);
+                                                      }}
+                                                  >
+                                                      <Play className="w-4 h-4 text-white fill-white translate-x-px" />
+                                                  </div>
+                                              </div>
                                           </div>
                                           <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">
                                               {getTitleLineText(item, titleLine, t)}

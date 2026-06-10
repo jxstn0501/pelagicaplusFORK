@@ -97,9 +97,7 @@ const BaseMediaPage = ({
                         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background via-background/85 to-transparent" />
                     </div>
                 )}
-                {failedBackdrop && (
-                    <div className="h-full w-full bg-background" />
-                )}
+                {failedBackdrop && <div className="h-full w-full bg-background" />}
                 {!isBgLoaded && !failedBackdrop && (
                     <div className="absolute inset-0 bg-muted/10 animate-pulse" />
                 )}
@@ -123,10 +121,10 @@ const BaseMediaPage = ({
                     )}
                 </div>
             )}
-            <div className={`relative z-10 px-4 sm:px-12 pb-12 pt-6 ${topPadding ? '' : 'min-h-full flex'}`}>
-                <div
-                    className={`w-full flex flex-col gap-8 ${topPadding ? '' : 'flex-1'}`}
-                >
+            <div
+                className={`relative z-10 px-4 sm:px-12 pb-12 pt-6 ${topPadding ? '' : 'min-h-full flex'}`}
+            >
+                <div className={`w-full flex flex-col gap-8 ${topPadding ? '' : 'flex-1'}`}>
                     {children}
                 </div>
             </div>

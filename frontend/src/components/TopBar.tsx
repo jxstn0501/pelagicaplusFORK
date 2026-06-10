@@ -496,9 +496,7 @@ const UserMenu = () => {
                         </div>
                         {config?.seerrUrl && (
                             <div>
-                                <Label className="mb-2 text-sm font-medium">
-                                    Seerr Password
-                                </Label>
+                                <Label className="mb-2 text-sm font-medium">Seerr Password</Label>
                                 <Input
                                     type="password"
                                     value={seerrPassword}
@@ -601,11 +599,13 @@ const TopBar = (_props: { overlay?: boolean }) => {
 
     return (
         <header className="fixed top-0 z-50 w-full">
-            <div className={`relative flex h-14 items-center gap-2 px-4 sm:px-12 transition-all duration-500 border-b ${
-                scrolled
-                    ? 'border-border bg-background/80 backdrop-blur shadow-md'
-                    : 'border-transparent bg-transparent backdrop-blur-none'
-            }`}>
+            <div
+                className={`relative flex h-14 items-center gap-2 px-4 sm:px-12 transition-all duration-500 border-b ${
+                    scrolled
+                        ? 'border-border bg-background/80 backdrop-blur shadow-md'
+                        : 'border-transparent bg-transparent backdrop-blur-none'
+                }`}
+            >
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2 shrink-0 mr-2">
                     <Avatar className="h-7 w-7 p-0.5 rounded-md">

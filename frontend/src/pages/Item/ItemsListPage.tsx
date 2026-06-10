@@ -93,8 +93,10 @@ const ItemsListPage = ({
     const { t } = useTranslation(['item', 'library']);
     const [searchParams, setSearchParams] = useSearchParams();
     const pageParam = parseInt(searchParams.get('page') ?? '0', 10);
-    const sortByParam = (searchParams.get('sortBy') as ItemSortBy) || defaultSortBy || DEFAULT_SORT_BY;
-    const sortOrderParam = (searchParams.get('sortOrder') as SortOrder) || defaultSortOrder || DEFAULT_SORT_ORDER;
+    const sortByParam =
+        (searchParams.get('sortBy') as ItemSortBy) || defaultSortBy || DEFAULT_SORT_BY;
+    const sortOrderParam =
+        (searchParams.get('sortOrder') as SortOrder) || defaultSortOrder || DEFAULT_SORT_ORDER;
     const [page, setPage] = useState<number>(Number.isNaN(pageParam) ? 0 : pageParam);
     const [sortBy, setSortBy] = useState<ItemSortBy>(sortByParam);
     const [sortOrder, setSortOrder] = useState<SortOrder>(sortOrderParam);
@@ -259,9 +261,13 @@ const ItemsListPage = ({
                                 key={child.Id}
                                 item={child}
                                 posterUrl={getPrimaryImageUrl(
-                                    (child.Type === 'Episode' ? child.SeriesPrimaryImageTag || child.Id : child.Id) || '',
+                                    (child.Type === 'Episode'
+                                        ? child.SeriesPrimaryImageTag || child.Id
+                                        : child.Id) || '',
                                     undefined,
-                                    (child.Type === 'Episode' ? child.SeriesPrimaryImageTag || undefined : child.ImageTags?.Primary) || undefined
+                                    (child.Type === 'Episode'
+                                        ? child.SeriesPrimaryImageTag || undefined
+                                        : child.ImageTags?.Primary) || undefined
                                 )}
                                 t={t}
                                 posterAspectRatio={
@@ -269,7 +275,11 @@ const ItemsListPage = ({
                                     child.Type === 'Audio' ||
                                     child.Type === 'MusicArtist'
                                         ? 'square'
-                                        : itemAspectClass.replace('aspect-', '').replace('[', '').replace(']', '').replace('/', '/')
+                                        : itemAspectClass
+                                              .replace('aspect-', '')
+                                              .replace('[', '')
+                                              .replace(']', '')
+                                              .replace('/', '/')
                                 }
                                 detailLine={
                                     child.PremiereDate ? (

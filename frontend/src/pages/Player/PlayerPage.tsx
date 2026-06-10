@@ -329,10 +329,12 @@ const PlayerPage = () => {
         <div
             ref={containerRef}
             className="relative w-full h-screen bg-black flex overflow-hidden"
-            style={{
-                '--subtitle-size': `${subtitleSize}%`,
-                '--subtitle-offset': `${subtitleOffset}px`,
-            } as React.CSSProperties}
+            style={
+                {
+                    '--subtitle-size': `${subtitleSize}%`,
+                    '--subtitle-offset': `${subtitleOffset}px`,
+                } as React.CSSProperties
+            }
         >
             {config.showContentAdvisory !== false && (
                 <ContentAdvisoryOverlay item={item} player={player} />

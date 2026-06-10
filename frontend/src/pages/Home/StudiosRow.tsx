@@ -46,7 +46,7 @@ export const StudioDisplay = ({
                 />
                 {!isImageLoaded && <Skeleton className="absolute inset-0 -z-1" />}
                 <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-40" />
-                
+
                 {isHovered && (
                     <video
                         src={`/api/studios/search/video?name=${encodeURIComponent(item.name)}`}
@@ -73,7 +73,10 @@ const StudiosRow = ({ title, limit }: StudiosRowProps) => {
         <SectionScroller
             className="max-w-full"
             title={
-                <Link to="/studios" className="flex items-center gap-1 group cursor-pointer w-fit hover:text-primary transition-colors">
+                <Link
+                    to="/studios"
+                    className="flex items-center gap-1 group cursor-pointer w-fit hover:text-primary transition-colors"
+                >
                     <h2 className="text-2xl font-bold">{title}</h2>
                     <ChevronRight className="w-7 h-7 opacity-50 group-hover:opacity-100 transition-opacity" />
                 </Link>

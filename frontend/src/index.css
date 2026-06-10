@@ -2,7 +2,9 @@
 @import 'tw-animate-css';
 
 @keyframes shimmer {
-    100% { transform: translateX(200%); }
+    100% {
+        transform: translateX(200%);
+    }
 }
 
 /* Shimmer only animates when visible — content-visibility:auto pauses it off-screen */
@@ -11,7 +13,7 @@
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
     animation: shimmer 1.8s infinite;
 }
 
@@ -233,5 +235,3 @@ body {
     font-size: var(--subtitle-size, 100%) !important;
     transition: font-size 0.2s ease-out;
 }
-
-

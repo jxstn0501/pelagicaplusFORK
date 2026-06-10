@@ -28,7 +28,13 @@ export function setPassword(password: string): void {
     localStorage.setItem(STORAGE_PASSWORD_KEY, password);
 }
 
-export function saveCredentials(serverUrl: string, userId: string, accessToken: string, username?: string, password?: string): void {
+export function saveCredentials(
+    serverUrl: string,
+    userId: string,
+    accessToken: string,
+    username?: string,
+    password?: string
+): void {
     localStorage.setItem(STORAGE_SERVER_KEY, serverUrl);
     localStorage.setItem(STORAGE_USER_KEY, userId);
     localStorage.setItem(STORAGE_TOKEN_KEY, accessToken);

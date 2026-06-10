@@ -16,9 +16,7 @@ const SearchPreview = ({ item }: { item: BaseItemDto }) => (
     <div className="absolute left-full top-0 ml-3 z-50 w-64 bg-background/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl p-3 flex flex-col gap-2 pointer-events-none">
         <p className="font-semibold text-sm leading-tight">{item.Name}</p>
         <div className="flex items-center gap-2 text-xs text-white/50 flex-wrap">
-            {item.PremiereDate && (
-                <span>{new Date(item.PremiereDate).getFullYear()}</span>
-            )}
+            {item.PremiereDate && <span>{new Date(item.PremiereDate).getFullYear()}</span>}
             {item.OfficialRating && (
                 <span className="border border-white/20 px-1 rounded">{item.OfficialRating}</span>
             )}
@@ -38,16 +36,17 @@ const SearchPreview = ({ item }: { item: BaseItemDto }) => (
         {item.Genres && item.Genres.length > 0 && (
             <div className="flex flex-wrap gap-1">
                 {item.Genres.slice(0, 3).map((g) => (
-                    <span key={g} className="text-[10px] bg-white/8 px-1.5 py-0.5 rounded-full text-white/70">
+                    <span
+                        key={g}
+                        className="text-[10px] bg-white/8 px-1.5 py-0.5 rounded-full text-white/70"
+                    >
                         {g}
                     </span>
                 ))}
             </div>
         )}
         {item.Overview && (
-            <p className="text-xs text-white/60 line-clamp-3 leading-relaxed">
-                {item.Overview}
-            </p>
+            <p className="text-xs text-white/60 line-clamp-3 leading-relaxed">{item.Overview}</p>
         )}
     </div>
 );
@@ -114,9 +113,7 @@ const MovieTvItem = ({ item }: { item: BaseItemDto }) => {
                 <span>{item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : ''}</span>
             </div>
 
-            {showPreview && (
-                <SearchPreview item={item} />
-            )}
+            {showPreview && <SearchPreview item={item} />}
         </Link>
     );
 };
