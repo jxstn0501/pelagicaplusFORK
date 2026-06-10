@@ -7,7 +7,6 @@ import WatchedStateBadge from './WatchedStateBadge';
 import { memo, useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import GenreOverlay from './GenreOverlay';
 import PosterPlayButton from './PosterPlayButton';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 
@@ -90,15 +89,6 @@ const ScrollableSectionPoster = ({
                         item={item}
                         show={config?.watchedStateBadgeHomeScreen || false}
                     />
-                    <GenreOverlay
-                        item={item}
-                        show={
-                            showGenres &&
-                            item?.Type !== 'Playlist' &&
-                            item?.Type !== 'MusicAlbum' &&
-                            item?.Type !== 'Audio'
-                        }
-                    />
                     <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
                 </div>
                 <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all max-w-36 lg:max-w-44 2xl:max-w-52">
@@ -152,11 +142,6 @@ const ScrollableSectionPoster = ({
 
                 {config?.showPosterTags !== false && (
                     <div className="absolute top-1.5 left-1.5 flex flex-col items-start gap-1.5 z-30 pointer-events-none drop-shadow-md">
-                        {item?.HasSubtitles && (
-                            <span className="bg-black/70 backdrop-blur-sm text-white/90 text-[9px] font-bold px-1.5 py-0.5 rounded-[4px] border border-white/20 uppercase tracking-wider">
-                                CC
-                            </span>
-                        )}
                         {item?.MediaSources?.[0]?.MediaStreams?.some(
                             (s) => s.Type === 'Video' && s.Height && s.Height >= 720
                         ) && (
@@ -164,22 +149,8 @@ const ScrollableSectionPoster = ({
                                 HD
                             </span>
                         )}
-                        {item?.OfficialRating && (
-                            <span className="bg-black/70 backdrop-blur-sm text-white/90 text-[9px] font-bold px-1.5 py-0.5 rounded-[4px] border border-white/20 uppercase tracking-wider">
-                                {item.OfficialRating}
-                            </span>
-                        )}
                     </div>
                 )}
-                <GenreOverlay
-                    item={item}
-                    show={
-                        showGenres &&
-                        item?.Type !== 'Playlist' &&
-                        item?.Type !== 'MusicAlbum' &&
-                        item?.Type !== 'Audio'
-                    }
-                />
                 <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
 
                 {/* Playback progress bar */}
