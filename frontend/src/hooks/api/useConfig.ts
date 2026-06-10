@@ -302,6 +302,7 @@ const DEFAULT_CONFIG: AppConfig = {
     logoLightUrl: '',
     logoDarkUrl: '',
     homeScreenSections: [
+        // 1. HERO — visuelle Aufmerksamkeit, sofortiger Sog
         {
             type: 'mediaBar',
             size: 'large',
@@ -312,6 +313,7 @@ const DEFAULT_CONFIG: AppConfig = {
             showFavoriteButton: true,
             showWatchlistButton: true,
         },
+        // 2. ZEIGARNIK — angefangene Inhalte zuerst, erzeugt Drang zur Vollendung
         {
             type: 'continueWatching',
             titleLine: 'ItemTitleWithEpisodeInfo',
@@ -319,113 +321,111 @@ const DEFAULT_CONFIG: AppConfig = {
             accurateSorting: true,
             limit: 20,
         },
+        // 3. SERIEN-BINGER — nächste Folge sofort greifbar
         {
-            type: 'moodBar',
+            type: 'nextUp',
+            title: 'Nächste Folge',
+            titleLine: 'ItemTitleWithEpisodeInfo',
+            detailLine: ['EpisodeInfo'],
             limit: 20,
         },
-        {
-            type: 'items',
-            title: 'Favoriten',
-            items: {
-                isFavorite: true,
-                limit: 10,
-            },
-        },
-        {
-            type: 'items',
-            title: 'Watchlist',
-            items: {
-                isInKefinTweaksWatchlist: true,
-                limit: 10,
-            },
-        },
+        // 4+5. PERSONALISIERUNG — "Wir kennen dich", fühlt sich persönlich an
         {
             type: 'streamystatsRecommended',
-            title: 'Empfohlene Filme',
+            title: 'Nur für dich — Filme',
             recommendationType: 'Movie',
             limit: 20,
-            showSimilarity: true,
+            showSimilarity: false,
             showBasedOn: false,
         },
         {
             type: 'streamystatsRecommended',
-            title: 'Empfohlene Serien',
+            title: 'Nur für dich — Serien',
             recommendationType: 'Series',
             limit: 20,
-            showSimilarity: true,
+            showSimilarity: false,
             showBasedOn: false,
         },
+        // 6. FOMO — frisch hinzugefügt, verpasst du das gerade?
         {
-            type: 'studios',
-            title: 'Studios',
+            type: 'recentlyAdded',
+        },
+        // 7+8. SOCIAL PROOF — "alle schauen das gerade", reduziert Entscheidungslähmung
+        {
+            type: 'items',
+            title: 'Trending Filme',
+            items: {
+                sortBy: ['PlayCount'],
+                sortOrder: 'Descending',
+                limit: 20,
+                types: ['Movie'],
+            },
+            detailFields: ['ReleaseYear'],
+        },
+        {
+            type: 'items',
+            title: 'Trending Serien',
+            items: {
+                sortBy: ['PlayCount'],
+                sortOrder: 'Descending',
+                limit: 20,
+                types: ['Series'],
+            },
+            detailFields: ['ReleaseYear'],
+        },
+        // 9. MOOD-FILTER — Entdeckungszone für "ich weiß nicht was ich will"
+        {
+            type: 'moodBar',
+            title: 'Wie ist deine Stimmung?',
             limit: 20,
         },
+        // 10+11. QUALITÄTS-ANKER — "sichere" Auswahl, reduziert Risiko
         {
             type: 'items',
-            title: 'Kürzlich erschienene Filme',
-            items: {
-                sortBy: ['PremiereDate'],
-                sortOrder: 'Descending',
-                limit: 10,
-                types: ['Movie'],
-            },
-            detailFields: ['ReleaseYearAndMonth'],
-        },
-        {
-            type: 'items',
-            title: 'Kürzlich erschienene Serien',
-            items: {
-                sortBy: ['PremiereDate'],
-                sortOrder: 'Descending',
-                limit: 10,
-                types: ['Series'],
-            },
-            detailFields: ['ReleaseYearAndMonth'],
-        },
-        {
-            type: 'items',
-            title: 'Bestbewertete Filme',
+            title: 'Top bewertet — Filme',
             items: {
                 sortBy: ['CommunityRating'],
                 sortOrder: 'Descending',
-                limit: 10,
+                limit: 20,
                 types: ['Movie'],
             },
             detailFields: ['CommunityRating'],
         },
         {
             type: 'items',
-            title: 'Bestbewertete Serien',
+            title: 'Top bewertet — Serien',
             items: {
                 sortBy: ['CommunityRating'],
                 sortOrder: 'Descending',
-                limit: 10,
+                limit: 20,
                 types: ['Series'],
             },
             detailFields: ['CommunityRating'],
         },
+        // 12+13. NEUHEIT — kürzlich erschienen, für Aktualitäts-Affinität
         {
             type: 'items',
-            title: 'Beliebte Filme',
+            title: 'Neu erschienen — Filme',
             items: {
-                sortBy: ['PlayCount'],
+                sortBy: ['PremiereDate'],
                 sortOrder: 'Descending',
-                limit: 10,
+                limit: 20,
                 types: ['Movie'],
             },
-            detailFields: ['ReleaseYear'],
+            detailFields: ['ReleaseYearAndMonth'],
         },
         {
             type: 'items',
-            title: 'Beliebte Serien',
+            title: 'Neu erschienen — Serien',
             items: {
-                sortBy: ['PlayCount'],
+                sortBy: ['PremiereDate'],
                 sortOrder: 'Descending',
-                limit: 10,
+                limit: 20,
                 types: ['Series'],
             },
-            detailFields: ['ReleaseYear'],
+            detailFields: ['ReleaseYearAndMonth'],
         },
+        // 14. GENRE-RABBIT-HOLE — deep browse für explorative User
         {
             type: 'genreRecommended',
             genreLimit: 5,
@@ -433,8 +433,28 @@ const DEFAULT_CONFIG: AppConfig = {
             mediaType: 'all',
             sortBy: ['CommunityRating'],
         },
+        // 15+16. COMMITMENT-REMINDER — bereits getroffene Entscheidungen reaktivieren
         {
-            type: 'recentlyAdded',
+            type: 'items',
+            title: 'Deine Watchlist',
+            items: {
+                isInKefinTweaksWatchlist: true,
+                limit: 20,
+            },
+        },
+        {
+            type: 'items',
+            title: 'Deine Favoriten',
+            items: {
+                isFavorite: true,
+                limit: 20,
+            },
+        },
+        // 17. POWER-USER — Studios für Entdecker ganz unten
+        {
+            type: 'studios',
+            title: 'Studios',
+            limit: 20,
         },
     ],
 };
