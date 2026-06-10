@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { useDominantColor } from '@/hooks/useDominantColor';
 
 interface BaseMediaPageProps {
     itemId: string;
@@ -30,6 +31,7 @@ const BaseMediaPage = ({
     const [failedLogo, setFailedLogo] = useState(false);
     const [isBgLoaded, setIsBgLoaded] = useState(false);
     const [prevItemId, setPrevItemId] = useState(itemId);
+    const dominantColor = useDominantColor(itemId ? getBackdropUrl(itemId) : undefined);
 
     if (itemId !== prevItemId) {
         setPrevItemId(itemId);
@@ -79,6 +81,16 @@ const BaseMediaPage = ({
                             onLoad={() => setIsBgLoaded(true)}
                             onError={() => setFailedBackdrop(true)}
                         />
+                        {/* Dominant color tint overlay */}
+                        {dominantColor && (
+                            <div
+                                className="absolute inset-0 transition-opacity duration-1000"
+                                style={{
+                                    background: `radial-gradient(ellipse at 70% 40%, rgba(${dominantColor},0.18) 0%, transparent 70%)`,
+                                    opacity: isBgLoaded ? 1 : 0,
+                                }}
+                            />
+                        )}
                         {/* Left-to-right dark fade to ensure text readability */}
                         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/75 to-transparent" />
                         {/* Bottom-to-top fade to background */}

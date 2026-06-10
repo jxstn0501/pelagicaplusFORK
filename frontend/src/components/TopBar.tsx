@@ -555,6 +555,13 @@ const TopBar = (_props: { overlay?: boolean }) => {
     const { theme } = useTheme();
     const effectiveTheme = getEffectiveTheme(theme);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
     const defaultLogo = effectiveTheme === 'dark' ? '/logo.svg' : '/logo-dark.svg';
     const configuredLogo =
@@ -570,7 +577,11 @@ const TopBar = (_props: { overlay?: boolean }) => {
 
     return (
         <header className="fixed top-0 z-50 w-full">
-            <div className="relative flex h-14 items-center gap-2 px-4 sm:px-12 transition-all duration-300 border-b border-border bg-background/60 backdrop-blur">
+            <div className={`relative flex h-14 items-center gap-2 px-4 sm:px-12 transition-all duration-500 border-b ${
+                scrolled
+                    ? 'border-border bg-background/80 backdrop-blur shadow-md'
+                    : 'border-transparent bg-transparent backdrop-blur-none'
+            }`}>
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2 shrink-0 mr-2">
                     <Avatar className="h-7 w-7 p-0.5 rounded-md">
