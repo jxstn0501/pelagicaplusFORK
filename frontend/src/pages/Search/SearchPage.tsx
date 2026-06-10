@@ -40,7 +40,6 @@ import GenresGrid from './GenresGrid';
 import { getUserId, getPassword, setPassword } from '@/utils/localstorageCredentials';
 import { useConfig } from '@/hooks/api/useConfig';
 import { useSeerrSearch } from '@/hooks/api/useSeerrSearch';
-import { useMeiliSearch } from '@/hooks/api/useMeiliSearch';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import SeerrGrid from './SeerrGrid';
 import { Earth, Loader2 } from 'lucide-react';
@@ -106,7 +105,7 @@ const SearchPage = () => {
 
     const [passwordInput, setPasswordInput] = useState('');
     const [isAuthorizing, setIsAuthorizing] = useState(false);
-    
+
     // Fallback if seerr is disabled but it was in the URL
     useEffect(() => {
         if (!isSeerrEnabled && typeFilter === 'seerr') {
@@ -116,37 +115,17 @@ const SearchPage = () => {
     }, [isSeerrEnabled, typeFilter]);
 
     const itemTypes: BaseItemKind[] | undefined = ITEM_TYPE_FILTER_MAP[typeFilter];
-    const isMeiliEnabled = !!config?.meiliSearchUrl;
-    const useMeiliForThisFilter = isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all');
 
     const {
-        data: jellyfinResults,
+        data: results,
         isLoading: isJellyfinLoading,
         error: jellyfinError,
     } = useSearchItems(debouncedQuery, {
         itemTypes,
         limit: 50,
         userId: getUserId() || undefined,
-        enabled: !useMeiliForThisFilter && typeFilter !== 'seerr',
+        enabled: typeFilter !== 'seerr',
     });
-
-    const {
-        data: meiliResults,
-        isLoading: isMeiliLoading,
-        error: meiliError,
-    } = useMeiliSearch(debouncedQuery, {
-        url: config?.meiliSearchUrl || '',
-        apiKey: config?.meiliSearchApiKey,
-        index: config?.meiliSearchIndex || 'jellyfin',
-        itemTypes: typeFilter === 'movies-tv' ? ['Movie', 'Series'] :
-                   typeFilter === 'all' ? ['Movie', 'Series', 'Episode'] :
-                   undefined,
-        limit: 50,
-        enabled: useMeiliForThisFilter,
-    });
-
-    // Use MeiliSearch results when available and configured, else Jellyfin
-    const results = useMeiliForThisFilter ? meiliResults : jellyfinResults;
 
     const { data: currentUser } = useCurrentUser();
     const {
@@ -165,11 +144,10 @@ const SearchPage = () => {
         )
     );
 
-    const isLoading = (typeFilter !== 'seerr' && (
-        useMeiliForThisFilter ? isMeiliLoading : isJellyfinLoading
-    )) || ((typeFilter === 'all' || typeFilter === 'seerr') && isSeerrLoading && !isUnauthorized);
+    const isLoading = (typeFilter !== 'seerr' && isJellyfinLoading)
+        || ((typeFilter === 'all' || typeFilter === 'seerr') && isSeerrLoading && !isUnauthorized);
 
-    const error = useMeiliForThisFilter ? meiliError : jellyfinError;
+    const error = typeFilter !== 'seerr' ? jellyfinError : null;
 
     const handleAuthorize = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -211,12 +189,6 @@ const SearchPage = () => {
 
     return (
         <Page title="Search" className="flex-1 flex flex-col items-center">
-            {isMeiliEnabled && (
-                <div className="w-full max-w-2xl mb-2 flex items-center gap-1.5 text-xs text-white/40">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                    MeiliSearch aktiv
-                </div>
-            )}
             <ButtonGroup className="w-full mt-0.5 max-w-2xl mb-1">
                 <InputGroup className="grow">
                     <InputGroupAddon>
