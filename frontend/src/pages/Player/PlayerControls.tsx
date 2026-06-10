@@ -166,7 +166,6 @@ const PlayerControls = ({
     const [showStats, setShowStats] = useState(false);
     const [container, setContainer] = useState<HTMLElement | null>(null);
     const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number | null>(null);
-    const [sleepTimerEnd, setSleepTimerEnd] = useState<number | null>(null);
     const [sleepTimerRemaining, setSleepTimerRemaining] = useState<number | null>(null);
     const sleepTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const sleepTimerTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -295,13 +294,11 @@ const PlayerControls = ({
         }
         if (minutes === null) {
             setSleepTimerMinutes(null);
-            setSleepTimerEnd(null);
             setSleepTimerRemaining(null);
             return;
         }
         const endTime = Date.now() + minutes * 60 * 1000;
         setSleepTimerMinutes(minutes);
-        setSleepTimerEnd(endTime);
         setSleepTimerRemaining(minutes);
         sleepTimerTickRef.current = setInterval(() => {
             const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 60000));
@@ -310,7 +307,6 @@ const PlayerControls = ({
         sleepTimerRef.current = setTimeout(() => {
             player?.pause();
             setSleepTimerMinutes(null);
-            setSleepTimerEnd(null);
             setSleepTimerRemaining(null);
             if (sleepTimerTickRef.current) {
                 clearInterval(sleepTimerTickRef.current);
