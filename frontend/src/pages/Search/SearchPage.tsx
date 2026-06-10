@@ -127,6 +127,7 @@ const SearchPage = () => {
         itemTypes,
         limit: 50,
         userId: getUserId() || undefined,
+        enabled: !useMeiliForThisFilter && typeFilter !== 'seerr',
     });
 
     const {
