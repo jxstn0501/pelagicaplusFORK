@@ -84,17 +84,6 @@ const LibraryItem = ({
                 )}
                 <WatchedStateBadge item={item} show={config?.watchedStateBadgeLibrary || false} />
                 
-                {config?.showPosterTags !== false && (
-                    <div className="absolute top-1.5 left-1.5 flex flex-col items-start gap-1.5 z-30 pointer-events-none drop-shadow-md">
-                        {item.MediaSources?.[0]?.MediaStreams?.some(
-                            (s) => s.Type === 'Video' && s.Height && s.Height >= 720
-                        ) && (
-                            <span className="bg-black/70 backdrop-blur-sm text-brand font-bold text-[9px] px-1.5 py-0.5 rounded-[4px] border border-brand/30 uppercase tracking-wider">
-                                HD
-                            </span>
-                        )}
-                    </div>
-                )}
                 {overlay}
             </div>
             <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">
