@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from './ui/button';
 
 interface SectionScrollerProps {
@@ -19,20 +19,26 @@ export default function SectionScroller({
     contentInset = false,
 }: SectionScrollerProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const rafRef = useRef<number | null>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
 
-    const checkScroll = () => {
-        const el = scrollRef.current;
-        if (!el) return;
-        setCanScrollLeft(el.scrollLeft > 0);
-        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
-    };
+    const checkScroll = useCallback(() => {
+        // Throttle with rAF — only one check per frame no matter how fast scroll fires
+        if (rafRef.current !== null) return;
+        rafRef.current = requestAnimationFrame(() => {
+            rafRef.current = null;
+            const el = scrollRef.current;
+            if (!el) return;
+            const left = el.scrollLeft > 0;
+            const right = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+            setCanScrollLeft((prev) => (prev === left ? prev : left));
+            setCanScrollRight((prev) => (prev === right ? prev : right));
+        });
+    }, []);
 
     const scroll = (offset: number) => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
-        }
+        scrollRef.current?.scrollBy({ left: offset, behavior: 'smooth' });
     };
 
     useEffect(() => {
@@ -41,14 +47,15 @@ export default function SectionScroller({
 
         checkScroll();
 
-        el.addEventListener('scroll', checkScroll);
-        window.addEventListener('resize', checkScroll);
+        el.addEventListener('scroll', checkScroll, { passive: true });
+        window.addEventListener('resize', checkScroll, { passive: true });
 
         return () => {
             el.removeEventListener('scroll', checkScroll);
             window.removeEventListener('resize', checkScroll);
+            if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
         };
-    }, [items.length]);
+    }, [checkScroll, items.length]);
 
     return (
         <div className={className}>
@@ -84,7 +91,7 @@ export default function SectionScroller({
             <div
                 ref={scrollRef}
                 className={
-                    'flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide custom-scrollbar scrollbar-hide' +
+                    'flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide custom-scrollbar' +
                     (contentInset ? ` pl-4 sm:pl-12` : '')
                 }
             >

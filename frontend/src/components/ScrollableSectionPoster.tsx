@@ -4,7 +4,7 @@ import { Skeleton } from './ui/skeleton';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { useConfig } from '@/hooks/api/useConfig';
 import WatchedStateBadge from './WatchedStateBadge';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GenreOverlay from './GenreOverlay';
@@ -102,6 +102,7 @@ const ScrollableSectionPoster = ({
             key={itemId || item?.Id}
             className={cn('group block', className)}
             onClick={handleClick}
+            style={{ contain: 'layout style' }}
         >
             <div className={`relative overflow-hidden rounded-md ${posterClasses}`}>
                 <img
@@ -188,4 +189,4 @@ const ScrollableSectionPoster = ({
         </Link>
     );
 };
-export default ScrollableSectionPoster;
+export default memo(ScrollableSectionPoster);
