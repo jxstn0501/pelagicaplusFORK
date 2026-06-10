@@ -239,6 +239,12 @@ export interface AppConfig {
     streamystatsUrl?: string;
     /** Optional URL for Seerr integration */
     seerrUrl?: string;
+    /** Optional URL for MeiliSearch integration (e.g. http://localhost:7700) */
+    meiliSearchUrl?: string;
+    /** Optional MeiliSearch API key */
+    meiliSearchApiKey?: string;
+    /** MeiliSearch index name to search in (default: "jellyfin") */
+    meiliSearchIndex?: string;
     /** Whether to show the Streamystats button in the user menu */
     showStreamystatsButton?: boolean;
     /** Whether to show the watched state badge for items on the home screen */

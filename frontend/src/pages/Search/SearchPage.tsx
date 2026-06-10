@@ -40,6 +40,7 @@ import GenresGrid from './GenresGrid';
 import { getUserId, getPassword, setPassword } from '@/utils/localstorageCredentials';
 import { useConfig } from '@/hooks/api/useConfig';
 import { useSeerrSearch } from '@/hooks/api/useSeerrSearch';
+import { useMeiliSearch } from '@/hooks/api/useMeiliSearch';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import SeerrGrid from './SeerrGrid';
 import { Earth, Loader2 } from 'lucide-react';
@@ -114,11 +115,42 @@ const SearchPage = () => {
     }, [isSeerrEnabled, typeFilter]);
 
     const itemTypes: BaseItemKind[] | undefined = ITEM_TYPE_FILTER_MAP[typeFilter];
+    const isMeiliEnabled = !!config?.meiliSearchUrl;
+
     const {
-        data: results,
+        data: jellyfinResults,
         isLoading: isJellyfinLoading,
         error: jellyfinError,
-    } = useSearchItems(debouncedQuery, { itemTypes, limit: 50, userId: getUserId() || undefined });
+    } = useSearchItems(debouncedQuery, {
+        itemTypes,
+        limit: 50,
+        userId: getUserId() || undefined,
+        // Skip Jellyfin search when MeiliSearch is available (for movies-tv and all)
+        // Still use Jellyfin for music, episodes, people
+        ...(isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all')
+            ? { limit: 0 }
+            : {}),
+    });
+
+    const {
+        data: meiliResults,
+        isLoading: isMeiliLoading,
+        error: meiliError,
+    } = useMeiliSearch(debouncedQuery, {
+        url: config?.meiliSearchUrl || '',
+        apiKey: config?.meiliSearchApiKey,
+        index: config?.meiliSearchIndex || 'jellyfin',
+        itemTypes: typeFilter === 'movies-tv' ? ['Movie', 'Series'] :
+                   typeFilter === 'all' ? ['Movie', 'Series', 'Episode'] :
+                   undefined,
+        limit: 50,
+    });
+
+    // Use MeiliSearch results for movie/tv/all when enabled, else Jellyfin
+    const results = isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all')
+        ? meiliResults
+        : jellyfinResults;
+
     const { data: currentUser } = useCurrentUser();
     const {
         data: seerrResponse,
@@ -128,17 +160,20 @@ const SearchPage = () => {
 
     const isUnauthorized = isSeerrEnabled && (
         (debouncedQuery || typeFilter === 'seerr') && (
-            !getPassword() || 
-            (seerrError as any)?.status === 401 || 
-            seerrError?.message?.includes('Unauthorized') || 
+            !getPassword() ||
+            (seerrError as any)?.status === 401 ||
+            seerrError?.message?.includes('Unauthorized') ||
             seerrError?.message?.includes('401')
         )
     );
 
-    const isLoading = (typeFilter !== 'seerr' && isJellyfinLoading) || 
-        ((typeFilter === 'all' || typeFilter === 'seerr') && isSeerrLoading && !isUnauthorized);
-    
-    const error = jellyfinError; // Prioritize jellyfin error
+    const isLoading = (typeFilter !== 'seerr' && (
+        isMeiliEnabled && (typeFilter === 'movies-tv' || typeFilter === 'all')
+            ? isMeiliLoading
+            : isJellyfinLoading
+    )) || ((typeFilter === 'all' || typeFilter === 'seerr') && isSeerrLoading && !isUnauthorized);
+
+    const error = meiliError || jellyfinError;
 
     const handleAuthorize = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -180,6 +215,12 @@ const SearchPage = () => {
 
     return (
         <Page title="Search" className="flex-1 flex flex-col items-center">
+            {isMeiliEnabled && (
+                <div className="w-full max-w-2xl mb-2 flex items-center gap-1.5 text-xs text-white/40">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    MeiliSearch aktiv
+                </div>
+            )}
             <ButtonGroup className="w-full mt-0.5 max-w-2xl mb-1">
                 <InputGroup className="grow">
                     <InputGroupAddon>
