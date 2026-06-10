@@ -1,4 +1,3 @@
-
 import {
     Compass,
     Film,
@@ -51,7 +50,8 @@ interface GenreOverlayProps {
 
 export const GenreOverlay = ({ item, show }: GenreOverlayProps) => {
     const { config } = useConfig();
-    if (!show || config?.showGenreTags === false || !item?.Genres || item.Genres.length === 0) return null;
+    if (!show || config?.showGenreTags === false || !item?.Genres || item.Genres.length === 0)
+        return null;
 
     // Display at most 3 genres to keep the card clean
     const genresToShow = item.Genres.slice(0, 3);

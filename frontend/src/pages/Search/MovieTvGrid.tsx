@@ -1,8 +1,8 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { ImageOff, Film, Tv } from 'lucide-react';
-import { useState } from 'react';
+import { ImageOff, Film, Tv, Star } from 'lucide-react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router';
 import WatchedStateBadge from '@/components/WatchedStateBadge';
 import { useConfig } from '@/hooks/api/useConfig';
@@ -12,17 +12,70 @@ interface MovieTvGridProps {
     items: BaseItemDto[];
 }
 
+const SearchPreview = ({ item }: { item: BaseItemDto }) => (
+    <div className="absolute left-full top-0 ml-3 z-50 w-64 bg-background/95 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl p-3 flex flex-col gap-2 pointer-events-none">
+        <p className="font-semibold text-sm leading-tight">{item.Name}</p>
+        <div className="flex items-center gap-2 text-xs text-white/50 flex-wrap">
+            {item.PremiereDate && <span>{new Date(item.PremiereDate).getFullYear()}</span>}
+            {item.OfficialRating && (
+                <span className="border border-white/20 px-1 rounded">{item.OfficialRating}</span>
+            )}
+            {item.CommunityRating != null && (
+                <span className="flex items-center gap-0.5">
+                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                    {item.CommunityRating.toFixed(1)}
+                </span>
+            )}
+            {item.Type === 'Series' && item.ProductionYear && (
+                <span className="flex items-center gap-1">
+                    <Tv className="w-3 h-3" />
+                    Serie
+                </span>
+            )}
+        </div>
+        {item.Genres && item.Genres.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+                {item.Genres.slice(0, 3).map((g) => (
+                    <span
+                        key={g}
+                        className="text-[10px] bg-white/8 px-1.5 py-0.5 rounded-full text-white/70"
+                    >
+                        {g}
+                    </span>
+                ))}
+            </div>
+        )}
+        {item.Overview && (
+            <p className="text-xs text-white/60 line-clamp-3 leading-relaxed">{item.Overview}</p>
+        )}
+    </div>
+);
+
 const MovieTvItem = ({ item }: { item: BaseItemDto }) => {
     const { config } = useConfig();
     const [posterError, setPosterError] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+    const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const posterUrl = getPrimaryImageUrl(item.Id || '', undefined, item.ImageTags?.Primary);
 
+    const handleMouseEnter = () => {
+        hoverTimer.current = setTimeout(() => setShowPreview(true), 600);
+    };
+    const handleMouseLeave = () => {
+        if (hoverTimer.current) clearTimeout(hoverTimer.current);
+        setShowPreview(false);
+    };
+
     return (
-        <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0">
-            <div
-                className="relative w-full aspect-[2/3] overflow-hidden rounded-md group"
-            >
+        <Link
+            to={`/item/${item.Id}`}
+            key={item.Id}
+            className="p-0 m-0 relative"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            <div className="relative w-full aspect-[2/3] overflow-hidden rounded-md group">
                 {!posterError ? (
                     <>
                         <img
@@ -59,6 +112,8 @@ const MovieTvItem = ({ item }: { item: BaseItemDto }) => {
                 {item.Type === 'Series' && <Tv className="w-3.5 h-3.5 shrink-0" />}
                 <span>{item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : ''}</span>
             </div>
+
+            {showPreview && <SearchPreview item={item} />}
         </Link>
     );
 };

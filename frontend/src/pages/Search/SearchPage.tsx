@@ -93,7 +93,9 @@ const SearchPage = () => {
     const queryClient = useQueryClient();
     const { config } = useConfig();
     const isSeerrEnabled = !!config?.seerrUrl;
-    const availableFilters = isSeerrEnabled ? [...ALL_TYPE_FILTERS, 'seerr' as SearchTypeFilter] : ALL_TYPE_FILTERS;
+    const availableFilters = isSeerrEnabled
+        ? [...ALL_TYPE_FILTERS, 'seerr' as SearchTypeFilter]
+        : ALL_TYPE_FILTERS;
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [query, setQuery] = useState(searchParams.get('q') || '');
@@ -105,20 +107,28 @@ const SearchPage = () => {
 
     const [passwordInput, setPasswordInput] = useState('');
     const [isAuthorizing, setIsAuthorizing] = useState(false);
-    
+
     // Fallback if seerr is disabled but it was in the URL
     useEffect(() => {
         if (!isSeerrEnabled && typeFilter === 'seerr') {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTypeFilter('movies-tv');
         }
     }, [isSeerrEnabled, typeFilter]);
 
     const itemTypes: BaseItemKind[] | undefined = ITEM_TYPE_FILTER_MAP[typeFilter];
+
     const {
         data: results,
         isLoading: isJellyfinLoading,
         error: jellyfinError,
-    } = useSearchItems(debouncedQuery, { itemTypes, limit: 50, userId: getUserId() || undefined });
+    } = useSearchItems(debouncedQuery, {
+        itemTypes,
+        limit: 50,
+        userId: getUserId() || undefined,
+        enabled: typeFilter !== 'seerr',
+    });
+
     const { data: currentUser } = useCurrentUser();
     const {
         data: seerrResponse,
@@ -126,19 +136,20 @@ const SearchPage = () => {
         error: seerrError,
     } = useSeerrSearch(debouncedQuery, currentUser?.Name || undefined);
 
-    const isUnauthorized = isSeerrEnabled && (
-        (debouncedQuery || typeFilter === 'seerr') && (
-            !getPassword() || 
-            (seerrError as any)?.status === 401 || 
-            seerrError?.message?.includes('Unauthorized') || 
-            seerrError?.message?.includes('401')
-        )
-    );
+    const isUnauthorized =
+        isSeerrEnabled &&
+        (debouncedQuery || typeFilter === 'seerr') &&
+        (!getPassword() ||
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (seerrError as any)?.status === 401 ||
+            seerrError?.message?.includes('Unauthorized') ||
+            seerrError?.message?.includes('401'));
 
-    const isLoading = (typeFilter !== 'seerr' && isJellyfinLoading) || 
+    const isLoading =
+        (typeFilter !== 'seerr' && isJellyfinLoading) ||
         ((typeFilter === 'all' || typeFilter === 'seerr') && isSeerrLoading && !isUnauthorized);
-    
-    const error = jellyfinError; // Prioritize jellyfin error
+
+    const error = typeFilter !== 'seerr' ? jellyfinError : null;
 
     const handleAuthorize = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -152,7 +163,7 @@ const SearchPage = () => {
             await queryClient.invalidateQueries({ queryKey: ['seerrSearch'] });
             toast.success('Successfully authorized Seerr!');
             setPasswordInput('');
-        } catch (err) {
+        } catch {
             toast.error('Failed to authorize. Please check your password.');
         } finally {
             setIsAuthorizing(false);
@@ -176,7 +187,8 @@ const SearchPage = () => {
     }, [query, typeFilter, setSearchParams]);
 
     const seerrResults = seerrResponse?.results || [];
-    const hasAnyResults = (results && results.length > 0) || (seerrResults && seerrResults.length > 0);
+    const hasAnyResults =
+        (results && results.length > 0) || (seerrResults && seerrResults.length > 0);
 
     return (
         <Page title="Search" className="flex-1 flex flex-col items-center">
@@ -242,7 +254,8 @@ const SearchPage = () => {
                     </EmptyHeader>
                 </Empty>
             )}
-            {results && typeFilter !== 'seerr' &&
+            {results &&
+                typeFilter !== 'seerr' &&
                 Object.keys(ITEM_TYPE_GROUPS).map((groupKey) => {
                     const groupItemTypes =
                         ITEM_TYPE_GROUPS[groupKey as keyof typeof ITEM_TYPE_GROUPS];
@@ -314,13 +327,19 @@ const SearchPage = () => {
                             <Earth className="h-6 w-6" />
                         </div>
                         <div className="flex-1 space-y-1">
-                            <h3 className="text-lg font-semibold text-foreground">Authorize Seerr Integration</h3>
+                            <h3 className="text-lg font-semibold text-foreground">
+                                Authorize Seerr Integration
+                            </h3>
                             <p className="text-sm text-muted-foreground leading-relaxed font-normal">
-                                Enter your Jellyfin password to enable searching and requesting media directly from Seerr.
+                                Enter your Jellyfin password to enable searching and requesting
+                                media directly from Seerr.
                             </p>
                         </div>
                     </div>
-                    <form onSubmit={handleAuthorize} className="flex flex-col sm:flex-row gap-3 mt-1">
+                    <form
+                        onSubmit={handleAuthorize}
+                        className="flex flex-col sm:flex-row gap-3 mt-1"
+                    >
                         <Input
                             type="password"
                             placeholder="Jellyfin Password"

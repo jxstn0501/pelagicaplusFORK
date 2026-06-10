@@ -243,7 +243,10 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                         <TabsTrigger value="online">{t('online_subtitles')}</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="local" className="flex-1 overflow-y-auto min-h-0 focus-visible:outline-none">
+                    <TabsContent
+                        value="local"
+                        className="flex-1 overflow-y-auto min-h-0 focus-visible:outline-none"
+                    >
                         {entries.length === 0 ? (
                             <p className="text-sm text-muted-foreground py-4 text-center">
                                 {t('no_subtitles_available')}
@@ -275,13 +278,31 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                             className="flex items-center justify-between gap-3 p-3 rounded-md border bg-card hover:bg-muted/10 transition-colors"
                                         >
                                             <div className="flex flex-col min-w-0">
-                                                <span className="font-medium text-sm truncate">{title}</span>
+                                                <span className="font-medium text-sm truncate">
+                                                    {title}
+                                                </span>
                                                 <span className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-1">
-                                                    <span className="font-semibold">{stream.Codec?.toUpperCase()}</span>
-                                                    {stream.IsExternal && <span>{t('external')}</span>}
-                                                    {stream.IsForced && <span className="text-red-500 font-semibold">{t('forced')}</span>}
-                                                    {stream.IsDefault && <span className="text-primary font-semibold">{t('default')}</span>}
-                                                    {entry.isImageBased && <span className="text-amber-500">{t('image_based')}</span>}
+                                                    <span className="font-semibold">
+                                                        {stream.Codec?.toUpperCase()}
+                                                    </span>
+                                                    {stream.IsExternal && (
+                                                        <span>{t('external')}</span>
+                                                    )}
+                                                    {stream.IsForced && (
+                                                        <span className="text-red-500 font-semibold">
+                                                            {t('forced')}
+                                                        </span>
+                                                    )}
+                                                    {stream.IsDefault && (
+                                                        <span className="text-primary font-semibold">
+                                                            {t('default')}
+                                                        </span>
+                                                    )}
+                                                    {entry.isImageBased && (
+                                                        <span className="text-amber-500">
+                                                            {t('image_based')}
+                                                        </span>
+                                                    )}
                                                 </span>
                                             </div>
                                             <div className="flex gap-2 shrink-0">
@@ -304,7 +325,9 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                                         ) : (
                                                             <FileText className="h-4 w-4" />
                                                         )}
-                                                        <span className="ml-1.5 hidden sm:inline">{t('original')}</span>
+                                                        <span className="ml-1.5 hidden sm:inline">
+                                                            {t('original')}
+                                                        </span>
                                                     </Button>
                                                 )}
                                                 <Button
@@ -318,7 +341,8 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                                         )
                                                     }
                                                     disabled={
-                                                        (!entry.convertedUrl && !entry.rawUrl) || anyLoading
+                                                        (!entry.convertedUrl && !entry.rawUrl) ||
+                                                        anyLoading
                                                     }
                                                     title={t('download')}
                                                 >
@@ -327,7 +351,9 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                                     ) : (
                                                         <Download className="h-4 w-4" />
                                                     )}
-                                                    <span className="ml-1.5 hidden sm:inline">{t('download')}</span>
+                                                    <span className="ml-1.5 hidden sm:inline">
+                                                        {t('download')}
+                                                    </span>
                                                 </Button>
                                                 {entry.convertedUrl && (
                                                     <Button
@@ -353,7 +379,10 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                         )}
                     </TabsContent>
 
-                    <TabsContent value="online" className="flex-1 flex flex-col min-h-0 focus-visible:outline-none">
+                    <TabsContent
+                        value="online"
+                        className="flex-1 flex flex-col min-h-0 focus-visible:outline-none"
+                    >
                         <div className="flex gap-3 items-end mb-4 shrink-0">
                             <div className="flex-1 flex flex-col gap-1.5">
                                 <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
@@ -373,7 +402,11 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <Button onClick={handleSearchOnline} disabled={searchingOnline} className="px-4">
+                            <Button
+                                onClick={handleSearchOnline}
+                                disabled={searchingOnline}
+                                className="px-4"
+                            >
                                 {searchingOnline ? (
                                     <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
                                 ) : (
@@ -410,7 +443,10 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                                 className="flex items-center justify-between gap-3 p-3 rounded-md border bg-card hover:bg-muted/10 transition-colors"
                                             >
                                                 <div className="flex flex-col min-w-0">
-                                                    <span className="font-semibold text-sm truncate" title={result.Name || ''}>
+                                                    <span
+                                                        className="font-semibold text-sm truncate"
+                                                        title={result.Name || ''}
+                                                    >
                                                         {result.Name || t('unknown_subtitle')}
                                                     </span>
                                                     <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-muted-foreground">
@@ -420,13 +456,21 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                                             </span>
                                                         )}
                                                         {result.ProviderName && (
-                                                            <span>Provider: {result.ProviderName}</span>
+                                                            <span>
+                                                                Provider: {result.ProviderName}
+                                                            </span>
                                                         )}
                                                         {result.DownloadCount != null && (
-                                                            <span>Downloads: {result.DownloadCount}</span>
+                                                            <span>
+                                                                Downloads: {result.DownloadCount}
+                                                            </span>
                                                         )}
                                                         {result.CommunityRating != null && (
-                                                            <span>Rating: {result.CommunityRating.toFixed(1)}⭐</span>
+                                                            <span>
+                                                                Rating:{' '}
+                                                                {result.CommunityRating.toFixed(1)}
+                                                                ⭐
+                                                            </span>
                                                         )}
                                                         {result.Forced && (
                                                             <span className="bg-red-500/20 text-red-600 font-bold px-1 py-0.2 rounded text-[10px]">
@@ -443,7 +487,10 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                                 <Button
                                                     size="sm"
                                                     disabled={anyDownloading}
-                                                    onClick={() => result.Id && handleDownloadToServer(result.Id)}
+                                                    onClick={() =>
+                                                        result.Id &&
+                                                        handleDownloadToServer(result.Id)
+                                                    }
                                                     className="shrink-0"
                                                 >
                                                     {isDownloading ? (
@@ -451,7 +498,9 @@ const SubtitleDownloadDialog = ({ item, trigger }: SubtitleDownloadDialogProps) 
                                                     ) : (
                                                         <FileDown className="h-4 w-4" />
                                                     )}
-                                                    <span className="ml-1.5 hidden sm:inline">{t('download_to_server')}</span>
+                                                    <span className="ml-1.5 hidden sm:inline">
+                                                        {t('download_to_server')}
+                                                    </span>
                                                 </Button>
                                             </li>
                                         );

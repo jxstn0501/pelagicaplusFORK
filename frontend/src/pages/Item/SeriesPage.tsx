@@ -28,6 +28,7 @@ import PlayStateButton from '../../components/PlayStateButton';
 import { getUserId } from '@/utils/localstorageCredentials';
 import ItemAdminButton from '@/components/ItemAdminButton';
 import { TrailerButton } from '../../components/TrailerButton';
+import UserRatingButton from '../../components/UserRatingButton';
 import { useUpcomingEpisodes } from '../../hooks/api/useUpcomingEpisodes';
 import UpcomingEpisodeComponent from './UpcomingEpisodeComponent';
 import { Badge } from '@/components/ui/badge';
@@ -75,7 +76,12 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
     const studios = item.Studios?.filter((studio) => studio.Name) || [];
 
     return (
-        <BaseMediaPage itemId={item.Id || ''} name={item.Name || ''} showLogo={false} topPadding={false}>
+        <BaseMediaPage
+            itemId={item.Id || ''}
+            name={item.Name || ''}
+            showLogo={false}
+            topPadding={false}
+        >
             <div className="pt-24 sm:pt-32 pb-12 px-4 sm:px-12 max-w-7xl mx-auto w-full flex flex-col gap-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">
                     {/* Left Column (Poster) */}
@@ -94,7 +100,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                         className={[
                                             'object-cover rounded-xl w-full h-full relative z-10',
                                             'transition-[filter,opacity] duration-700 ease-out',
-                                            isPosterLoaded ? 'blur-0 opacity-100' : 'blur-md opacity-0',
+                                            isPosterLoaded
+                                                ? 'blur-0 opacity-100'
+                                                : 'blur-md opacity-0',
                                         ].join(' ')}
                                         onLoad={() => setIsPosterLoaded(true)}
                                         onError={() => setPosterFailed(true)}
@@ -128,7 +136,10 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         {/* Actions */}
                         <div className="flex flex-wrap gap-2.5 items-center mt-2">
                             {episodeToContinue ? (
-                                <Button className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out" asChild>
+                                <Button
+                                    className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
+                                    asChild
+                                >
                                     <Link to={`/play/${episodeToContinue.Id}`}>
                                         <Play className="mr-2 h-4 w-4 fill-current" />
                                         {episodeToContinue.UserData?.PlaybackPositionTicks
@@ -153,7 +164,8 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                             <FavoriteButton
                                 item={item}
                                 showFavoriteButton={
-                                    item.Type && config.itemPage?.favoriteButton?.includes(item.Type)
+                                    item.Type &&
+                                    config.itemPage?.favoriteButton?.includes(item.Type)
                                 }
                             />
                             <WatchListButton
@@ -161,6 +173,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                 showWatchlistButton={config.itemPage?.showWatchlistButton}
                             />
                             <PlayStateButton itemId={item.Id || ''} userId={getUserId() || ''} />
+                            <UserRatingButton itemId={item.Id} />
                             <ItemAdminButton item={item} />
                         </div>
 
@@ -206,7 +219,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                                 className="bg-white/5 hover:bg-white/10 border-white/5 text-foreground hover:underline transition-colors px-2.5 py-0.5"
                                                 asChild
                                             >
-                                                <Link to={`/person/${person.Id}`}>{person.Name}</Link>
+                                                <Link to={`/person/${person.Id}`}>
+                                                    {person.Name}
+                                                </Link>
                                             </Badge>
                                         ))}
                                     </div>
@@ -227,7 +242,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                                 className="bg-white/5 hover:bg-white/10 border-white/5 text-foreground hover:underline transition-colors px-2.5 py-0.5"
                                                 asChild
                                             >
-                                                <Link to={`/person/${person.Id}`}>{person.Name}</Link>
+                                                <Link to={`/person/${person.Id}`}>
+                                                    {person.Name}
+                                                </Link>
                                             </Badge>
                                         ))}
                                     </div>
@@ -249,7 +266,9 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                                 asChild
                                             >
                                                 {studio.Id ? (
-                                                    <Link to={`/studio/${studio.Id}?name=${encodeURIComponent(studio.Name ?? '')}`}>
+                                                    <Link
+                                                        to={`/studio/${studio.Id}?name=${encodeURIComponent(studio.Name ?? '')}`}
+                                                    >
                                                         {studio.Name}
                                                     </Link>
                                                 ) : (
@@ -269,7 +288,11 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         <h3 className="text-3xl font-bold">{t('upcoming_episodes')}</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                             {upcomingEpisodes.map((episode) => (
-                                <UpcomingEpisodeComponent key={episode.Id} episode={episode} t={t} />
+                                <UpcomingEpisodeComponent
+                                    key={episode.Id}
+                                    episode={episode}
+                                    t={t}
+                                />
                             ))}
                         </div>
                     </div>
@@ -290,10 +313,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         {seasons?.map((season) => (
-                                            <SelectItem
-                                                key={season.Id}
-                                                value={season.Id || ''}
-                                            >
+                                            <SelectItem key={season.Id} value={season.Id || ''}>
                                                 {season.Name}
                                             </SelectItem>
                                         ))}
@@ -305,7 +325,11 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         seasonId={effectiveSelectedSeason}
                         episodeDisplay={config.itemPage?.episodeDisplay || 'row'}
                     />
-                    {error && <p className="text-destructive">Error loading seasons: {(error as Error).message}</p>}
+                    {error && (
+                        <p className="text-destructive">
+                            Error loading seasons: {(error as Error).message}
+                        </p>
+                    )}
                 </div>
 
                 <PeopleRow

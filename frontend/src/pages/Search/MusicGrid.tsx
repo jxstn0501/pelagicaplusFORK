@@ -14,32 +14,32 @@ const MusicItem = ({ item }: { item: BaseItemDto }) => {
     const { loadQueue } = useMusicPlayback();
     const [posterError, setPosterError] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const targetImageId = item.Type === 'Audio' && item.AlbumId ? item.AlbumId : (item.Id || '');
-    const targetImageTag = item.Type === 'Audio' && item.AlbumId ? undefined : item.ImageTags?.Primary;
+    const targetImageId = item.Type === 'Audio' && item.AlbumId ? item.AlbumId : item.Id || '';
+    const targetImageTag =
+        item.Type === 'Audio' && item.AlbumId ? undefined : item.ImageTags?.Primary;
     const posterUrl = getPrimaryImageUrl(targetImageId, undefined, targetImageTag);
 
     const handleClick = (e: React.MouseEvent) => {
         if (item.Type === 'Audio') {
             e.preventDefault();
-            loadQueue([
-                {
-                    id: item.Id || '',
-                    title: item.Name || '',
-                    artist: item.AlbumArtist || (item.Artists && item.Artists[0]) || 'Unknown',
-                    albumId: item.AlbumId || '',
-                    albumName: item.Album || '',
-                }
-            ], 0, true);
+            loadQueue(
+                [
+                    {
+                        id: item.Id || '',
+                        title: item.Name || '',
+                        artist: item.AlbumArtist || (item.Artists && item.Artists[0]) || 'Unknown',
+                        albumId: item.AlbumId || '',
+                        albumName: item.Album || '',
+                    },
+                ],
+                0,
+                true
+            );
         }
     };
 
     return (
-        <Link
-            to={`/item/${item.Id}`}
-            key={item.Id}
-            className="p-0 m-0"
-            onClick={handleClick}
-        >
+        <Link to={`/item/${item.Id}`} key={item.Id} className="p-0 m-0" onClick={handleClick}>
             <div className="relative w-full aspect-square overflow-hidden rounded-md group">
                 {!posterError ? (
                     <>

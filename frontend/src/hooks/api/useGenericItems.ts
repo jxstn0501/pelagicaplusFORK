@@ -37,14 +37,18 @@ export function useGenericItems(configJson: string, options?: GenericItemsOption
             // Merge options from generic pagination (options) and config (config)
             // Options from pagination (ItemsListPage) take precedence for sorting if they aren't the default, but actually ItemsListPage always passes Name Ascending by default.
             // Let's use the options passed by the hook caller, but default to config if it exists.
-            // Actually, we want to allow users to override the sort in the UI. 
+            // Actually, we want to allow users to override the sort in the UI.
             // So if `options.sortBy` is provided, we use it.
 
             const response = await itemsApi.getItems({
                 userId: getUserId() || undefined,
                 parentId: config?.libraryId,
                 sortBy: options?.sortBy || config?.sortBy || ['Random'],
-                sortOrder: options?.sortOrder ? options.sortOrder : config?.sortOrder ? [config.sortOrder] : ['Descending'],
+                sortOrder: options?.sortOrder
+                    ? options.sortOrder
+                    : config?.sortOrder
+                      ? [config.sortOrder]
+                      : ['Descending'],
                 limit: options?.limit || config?.limit || 50,
                 startIndex: options?.startIndex || 0,
                 recursive: true,

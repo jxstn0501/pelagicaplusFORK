@@ -226,10 +226,12 @@ const LibraryPage = () => {
     const [sortOrder, setSortOrder] = useState<SortOrder>(sortOrderParam);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSortBy(sortByParam);
     }, [sortByParam]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSortOrder(sortOrderParam);
     }, [sortOrderParam]);
 
@@ -258,6 +260,7 @@ const LibraryPage = () => {
     const [itemType, setItemType] = useState<string>(itemTypeParam);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setItemType(itemTypeParam);
     }, [itemTypeParam]);
 

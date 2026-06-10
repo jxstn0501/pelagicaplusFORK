@@ -21,9 +21,11 @@ const GenreRecommendedRows = ({
     if (!genres || genres.length === 0) return null;
 
     const types: ('Movie' | 'Series')[] =
-        mediaType === 'Movie' ? ['Movie'] :
-        mediaType === 'Series' ? ['Series'] :
-        ['Movie', 'Series'];
+        mediaType === 'Movie'
+            ? ['Movie']
+            : mediaType === 'Series'
+              ? ['Series']
+              : ['Movie', 'Series'];
 
     const topGenres = [...genres]
         .sort((a, b) => (b.item?.totalItems || 0) - (a.item?.totalItems || 0))

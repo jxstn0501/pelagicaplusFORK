@@ -4,10 +4,9 @@ import { Skeleton } from './ui/skeleton';
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { useConfig } from '@/hooks/api/useConfig';
 import WatchedStateBadge from './WatchedStateBadge';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import GenreOverlay from './GenreOverlay';
 import PosterPlayButton from './PosterPlayButton';
 import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 
@@ -51,21 +50,26 @@ const ScrollableSectionPoster = ({
     const skeletonClasses = isSquareType ? 'h-36 lg:h-44 2xl:h-52' : 'h-54 lg:h-64 2xl:h-80';
 
     const primaryImageTag = item?.ImageTags?.Primary;
-    const targetImageId = item?.Type === 'Audio' && item.AlbumId ? item.AlbumId : (itemId || item?.Id || '');
+    const targetImageId =
+        item?.Type === 'Audio' && item.AlbumId ? item.AlbumId : itemId || item?.Id || '';
     const targetImageTag = item?.Type === 'Audio' && item.AlbumId ? undefined : primaryImageTag;
 
     const handleClick = (e: React.MouseEvent) => {
         if (item?.Type === 'Audio') {
             e.preventDefault();
-            loadQueue([
-                {
-                    id: itemId || item.Id || '',
-                    title: itemName || item.Name || '',
-                    artist: item.AlbumArtist || (item.Artists && item.Artists[0]) || 'Unknown',
-                    albumId: item.AlbumId || '',
-                    albumName: item.Album || '',
-                }
-            ], 0, true);
+            loadQueue(
+                [
+                    {
+                        id: itemId || item.Id || '',
+                        title: itemName || item.Name || '',
+                        artist: item.AlbumArtist || (item.Artists && item.Artists[0]) || 'Unknown',
+                        albumId: item.AlbumId || '',
+                        albumName: item.Album || '',
+                    },
+                ],
+                0,
+                true
+            );
         }
     };
 
@@ -85,7 +89,6 @@ const ScrollableSectionPoster = ({
                         item={item}
                         show={config?.watchedStateBadgeHomeScreen || false}
                     />
-                    <GenreOverlay item={item} show={showGenres && item?.Type !== 'Playlist' && item?.Type !== 'MusicAlbum' && item?.Type !== 'Audio'} />
                     <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
                 </div>
                 <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all max-w-36 lg:max-w-44 2xl:max-w-52">
@@ -102,6 +105,7 @@ const ScrollableSectionPoster = ({
             key={itemId || item?.Id}
             className={cn('group block', className)}
             onClick={handleClick}
+            style={{ contain: 'layout style' }}
         >
             <div className={`relative overflow-hidden rounded-md ${posterClasses}`}>
                 <img
@@ -109,11 +113,7 @@ const ScrollableSectionPoster = ({
                     src={
                         posterUrl
                             ? posterUrl
-                            : getPrimaryImageUrl(
-                                  targetImageId,
-                                  undefined,
-                                  targetImageTag
-                              )
+                            : getPrimaryImageUrl(targetImageId, undefined, targetImageTag)
                     }
                     alt={itemName || item?.Name || ''}
                     className={cn(
@@ -139,32 +139,25 @@ const ScrollableSectionPoster = ({
                     item={item}
                     show={config?.watchedStateBadgeHomeScreen || false}
                 />
-                
-                {config?.showPosterTags !== false && (
-                    <div className="absolute top-1.5 left-1.5 flex flex-col items-start gap-1.5 z-30 pointer-events-none drop-shadow-md">
-                        {item?.HasSubtitles && (
-                            <span className="bg-black/70 backdrop-blur-sm text-white/90 text-[9px] font-bold px-1.5 py-0.5 rounded-[4px] border border-white/20 uppercase tracking-wider">
-                                CC
-                            </span>
-                        )}
-                        {item?.MediaSources?.[0]?.MediaStreams?.some(s => s.Type === 'Video' && s.Height && s.Height >= 720) && (
-                            <span className="bg-black/70 backdrop-blur-sm text-brand font-bold text-[9px] px-1.5 py-0.5 rounded-[4px] border border-brand/30 uppercase tracking-wider">
-                                HD
-                            </span>
-                        )}
-                        {item?.OfficialRating && (
-                            <span className="bg-black/70 backdrop-blur-sm text-white/90 text-[9px] font-bold px-1.5 py-0.5 rounded-[4px] border border-white/20 uppercase tracking-wider">
-                                {item.OfficialRating}
-                            </span>
-                        )}
-                    </div>
-                )}
-                <GenreOverlay item={item} show={showGenres && item?.Type !== 'Playlist' && item?.Type !== 'MusicAlbum' && item?.Type !== 'Audio'} />
+
                 <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
 
-                {showPlayButton && (
-                    <PosterPlayButton item={item} itemId={itemId} />
-                )}
+                {/* Playback progress bar */}
+                {item?.UserData?.PlaybackPositionTicks != null &&
+                    item.UserData.PlaybackPositionTicks > 0 &&
+                    item?.RunTimeTicks != null &&
+                    item.RunTimeTicks > 0 && (
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-30 rounded-b-md overflow-hidden">
+                            <div
+                                className="h-full bg-primary rounded-b-md transition-all duration-300"
+                                style={{
+                                    width: `${Math.min(100, (item.UserData.PlaybackPositionTicks / item.RunTimeTicks) * 100)}%`,
+                                }}
+                            />
+                        </div>
+                    )}
+
+                {showPlayButton && <PosterPlayButton item={item} itemId={itemId} />}
             </div>
             <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all max-w-36 lg:max-w-44 2xl:max-w-52">
                 {itemName || item?.Name || ''}
@@ -173,4 +166,4 @@ const ScrollableSectionPoster = ({
         </Link>
     );
 };
-export default ScrollableSectionPoster;
+export default memo(ScrollableSectionPoster);

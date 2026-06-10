@@ -11,7 +11,8 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 function getTrailerUrl(item: BaseItemDto): string {
     const stored = item.RemoteTrailers?.[0]?.Url;
     if (stored) return stored;
-    const year = item.ProductionYear ?? (item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : '');
+    const year =
+        item.ProductionYear ?? (item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : '');
     const query = `${item.Name ?? ''} ${year} trailer deutsch`;
     return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
 }
@@ -48,7 +49,7 @@ const TrailerCard = ({ item, trailerUrl }: TrailerCardProps) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
-                onClick={e => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
                 title={item.Name || ''}
             >
                 <div className="bg-red-600 rounded-full p-3 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-200 shadow-xl">
@@ -64,7 +65,7 @@ const TrailerCard = ({ item, trailerUrl }: TrailerCardProps) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-xs text-red-500 hover:text-red-400 transition-colors mt-0.5 w-fit"
-                onClick={e => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
             >
                 <Play className="w-3 h-3" fill="currentColor" />
                 Trailer{year ? ` · ${year}` : ''}
@@ -88,15 +89,15 @@ const TrailersRow = ({ title, limit = 20, types = ['Movie'] }: TrailersRowProps)
     return (
         <SectionScroller
             className="max-w-full"
-            title={<h2 className="text-2xl font-bold flex items-center gap-2">{title ?? t('trailers')}</h2>}
+            title={
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                    {title ?? t('trailers')}
+                </h2>
+            }
             items={
                 items
-                    ? items.map(item => (
-                          <TrailerCard
-                              key={item.Id}
-                              item={item}
-                              trailerUrl={getTrailerUrl(item)}
-                          />
+                    ? items.map((item) => (
+                          <TrailerCard key={item.Id} item={item} trailerUrl={getTrailerUrl(item)} />
                       ))
                     : Array.from({ length: 5 }).map((_, i) => (
                           <div key={i} className="w-36 lg:w-44 2xl:w-52">

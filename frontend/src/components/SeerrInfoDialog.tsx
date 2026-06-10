@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import {
     Dialog,
@@ -9,13 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-    Loader2,
-    Film,
-    Tv,
-    Layers,
-    Play,
-} from 'lucide-react';
+import { Loader2, Film, Tv, Layers, Play } from 'lucide-react';
 import { getUsername, getPassword, setPassword } from '@/utils/localstorageCredentials';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { toast } from 'sonner';
@@ -85,17 +80,17 @@ export default function SeerrInfoDialog({
     const releaseDate = item.releaseDate || item.firstAirDate;
     const year = releaseDate ? new Date(releaseDate).getFullYear() : '';
     const title = item.title || item.name || 'No Title';
-    const rating = details?.voteAverage ? (details.voteAverage).toFixed(1) : null;
-    const collection = details?.collection || details?.belongsToCollection || details?.belongs_to_collection;
+    const rating = details?.voteAverage ? details.voteAverage.toFixed(1) : null;
+    const collection =
+        details?.collection || details?.belongsToCollection || details?.belongs_to_collection;
 
-    const creators = details?.createdBy
-        ?.map((c: any) => c.name)
-        ?.join(', ');
+    const creators = details?.createdBy?.map((c: any) => c.name)?.join(', ');
 
-    const directors = details?.credits?.crew
-        ?.filter((c: any) => c.job === 'Director')
-        ?.map((c: any) => c.name)
-        ?.join(', ') || creators;
+    const directors =
+        details?.credits?.crew
+            ?.filter((c: any) => c.job === 'Director')
+            ?.map((c: any) => c.name)
+            ?.join(', ') || creators;
 
     const mainCast = details?.credits?.cast
         ?.slice(0, 5)
@@ -103,18 +98,18 @@ export default function SeerrInfoDialog({
         ?.join(', ');
 
     const crewLabel = isTv ? 'Creator' : 'Director';
-    
+
     // Find YouTube trailer
     const trailer = details?.relatedVideos?.find(
         (v: any) => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser')
     );
 
     const backdropPath = details?.backdropPath || item.backdropPath;
-    const backdropUrl = backdropPath 
-        ? `https://image.tmdb.org/t/p/original${backdropPath}` 
-        : item.posterPath 
-            ? `https://image.tmdb.org/t/p/original${item.posterPath}` 
-            : null;
+    const backdropUrl = backdropPath
+        ? `https://image.tmdb.org/t/p/original${backdropPath}`
+        : item.posterPath
+          ? `https://image.tmdb.org/t/p/original${item.posterPath}`
+          : null;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -134,13 +129,15 @@ export default function SeerrInfoDialog({
                 {isUnauthorized ? (
                     <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full gap-4 py-8 text-left">
                         <DialogHeader>
-                            <DialogTitle className="text-xl font-bold">Seerr Authentication Required</DialogTitle>
+                            <DialogTitle className="text-xl font-bold">
+                                Seerr Authentication Required
+                            </DialogTitle>
                             <DialogDescription className="text-sm text-muted-foreground mt-1">
-                                Your Jellyfin password is required to retrieve media details from Seerr. 
-                                Enter your password below to authorize requests.
+                                Your Jellyfin password is required to retrieve media details from
+                                Seerr. Enter your password below to authorize requests.
                             </DialogDescription>
                         </DialogHeader>
-                        <form 
+                        <form
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 if (passwordInput) {
@@ -150,11 +147,13 @@ export default function SeerrInfoDialog({
                                     }
                                     setIsUnauthorized(false);
                                 }
-                            }} 
+                            }}
                             className="flex flex-col gap-4 mt-2"
                         >
                             <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-semibold text-muted-foreground">Jellyfin Password</label>
+                                <label className="text-xs font-semibold text-muted-foreground">
+                                    Jellyfin Password
+                                </label>
                                 <Input
                                     type="password"
                                     placeholder="Enter password"
@@ -165,12 +164,14 @@ export default function SeerrInfoDialog({
                                 />
                             </div>
                             <div className="flex justify-end gap-3 mt-2">
-                                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => onOpenChange(false)}
+                                >
                                     Cancel
                                 </Button>
-                                <Button type="submit">
-                                    Authorize
-                                </Button>
+                                <Button type="submit">Authorize</Button>
                             </div>
                         </form>
                     </div>
@@ -184,14 +185,24 @@ export default function SeerrInfoDialog({
                         {/* Title overlay */}
                         <div className="flex flex-col gap-1 text-left mb-4 shrink-0 pr-8">
                             <span className="text-xs font-semibold tracking-wider text-primary uppercase flex items-center gap-1.5">
-                                {isTv ? <Tv className="h-3.5 w-3.5" /> : <Film className="h-3.5 w-3.5" />}
+                                {isTv ? (
+                                    <Tv className="h-3.5 w-3.5" />
+                                ) : (
+                                    <Film className="h-3.5 w-3.5" />
+                                )}
                                 {isTv ? 'TV Series' : 'Movie'}
                             </span>
                             <DialogTitle className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground line-clamp-2">
                                 {title}
-                                {year && <span className="text-muted-foreground font-normal ml-2">({year})</span>}
+                                {year && (
+                                    <span className="text-muted-foreground font-normal ml-2">
+                                        ({year})
+                                    </span>
+                                )}
                             </DialogTitle>
-                            <DialogDescription className="hidden">Details for {title}</DialogDescription>
+                            <DialogDescription className="hidden">
+                                Details for {title}
+                            </DialogDescription>
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-6">
@@ -207,7 +218,10 @@ export default function SeerrInfoDialog({
 
                                 {/* Release Status */}
                                 {details?.status && (
-                                    <Badge variant="outline" className="font-medium bg-muted/40 px-2.5 py-0.5 border">
+                                    <Badge
+                                        variant="outline"
+                                        className="font-medium bg-muted/40 px-2.5 py-0.5 border"
+                                    >
                                         {details.status}
                                     </Badge>
                                 )}
@@ -232,7 +246,7 @@ export default function SeerrInfoDialog({
                                             <Layers className="h-3.5 w-3.5" />
                                             View Collection
                                         </Button>
-                                        
+
                                         <SeerrCollectionDialog
                                             collectionId={collection.id}
                                             open={isCollectionOpen}
@@ -241,7 +255,10 @@ export default function SeerrInfoDialog({
                                     </div>
                                 )}
                                 {/* Request Options Button */}
-                                <Button onClick={onRequestOpen} className="w-full font-semibold gap-1.5 mt-2.5 h-9 text-xs">
+                                <Button
+                                    onClick={onRequestOpen}
+                                    className="w-full font-semibold gap-1.5 mt-2.5 h-9 text-xs"
+                                >
                                     <Play className="h-4 w-4 fill-current animate-pulse" />
                                     Request Options
                                 </Button>
@@ -252,9 +269,9 @@ export default function SeerrInfoDialog({
                                 {/* Rating with TMDB Logo */}
                                 {rating && (
                                     <div className="flex items-center gap-2 text-sm font-semibold select-none">
-                                        <img 
-                                            src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg" 
-                                            alt="TMDB" 
+                                        <img
+                                            src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg"
+                                            alt="TMDB"
                                             className="h-4.5 w-4.5 rounded-sm shrink-0"
                                         />
                                         <span className="text-foreground">{rating} / 10</span>
@@ -270,7 +287,11 @@ export default function SeerrInfoDialog({
                                 {details?.genres && details.genres.length > 0 && (
                                     <div className="flex flex-wrap gap-1.5">
                                         {details.genres.map((g: any) => (
-                                            <Badge key={g.id} variant="secondary" className="px-2 py-0.5 text-xs font-semibold">
+                                            <Badge
+                                                key={g.id}
+                                                variant="secondary"
+                                                className="px-2 py-0.5 text-xs font-semibold"
+                                            >
                                                 {g.name}
                                             </Badge>
                                         ))}
@@ -282,14 +303,20 @@ export default function SeerrInfoDialog({
                                     <div className="flex flex-col gap-1.5 text-xs border-y py-2.5 my-1 bg-muted/5 border-border/40">
                                         {directors && (
                                             <div className="flex gap-2">
-                                                <span className="font-semibold text-muted-foreground min-w-[70px]">{crewLabel}:</span>
+                                                <span className="font-semibold text-muted-foreground min-w-[70px]">
+                                                    {crewLabel}:
+                                                </span>
                                                 <span className="text-foreground">{directors}</span>
                                             </div>
                                         )}
                                         {mainCast && (
                                             <div className="flex gap-2">
-                                                <span className="font-semibold text-muted-foreground min-w-[70px]">Cast:</span>
-                                                <span className="text-foreground line-clamp-1">{mainCast}</span>
+                                                <span className="font-semibold text-muted-foreground min-w-[70px]">
+                                                    Cast:
+                                                </span>
+                                                <span className="text-foreground line-clamp-1">
+                                                    {mainCast}
+                                                </span>
                                             </div>
                                         )}
                                     </div>
@@ -297,13 +324,15 @@ export default function SeerrInfoDialog({
 
                                 {/* Overview */}
                                 <div className="flex flex-col gap-1.5">
-                                    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Overview</h3>
+                                    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                        Overview
+                                    </h3>
                                     <p className="text-sm text-foreground leading-relaxed">
-                                        {details?.overview || item.overview || 'No description available.'}
+                                        {details?.overview ||
+                                            item.overview ||
+                                            'No description available.'}
                                     </p>
                                 </div>
-
-
 
                                 {/* Trailer Player */}
                                 {trailer && (
@@ -325,7 +354,6 @@ export default function SeerrInfoDialog({
                                 )}
                             </div>
                         </div>
-
                     </>
                 )}
             </DialogContent>

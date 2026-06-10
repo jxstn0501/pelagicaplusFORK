@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 import ItemsRow from './ItemsRow';
 
 interface Mood {
@@ -76,9 +75,7 @@ const MoodBar = ({ title, limit = 20 }: MoodBarProps) => {
     return (
         <div className="flex flex-col gap-4 px-4">
             <div>
-                {title && (
-                    <h2 className="text-xl font-semibold mb-3">{title}</h2>
-                )}
+                {title && <h2 className="text-xl font-semibold mb-3">{title}</h2>}
                 <div className="flex flex-wrap gap-2">
                     {MOODS.map((mood) => {
                         const isActive = activeMood?.label === mood.label;
@@ -89,9 +86,10 @@ const MoodBar = ({ title, limit = 20 }: MoodBarProps) => {
                                 className={`
                                     flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
                                     transition-all duration-200 border cursor-pointer
-                                    ${isActive
-                                        ? 'bg-white text-black border-white shadow-lg scale-105'
-                                        : 'bg-white/5 text-white/80 border-white/10 hover:bg-white/15 hover:border-white/25'
+                                    ${
+                                        isActive
+                                            ? 'bg-white text-black border-white shadow-lg scale-105'
+                                            : 'bg-white/5 text-white/80 border-white/10 hover:bg-white/15 hover:border-white/25'
                                     }
                                 `}
                             >
@@ -106,13 +104,15 @@ const MoodBar = ({ title, limit = 20 }: MoodBarProps) => {
             {activeMood && (
                 <ItemsRow
                     title={`${activeMood.emoji} ${activeMood.label}`}
-                    allLink={`/items?title=${encodeURIComponent(activeMood.label)}&config=${encodeURIComponent(JSON.stringify({
-                        genres: activeMood.genres,
-                        types: activeMood.types,
-                        sortBy: ['CommunityRating'],
-                        sortOrder: 'Descending',
-                        limit,
-                    }))}`}
+                    allLink={`/items?title=${encodeURIComponent(activeMood.label)}&config=${encodeURIComponent(
+                        JSON.stringify({
+                            genres: activeMood.genres,
+                            types: activeMood.types,
+                            sortBy: ['CommunityRating'],
+                            sortOrder: 'Descending',
+                            limit,
+                        })
+                    )}`}
                     items={{
                         genres: activeMood.genres,
                         types: activeMood.types,

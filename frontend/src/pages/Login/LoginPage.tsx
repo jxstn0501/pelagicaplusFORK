@@ -72,6 +72,7 @@ const LoginPage = () => {
     useEffect(() => {
         const serverUrl = getServerUrl();
         if (!serverUrl) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSplashScreenUrl(null);
             return;
         }
@@ -92,6 +93,7 @@ const LoginPage = () => {
                 return;
             }
             localStorage.setItem('jf_server', config.serverAddress);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setStep('login');
             setServerCheckError(null);
         }
@@ -149,6 +151,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (quickConnectStatus.data?.Authenticated) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             handleQuickConnectAuthenticated();
         }
     }, [quickConnectStatus.data, handleQuickConnectAuthenticated]);

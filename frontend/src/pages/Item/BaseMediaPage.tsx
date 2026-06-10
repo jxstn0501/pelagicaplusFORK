@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { useDominantColor } from '@/hooks/useDominantColor';
 
 interface BaseMediaPageProps {
     itemId: string;
@@ -30,6 +31,7 @@ const BaseMediaPage = ({
     const [failedLogo, setFailedLogo] = useState(false);
     const [isBgLoaded, setIsBgLoaded] = useState(false);
     const [prevItemId, setPrevItemId] = useState(itemId);
+    const dominantColor = useDominantColor(itemId ? getBackdropUrl(itemId) : undefined);
 
     if (itemId !== prevItemId) {
         setPrevItemId(itemId);
@@ -79,15 +81,23 @@ const BaseMediaPage = ({
                             onLoad={() => setIsBgLoaded(true)}
                             onError={() => setFailedBackdrop(true)}
                         />
+                        {/* Dominant color tint overlay */}
+                        {dominantColor && (
+                            <div
+                                className="absolute inset-0 transition-opacity duration-1000"
+                                style={{
+                                    background: `radial-gradient(ellipse at 70% 40%, rgba(${dominantColor},0.18) 0%, transparent 70%)`,
+                                    opacity: isBgLoaded ? 1 : 0,
+                                }}
+                            />
+                        )}
                         {/* Left-to-right dark fade to ensure text readability */}
                         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/75 to-transparent" />
                         {/* Bottom-to-top fade to background */}
                         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background via-background/85 to-transparent" />
                     </div>
                 )}
-                {failedBackdrop && (
-                    <div className="h-full w-full bg-background" />
-                )}
+                {failedBackdrop && <div className="h-full w-full bg-background" />}
                 {!isBgLoaded && !failedBackdrop && (
                     <div className="absolute inset-0 bg-muted/10 animate-pulse" />
                 )}
@@ -111,10 +121,10 @@ const BaseMediaPage = ({
                     )}
                 </div>
             )}
-            <div className={`relative z-10 px-4 sm:px-12 pb-12 pt-6 ${topPadding ? '' : 'min-h-full flex'}`}>
-                <div
-                    className={`w-full flex flex-col gap-8 ${topPadding ? '' : 'flex-1'}`}
-                >
+            <div
+                className={`relative z-10 px-4 sm:px-12 pb-12 pt-6 ${topPadding ? '' : 'min-h-full flex'}`}
+            >
+                <div className={`w-full flex flex-col gap-8 ${topPadding ? '' : 'flex-1'}`}>
                     {children}
                 </div>
             </div>

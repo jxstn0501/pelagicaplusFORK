@@ -3,7 +3,11 @@ import ItemsListPage from '../Item/ItemsListPage';
 import Page from '../Page';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import type { BaseItemKind, ItemSortBy, SortOrder } from '@jellyfin/sdk/lib/generated-client/models';
+import type {
+    BaseItemKind,
+    ItemSortBy,
+    SortOrder,
+} from '@jellyfin/sdk/lib/generated-client/models';
 import { useGenericItems } from '../../hooks/api/useGenericItems';
 import { useUserViews } from '@/hooks/api/useUserViews';
 
@@ -33,15 +37,16 @@ const AllItemsPage = () => {
             defaultSortOrder = parsed.sortOrder as SortOrder;
         }
         libraryId = parsed.libraryId || '';
-    } catch (e) {
+    } catch {
         // ignore
     }
 
     const activeView = userViews?.Items?.find((view) => view.Id === libraryId);
-    const isMusic = activeView?.CollectionType === 'music' || 
-                    title.toLowerCase().includes('song') || 
-                    title.toLowerCase().includes('music') || 
-                    title.toLowerCase().includes('album');
+    const isMusic =
+        activeView?.CollectionType === 'music' ||
+        title.toLowerCase().includes('song') ||
+        title.toLowerCase().includes('music') ||
+        title.toLowerCase().includes('album');
 
     return (
         <Page

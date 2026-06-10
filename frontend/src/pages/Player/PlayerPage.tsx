@@ -160,6 +160,7 @@ const PlayerPage = () => {
         // Don't enable subtitles if the audio matched preferred language
         if (resolvedAudio.matchedPreferred) return;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSubtitleTrackIndex(resolvedSubtitleTrackIndex);
     }, [resolvedSubtitleTrackIndex, resolvedAudio.matchedPreferred]);
 
@@ -328,10 +329,12 @@ const PlayerPage = () => {
         <div
             ref={containerRef}
             className="relative w-full h-screen bg-black flex overflow-hidden"
-            style={{
-                '--subtitle-size': `${subtitleSize}%`,
-                '--subtitle-offset': `${subtitleOffset}px`,
-            } as React.CSSProperties}
+            style={
+                {
+                    '--subtitle-size': `${subtitleSize}%`,
+                    '--subtitle-offset': `${subtitleOffset}px`,
+                } as React.CSSProperties
+            }
         >
             {config.showContentAdvisory !== false && (
                 <ContentAdvisoryOverlay item={item} player={player} />

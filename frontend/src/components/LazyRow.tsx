@@ -4,7 +4,10 @@ interface LazyRowProps {
     placeholderHeight?: string;
 }
 
-export const LazyRow = ({ children, placeholderHeight = '280px' }: PropsWithChildren<LazyRowProps>) => {
+export const LazyRow = ({
+    children,
+    placeholderHeight = '280px',
+}: PropsWithChildren<LazyRowProps>) => {
     const [isIntersected, setIsIntersected] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
@@ -18,24 +21,27 @@ export const LazyRow = ({ children, placeholderHeight = '280px' }: PropsWithChil
                 }
             },
             {
-                rootMargin: '400px 0px', // Preload when the row is within 400px of the viewport
+                rootMargin: '600px 0px',
             }
         );
 
         const currentRef = ref.current;
-        if (currentRef) {
-            observer.observe(currentRef);
-        }
-
+        if (currentRef) observer.observe(currentRef);
         return () => {
-            if (currentRef) {
-                observer.unobserve(currentRef);
-            }
+            if (currentRef) observer.unobserve(currentRef);
         };
     }, [isIntersected]);
 
     return (
-        <div ref={ref} style={{ minHeight: isIntersected ? 'auto' : placeholderHeight }}>
+        <div
+            ref={ref}
+            style={{
+                minHeight: isIntersected ? 'auto' : placeholderHeight,
+                // Skip rendering and painting for off-screen rows entirely
+                contentVisibility: 'auto',
+                containIntrinsicBlockSize: placeholderHeight,
+            }}
+        >
             {isIntersected ? children : null}
         </div>
     );

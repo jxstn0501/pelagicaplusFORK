@@ -185,6 +185,7 @@ const SectionEditor = ({
     const [editedSection, setEditedSection] = useState<HomeScreenSection | null>(section);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setEditedSection(section);
     }, [section]);
 
@@ -221,13 +222,14 @@ const SectionEditor = ({
                             { value: 'genres', label: 'Genres' },
                             { value: 'libraries', label: 'Libraries' },
                             { value: 'studios', label: 'Studios' },
+                            { value: 'moodBar', label: 'Mood Filter' },
                         ]}
                         value={editedSection.type}
                         onChange={(value) => {
                             setEditedSection({
                                 ...editedSection,
                                 type: value as HomeScreenSection['type'],
-                            });
+                            } as HomeScreenSection);
                         }}
                     />
 
@@ -418,7 +420,13 @@ const SectionEditor = ({
                                 { value: 'MusicAlbum', label: 'Music Album' },
                                 { value: 'Playlist', label: 'Playlist' },
                             ]}
-                            selected={((editedSection as any).types || ['Movie', 'Series', 'MusicAlbum']) as string[]}
+                            selected={
+                                ((editedSection as any).types || [
+                                    'Movie',
+                                    'Series',
+                                    'MusicAlbum',
+                                ]) as string[]
+                            }
                             onChange={(selected) =>
                                 setEditedSection({
                                     ...editedSection,
@@ -713,6 +721,7 @@ const SettingsPage = () => {
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setServerAddress(config?.serverAddress || '');
         setStreamystatsUrl(config?.streamystatsUrl || '');
         setShowStreamystatsButton(config?.showStreamystatsButton || false);
@@ -1090,7 +1099,8 @@ const SettingsPage = () => {
                         Seerr
                     </h2>
                     <p className="mb-2 text-sm text-muted-foreground">
-                        Configure Seerr integration to search for and request new media directly within the app.
+                        Configure Seerr integration to search for and request new media directly
+                        within the app.
                     </p>
                     <StringInput
                         label="Server URL"

@@ -15,6 +15,10 @@ import LibrariesRow from './LibrariesRow';
 import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
 import LazyRow from '@/components/LazyRow';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRandomItem } from '@/hooks/api/useRandomItem';
 
 function getDetailFieldsForCollectionType(type: CollectionType | undefined): DetailField[] {
     switch (type) {
@@ -31,6 +35,41 @@ const HomePage = () => {
     const { t } = useTranslation('home');
     const { data: userViews } = useUserViews();
     const { config } = useConfig();
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const [randomEnabled, setRandomEnabled] = useState(false);
+    const { data: randomItem, isFetching: isRandomFetching } = useRandomItem(
+        ['Movie', 'Series'],
+        randomEnabled
+    );
+
+    useEffect(() => {
+        if (randomEnabled && !isRandomFetching && randomItem) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setRandomEnabled(false);
+            navigate(`/item/${randomItem.Id}`);
+        }
+    }, [randomEnabled, isRandomFetching, randomItem, navigate]);
+
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            // Don't fire when typing in inputs
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+                return;
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+            if (e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                navigate('/search');
+            } else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                queryClient.invalidateQueries({ queryKey: ['random-item', ['Movie', 'Series']] });
+                setRandomEnabled(true);
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, [navigate, queryClient]);
 
     return (
         <Page
@@ -123,21 +162,27 @@ const HomePage = () => {
                             );
 
                         case 'recentlyAdded': {
-                            const allowedTypes = (section as any).types !== undefined
-                                ? (section as any).types
-                                : [
-                                    'Movie',
-                                    'Series',
-                                    'MusicAlbum',
-                                ];
+                            const sectionWithTypes = section as unknown as {
+                                types?: string[];
+                            };
+                            const allowedTypes =
+                                sectionWithTypes.types !== undefined
+                                    ? sectionWithTypes.types
+                                    : ['Movie', 'Series', 'MusicAlbum'];
                             const allowedCollectionTypes = allowedTypes.flatMap((t: string) => {
                                 switch (t) {
-                                    case 'Movie': return ['movies'];
-                                    case 'Series': return ['tvshows'];
-                                    case 'MusicAlbum': return ['music'];
-                                    case 'Playlist': return ['playlists'];
-                                    case 'BoxSet': return ['boxsets'];
-                                    default: return [];
+                                    case 'Movie':
+                                        return ['movies'];
+                                    case 'Series':
+                                        return ['tvshows'];
+                                    case 'MusicAlbum':
+                                        return ['music'];
+                                    case 'Playlist':
+                                        return ['playlists'];
+                                    case 'BoxSet':
+                                        return ['boxsets'];
+                                    default:
+                                        return [];
                                 }
                             });
 
@@ -145,26 +190,34 @@ const HomePage = () => {
                                 <div key={index} className="flex flex-col gap-4">
                                     {userViews && userViews.Items ? (
                                         <>
-                                            {userViews.Items.filter((view) => 
-                                                !view.CollectionType || allowedCollectionTypes.includes(view.CollectionType)
+                                            {userViews.Items.filter(
+                                                (view) =>
+                                                    !view.CollectionType ||
+                                                    allowedCollectionTypes.includes(
+                                                        view.CollectionType
+                                                    )
                                             ).map((view) => {
                                                 const title = t('recently_added', {
-                                                                category: view.Name,
-                                                            });
+                                                    category: view.Name,
+                                                });
                                                 const itemsConfig = {
-                                                                libraryId: view.Id,
-                                                                sortBy: ['DateCreated'],
-                                                                sortOrder: 'Descending',
-                                                                limit: section.limit || 10,
-                                                                types: allowedTypes,
-                                                            };
+                                                    libraryId: view.Id,
+                                                    sortBy: ['DateCreated'],
+                                                    sortOrder: 'Descending',
+                                                    limit: section.limit || 10,
+                                                    types: allowedTypes,
+                                                };
                                                 return (
-                                                    <LazyRow key={view.Id} placeholderHeight="320px">
+                                                    <LazyRow
+                                                        key={view.Id}
+                                                        placeholderHeight="320px"
+                                                    >
                                                         <div data-library-id={view.Id}>
                                                             {view.Id && view.Name && (
                                                                 <ItemsRow
                                                                     title={title}
                                                                     allLink={`/items?title=${encodeURIComponent(title)}&config=${encodeURIComponent(JSON.stringify(itemsConfig))}`}
+                                                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                                     items={itemsConfig as any}
                                                                     detailFields={getDetailFieldsForCollectionType(
                                                                         view.CollectionType
@@ -188,7 +241,10 @@ const HomePage = () => {
                                 <LazyRow key={index} placeholderHeight="320px">
                                     <ItemsRow
                                         title={section.title}
-                                        allLink={section.allLink || `/items?title=${encodeURIComponent(section.title || 'Items')}&config=${encodeURIComponent(JSON.stringify(section.items || {}))}`}
+                                        allLink={
+                                            section.allLink ||
+                                            `/items?title=${encodeURIComponent(section.title || 'Items')}&config=${encodeURIComponent(JSON.stringify(section.items || {}))}`
+                                        }
                                         items={section.items}
                                         detailFields={
                                             section.detailFields && section.detailFields.length > 0
