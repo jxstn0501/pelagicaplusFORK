@@ -163,7 +163,6 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                                   key={item.Id}
                                   item={item}
                                   posterUrl={`${posterUrls[item.Id!]}&maxWidth=416&maxHeight=640&quality=85`}
-                                  showGenres={true}
                                   showPlayButton={true}
                               >
                                   <div className="flex flex-wrap items-center mt-1">
