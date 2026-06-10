@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState, useTransition } from 'react';
 import {
     CommandDialog,
     CommandEmpty,
+    CommandGroup,
     CommandInput,
     CommandItem,
     CommandList,
+    CommandSeparator,
 } from '@/components/ui/command';
 import { useSearch } from '@/context/SearchContext';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
@@ -12,10 +14,11 @@ import { useNavigate } from 'react-router';
 import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
 import { getApi } from '@/api/getApi';
 import { Skeleton } from './ui/skeleton';
-import { Calendar, Star } from 'lucide-react';
+import { Calendar, Clock, Star, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import JellyfinItemKindIcon from './JellyfinItemKindIcon';
 import { Badge } from './ui/badge';
+import { useSearchHistory } from '@/hooks/useSearchHistory';
 
 export const SearchCommand = () => {
     const { t } = useTranslation('search');
@@ -24,6 +27,7 @@ export const SearchCommand = () => {
     const [query, setQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
     const [, startTransition] = useTransition();
+    const { history, addEntry, removeEntry } = useSearchHistory();
     const {
         data: results,
         isLoading,
@@ -89,7 +93,38 @@ export const SearchCommand = () => {
                         Error: {error.message || t('failed_search')}
                     </div>
                 ) : !query ? (
-                    <CommandEmpty>{t('start_typing')}</CommandEmpty>
+                    history.length > 0 ? (
+                        <>
+                            <CommandGroup heading={t('recent_searches', { defaultValue: 'Zuletzt gesucht' })}>
+                                {history.map((entry) => (
+                                    <CommandItem
+                                        key={entry}
+                                        value={entry}
+                                        onSelect={() => setQuery(entry)}
+                                        className="flex items-center justify-between"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                            <span>{entry}</span>
+                                        </div>
+                                        <button
+                                            className="ml-2 p-0.5 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                                            onPointerDown={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                                removeEntry(entry);
+                                            }}
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                            <CommandSeparator />
+                        </>
+                    ) : (
+                        <CommandEmpty>{t('start_typing')}</CommandEmpty>
+                    )
                 ) : isLoading ? (
                     <>
                         {Array.from({ length: 3 }).map((_, i) => (
@@ -109,6 +144,7 @@ export const SearchCommand = () => {
                                 key={item.Id}
                                 value={item.Name!}
                                 onSelect={() => {
+                                    addEntry(query);
                                     navigate(`/item/${item.Id}`);
                                     closeSearch();
                                 }}

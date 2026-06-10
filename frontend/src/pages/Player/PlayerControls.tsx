@@ -13,6 +13,7 @@ import {
     Info,
     Minimize,
     SkipBack,
+    Timer,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Link, useNavigate } from 'react-router';
@@ -164,6 +165,9 @@ const PlayerControls = ({
     const [stats, setStats] = useState<RuntimePlaybackStats | null>(null);
     const [showStats, setShowStats] = useState(false);
     const [container, setContainer] = useState<HTMLElement | null>(null);
+    const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number | null>(null);
+    const [sleepTimerEnd, setSleepTimerEnd] = useState<number | null>(null);
+    const sleepTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { data: session } = useSession(item.Id, showStats);
     const { config } = useConfig();
 
@@ -275,6 +279,32 @@ const PlayerControls = ({
             if (hideTimeoutRef.current) {
                 clearTimeout(hideTimeoutRef.current);
             }
+        };
+    }, []);
+
+    const handleSleepTimer = useCallback((minutes: number | null) => {
+        if (sleepTimerRef.current) {
+            clearTimeout(sleepTimerRef.current);
+            sleepTimerRef.current = null;
+        }
+        if (minutes === null) {
+            setSleepTimerMinutes(null);
+            setSleepTimerEnd(null);
+            return;
+        }
+        const endTime = Date.now() + minutes * 60 * 1000;
+        setSleepTimerMinutes(minutes);
+        setSleepTimerEnd(endTime);
+        sleepTimerRef.current = setTimeout(() => {
+            player?.pause();
+            setSleepTimerMinutes(null);
+            setSleepTimerEnd(null);
+        }, minutes * 60 * 1000);
+    }, [player]);
+
+    useEffect(() => {
+        return () => {
+            if (sleepTimerRef.current) clearTimeout(sleepTimerRef.current);
         };
     }, []);
 
@@ -804,6 +834,37 @@ const PlayerControls = ({
                     </div>
 
                     <div className="flex items-center gap-2">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant={'ghost'}
+                                    size={'icon-lg'}
+                                    className="cursor-pointer relative"
+                                    title="Sleep Timer"
+                                >
+                                    <Timer size={20} className={sleepTimerMinutes ? 'text-amber-400' : ''} />
+                                    {sleepTimerEnd && (
+                                        <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-black rounded-full px-1 font-bold leading-tight">
+                                            {Math.max(0, Math.ceil((sleepTimerEnd - Date.now()) / 60000))}m
+                                        </span>
+                                    )}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent container={container}>
+                                <DropdownMenuLabel>Sleep Timer</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuRadioGroup
+                                    value={sleepTimerMinutes?.toString() ?? 'off'}
+                                    onValueChange={(v) => handleSleepTimer(v === 'off' ? null : parseInt(v, 10))}
+                                >
+                                    <DropdownMenuRadioItem value="off">Aus</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="30">30 Minuten</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="60">60 Minuten</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="90">90 Minuten</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="120">120 Minuten</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button
                             variant={'ghost'}
                             size={'icon-lg'}

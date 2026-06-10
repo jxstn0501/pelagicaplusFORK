@@ -17,6 +17,7 @@ import ItemAdminButton from '@/components/ItemAdminButton';
 import { useState } from 'react';
 import { TrailerButton } from '../../components/TrailerButton';
 import ItemDownloadButton from '../../components/ItemDownloadButton';
+import UserRatingButton from '../../components/UserRatingButton';
 import SourcePickerButton from '@/components/SourcePickerButton';
 import { Link } from 'react-router';
 import { Badge } from '@/components/ui/badge';
@@ -125,6 +126,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                 item={item}
                                 showDownloadButton={config.itemPage?.showDownloadButton}
                             />
+                            <UserRatingButton itemId={item.Id} />
                             <MediaInfoDialog streams={item.MediaStreams || []} />
                             <ItemAdminButton item={item} showSubtitlesButton={true} />
                         </div>

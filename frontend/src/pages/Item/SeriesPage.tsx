@@ -28,6 +28,7 @@ import PlayStateButton from '../../components/PlayStateButton';
 import { getUserId } from '@/utils/localstorageCredentials';
 import ItemAdminButton from '@/components/ItemAdminButton';
 import { TrailerButton } from '../../components/TrailerButton';
+import UserRatingButton from '../../components/UserRatingButton';
 import { useUpcomingEpisodes } from '../../hooks/api/useUpcomingEpisodes';
 import UpcomingEpisodeComponent from './UpcomingEpisodeComponent';
 import { Badge } from '@/components/ui/badge';
@@ -161,6 +162,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                 showWatchlistButton={config.itemPage?.showWatchlistButton}
                             />
                             <PlayStateButton itemId={item.Id || ''} userId={getUserId() || ''} />
+                            <UserRatingButton itemId={item.Id} />
                             <ItemAdminButton item={item} />
                         </div>
 
