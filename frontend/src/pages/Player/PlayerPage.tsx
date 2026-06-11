@@ -6,7 +6,12 @@ import { useParams } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { getPrimaryImageUrl, getVideoStreamUrl, getSubtitleUrl } from '@/utils/jellyfinUrls';
+import {
+    getPrimaryImageUrl,
+    getVideoStreamUrl,
+    getSubtitleUrl,
+    stopActiveEncodings,
+} from '@/utils/jellyfinUrls';
 import { generateRandomId } from '@/utils/idGenerator';
 import { useMediaSegments } from '@/hooks/api/useMediaSegments';
 import { useAdjacentItems } from '@/hooks/api/useAdjacentItems';
@@ -112,7 +117,12 @@ const PlayerPage = () => {
     const progressReportingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const lastPositionRef = useRef<number>(0);
     const [playSessionId, setPlaySessionId] = useState<string>(generateRandomId());
+    const playSessionIdRef = useRef(playSessionId);
     const resumePositionRef = useRef(false);
+
+    useEffect(() => {
+        playSessionIdRef.current = playSessionId;
+    }, [playSessionId]);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const {
         data: adjacentItems,
@@ -227,7 +237,9 @@ const PlayerPage = () => {
                     itemId,
                     positionTicks,
                     isPaused,
-                    playSessionId,
+                    // Read from the ref so progress keeps reporting the current
+                    // session after an audio/quality switch replaces it
+                    playSessionId: playSessionIdRef.current,
                     volumeLevel,
                     isMuted,
                 });
@@ -260,6 +272,7 @@ const PlayerPage = () => {
     }, [startTicks]);
 
     const handleAudioTrackChange = (index: number) => {
+        void stopActiveEncodings(playSessionId);
         resumePositionRef.current = true;
         hasUserSelectedAudioRef.current = true;
         setPlaySessionId(generateRandomId());
@@ -268,6 +281,7 @@ const PlayerPage = () => {
 
     const handleVideoQualityChange = (qualityId: string) => {
         if (qualityId === videoQualityId) return;
+        void stopActiveEncodings(playSessionId);
         resumePositionRef.current = true;
         setStoredVideoQualityId(qualityId);
         setPlaySessionId(generateRandomId());
