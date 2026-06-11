@@ -102,12 +102,12 @@ const AppSidebar = () => {
                         className="cursor-default hover:bg-transparent active:bg-transparent"
                     >
                         <Avatar className="h-8 w-8 p-1 rounded-lg">
-                            <AvatarImage src={logoSrc} alt={'Pelagica logo'} />
+                            <AvatarImage src={logoSrc} alt={'Palcia logo'} />
                             <AvatarFallback className="rounded-lg">{'PE'}</AvatarFallback>
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">
                             <span className="truncate font-medium">
-                                {config?.serverName || 'Pelagica'}
+                                {config?.serverName || 'Palcia'}
                             </span>
                             {serverDomain && (
                                 <span className="truncate text-xs font-normal text-muted-foreground">

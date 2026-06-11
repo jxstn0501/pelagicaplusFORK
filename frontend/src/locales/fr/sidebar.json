@@ -14,7 +14,7 @@
   "audio_language_preference": "Préférence de langue audio",
   "subtitle_language_preference": "Préférence de langue des sous-titres",
   "select_language": "Sélectionnez la langue",
-  "pelagica_config": "Configuration Pelagica",
+  "pelagica_config": "Configuration Palcia",
   "quick_connect": "Connexion rapide",
   "authorize_quick_connect": "Autoriser une connexion rapide",
   "enter_quick_connect_code": "Saisissez le code à 6 chiffres affiché sur l'appareil que vous souhaitez autoriser.",
@@ -23,5 +23,5 @@
   "theme_preference": "Préférence de thème",
   "select_theme": "Sélectionner un thème",
   "server_default": "Par défaut du serveur",
-  "pelagica_default": "Par défaut de Pelagica"
+  "pelagica_default": "Par défaut de Palcia"
 }

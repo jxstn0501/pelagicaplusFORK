@@ -1,7 +1,7 @@
 {
   "name": "Default",
   "author": "System",
-  "description": "Default Pelagica theme.",
+  "description": "Default Palcia theme.",
   "version": "1.0",
   "radius": "0.625rem",
   "modes": ["light", "dark"],

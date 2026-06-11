@@ -1,1 +1,1 @@
-Pelagica - from pelagic (deep ocean) and a jellyfish named pelagica
+Palcia - a Jellyfin web frontend, forked from Pelagica
