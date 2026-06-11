@@ -17,7 +17,6 @@ interface ScrollableSectionPosterProps {
     itemName?: string;
     itemId?: string;
     className?: string;
-    showGenres?: boolean;
     showPlayButton?: boolean;
 }
 
@@ -28,7 +27,6 @@ const ScrollableSectionPoster = ({
     itemName,
     itemId,
     className,
-    showGenres = false,
     showPlayButton = false,
 }: ScrollableSectionPosterProps) => {
     const { config } = useConfig();

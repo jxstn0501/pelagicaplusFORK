@@ -14,6 +14,7 @@ import {
     Minimize,
     SkipBack,
     Timer,
+    Settings2,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Link, useNavigate } from 'react-router';
@@ -53,6 +54,7 @@ import {
     setLastAudioLanguage,
     setLastSubtitleLanguage,
 } from '@/utils/localstorageLastlanguage';
+import { AUTO_QUALITY_ID, VIDEO_QUALITY_OPTIONS } from '@/utils/videoQualityOptions';
 
 function getPrimaryTrickplayInfo(trickplay?: BaseItemDto['Trickplay']) {
     if (!trickplay) return null;
@@ -116,6 +118,8 @@ interface PlayerControlsProps {
     setSubtitleSize: React.Dispatch<React.SetStateAction<number>>;
     subtitleOffset: number;
     setSubtitleOffset: React.Dispatch<React.SetStateAction<number>>;
+    videoQualityId: string;
+    onVideoQualityChange: (qualityId: string) => void;
     isFullscreen: boolean;
     onFullscreenToggle?: () => void;
     mediaSegments?: MediaSegmentDto[];
@@ -136,6 +140,8 @@ const PlayerControls = ({
     setSubtitleSize,
     subtitleOffset,
     setSubtitleOffset,
+    videoQualityId,
+    onVideoQualityChange,
     isFullscreen,
     onFullscreenToggle,
     mediaSegments,
@@ -915,6 +921,34 @@ const PlayerControls = ({
                         >
                             <Info />
                         </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant={'ghost'}
+                                    size={'icon-lg'}
+                                    className="cursor-pointer"
+                                    title={t('quality')}
+                                >
+                                    <Settings2 />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent container={container} className="w-56">
+                                <DropdownMenuLabel>{t('quality')}</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuRadioGroup
+                                    value={videoQualityId}
+                                    onValueChange={onVideoQualityChange}
+                                >
+                                    {VIDEO_QUALITY_OPTIONS.map((option) => (
+                                        <DropdownMenuRadioItem key={option.id} value={option.id}>
+                                            {option.id === AUTO_QUALITY_ID
+                                                ? t('auto')
+                                                : option.label}
+                                        </DropdownMenuRadioItem>
+                                    ))}
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         {subtitleStreams.length > 0 && (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>

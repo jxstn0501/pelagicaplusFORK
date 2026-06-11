@@ -96,7 +96,6 @@ const RecommendedItemsRow = ({
                                       itemName={item.item.name}
                                       posterUrl={posterUrls[item.item.id!]}
                                       className="relative w-min"
-                                      showGenres={true}
                                       showPlayButton={true}
                                   >
                                       {showSimilarity && (

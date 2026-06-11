@@ -4,6 +4,8 @@
     "audioTracks": "Faixas de Áudio",
     "subtitles": "Legendas",
     "off": "Desligado",
+    "quality": "Qualidade",
+    "auto": "Automático",
     "nowPlaying": "Tocando Agora",
     "lyrics": "Letra",
     "loadingLyrics": "Carregando letra",
