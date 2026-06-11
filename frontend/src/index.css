@@ -206,19 +206,6 @@ body {
     }
 }
 
-@keyframes cd-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.animate-cd-spin {
-    animation: cd-spin 25s linear infinite;
-}
-
 /* Disable backdrop-filter blurs globally when no-blur class is present */
 .no-blur * {
     backdrop-filter: none !important;
