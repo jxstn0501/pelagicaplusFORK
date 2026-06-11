@@ -1,5 +1,6 @@
 import { getAccessToken, getServerUrl } from './localstorageCredentials';
 import { getSupportedVideoCodecs } from './videoCodecDetection';
+import { getDeviceId } from './deviceId';
 
 export function getAudioStreamUrl(itemId: string, userId?: string) {
     try {
@@ -156,6 +157,7 @@ export function getVideoStreamUrl(
         url.pathname = `/videos/${itemId}/master.m3u8`;
         url.searchParams.append('MediaSourceId', itemId);
         url.searchParams.append('ApiKey', token);
+        url.searchParams.append('DeviceId', getDeviceId());
         url.searchParams.append('VideoCodec', getSupportedVideoCodecs());
         url.searchParams.append('AudioCodec', 'aac');
         url.searchParams.append('SegmentContainer', 'mp4');
@@ -219,6 +221,30 @@ export function getVideoStreamUrl(
     // &h264-level=52
     // &h264-deinterlace=true
     // &TranscodeReasons=ContainerNotSupported,VideoCodecTagNotSupported
+}
+
+/**
+ * Stop any active transcoding session on the server for the given play session.
+ * Called before switching audio track or video quality so the old ffmpeg process
+ * doesn't keep running alongside the new one.
+ */
+export async function stopActiveEncodings(playSessionId: string) {
+    try {
+        const server = getServerUrl();
+        const token = getAccessToken();
+
+        if (!server || !token || !playSessionId) return;
+
+        const url = new URL(server);
+        url.pathname = '/Videos/ActiveEncodings';
+        url.searchParams.append('deviceId', getDeviceId());
+        url.searchParams.append('playSessionId', playSessionId);
+        url.searchParams.append('api_key', token);
+
+        await fetch(url.toString(), { method: 'DELETE' });
+    } catch {
+        // Best-effort cleanup; the server also times out stale encodings on its own
+    }
 }
 
 export function getSubtitleUrl(

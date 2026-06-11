@@ -130,12 +130,11 @@ const VideoPlayer = ({
         player.load();
 
         if (seekTo !== null) {
-            const target = seekTo;
-            // Seek once the new source's metadata is available; seeking
-            // immediately after load() is silently dropped by some browsers
-            player.one('loadedmetadata', () => {
-                player.currentTime(target);
-            });
+            // Seek immediately: video.js queues the seek until the new source is
+            // ready, so playback starts directly at the resume position instead of
+            // first loading position 0 and then jumping (which restarts the server
+            // transcode twice and can stall it)
+            player.currentTime(seekTo);
         }
 
         player.play()?.catch(console.error);
