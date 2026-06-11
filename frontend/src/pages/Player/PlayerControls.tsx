@@ -15,6 +15,7 @@ import {
     SkipBack,
     Timer,
     Settings2,
+    X,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Link, useNavigate } from 'react-router';
@@ -44,7 +45,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
 import NextEpisodeOverlay from '@/components/NextEpisodeOverlay';
-import { getTrickplayImageUrl, getLogoUrl, getItemImageUrl } from '@/utils/jellyfinUrls';
+import { getTrickplayImageUrl, getLogoUrl, getBackdropUrl } from '@/utils/jellyfinUrls';
 import { useReportPlaybackProgress } from '@/hooks/api/usePlaybackProgress';
 import { getRuntimePlaybackStats, type RuntimePlaybackStats } from '@/utils/playbackStats';
 import { useSession } from '@/hooks/api/useSession';
@@ -154,7 +155,7 @@ const PlayerControls = ({
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [failedLogo, setFailedLogo] = useState(false);
-    const [discImageFailed, setDiscImageFailed] = useState(false);
+    const [backdropFailed, setBackdropFailed] = useState(false);
     const [showPauseOverlay, setShowPauseOverlay] = useState(false);
     const [duration, setDuration] = useState(0);
     const [bufferedTime, setBufferedTime] = useState(0);
@@ -546,6 +547,10 @@ const PlayerControls = ({
 
     const audioStreams = item.MediaStreams?.filter((s) => s.Type === 'Audio') || [];
     const subtitleStreams = item.MediaStreams?.filter((s) => s.Type === 'Subtitle') || [];
+
+    const backdropItemId = item.BackdropImageTags?.length
+        ? item.Id
+        : (item.ParentBackdropItemId ?? item.Id);
 
     const timeRemaining = duration - currentTime;
     const showNextItemPrompt =
@@ -1126,201 +1131,132 @@ const PlayerControls = ({
             {/* Pause Screen Overlay */}
             {showPauseOverlay && (
                 <div
-                    className="absolute inset-0 bg-black/65 backdrop-blur-md z-45 flex flex-col justify-between p-8 sm:p-16 animate-in fade-in duration-300 cursor-pointer"
+                    className="absolute inset-0 z-45 overflow-hidden animate-in fade-in duration-300 cursor-pointer"
                     onClick={togglePlay}
                 >
-                    {/* Main Content Area */}
-                    <div className="flex-1 flex flex-col lg:flex-row items-center justify-between gap-12 w-full max-w-7xl mx-auto my-auto select-none">
-                        {/* Left Info Panel */}
-                        <div
-                            className="flex-1 flex flex-col lg:justify-between lg:self-stretch text-left max-w-2xl py-2"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="flex flex-col gap-6 lg:my-auto">
-                                {/* Movie Logo / Title */}
-                                {failedLogo || !item.Id ? (
-                                    <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white">
-                                        {item.Name}
-                                    </h1>
-                                ) : (
-                                    <img
-                                        src={getLogoUrl(item.Id)}
-                                        alt={item.Name || ''}
-                                        className="h-20 sm:h-32 object-contain object-left max-w-[85%]"
-                                        onError={() => setFailedLogo(true)}
-                                    />
+                    {/* Backdrop artwork */}
+                    {!backdropFailed && backdropItemId && (
+                        <img
+                            src={getBackdropUrl(backdropItemId)}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-cover"
+                            draggable={false}
+                            onError={() => setBackdropFailed(true)}
+                        />
+                    )}
+                    <div className="absolute inset-0 bg-black/75" />
+
+                    {/* Back button */}
+                    <Button
+                        variant="ghost"
+                        size="icon-lg"
+                        className="absolute top-5 left-5 z-10 rounded-full bg-black/40 hover:bg-black/60 text-white cursor-pointer"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (window.history.state && window.history.state.idx > 0) {
+                                navigate(-1);
+                            } else {
+                                navigate(`/item/${item.Id}`, { replace: true });
+                            }
+                        }}
+                    >
+                        <ArrowLeft />
+                    </Button>
+
+                    {/* Dismiss overlay button */}
+                    <Button
+                        variant="ghost"
+                        size="icon-lg"
+                        className="absolute top-5 right-5 z-10 rounded-full bg-black/40 hover:bg-black/60 text-white cursor-pointer"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            resetPauseTimer();
+                        }}
+                    >
+                        <X />
+                    </Button>
+
+                    {/* Item info */}
+                    <div
+                        className="relative z-5 h-full flex flex-col max-w-5xl px-8 sm:px-16 lg:px-32 pt-[8vh] pb-12 select-none cursor-default"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex-1 flex flex-col justify-center gap-8 sm:gap-12">
+                            {/* Movie Logo / Title */}
+                            {failedLogo || !item.Id ? (
+                                <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white">
+                                    {item.Name}
+                                </h1>
+                            ) : (
+                                <img
+                                    src={getLogoUrl(item.Id)}
+                                    alt={item.Name || ''}
+                                    className="h-20 sm:h-28 object-contain object-left max-w-[60%]"
+                                    onError={() => setFailedLogo(true)}
+                                />
+                            )}
+
+                            {/* Info Badges Row */}
+                            <div className="flex flex-wrap items-center gap-8 text-base sm:text-xl font-normal text-white/90">
+                                {item.PremiereDate && (
+                                    <span>{new Date(item.PremiereDate).getFullYear()}</span>
                                 )}
-
-                                {/* Info Badges Row */}
-                                <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base font-medium text-white/80">
-                                    {item.PremiereDate && (
-                                        <span>{new Date(item.PremiereDate).getFullYear()}</span>
-                                    )}
-                                    {item.OfficialRating && (
-                                        <Badge
-                                            variant="outline"
-                                            className="border-white/20 text-white/90 font-medium rounded-xs px-2 py-0.5 bg-transparent"
-                                        >
-                                            {getCleanRating(item.OfficialRating)}
-                                        </Badge>
-                                    )}
-                                    {item.RunTimeTicks && (
-                                        <span>{ticksToReadableTime(item.RunTimeTicks)}</span>
-                                    )}
-                                </div>
-
-                                {/* Overview / Synopsis */}
-                                <p className="text-base sm:text-lg text-white/80 leading-relaxed font-normal line-clamp-4 max-w-2xl">
-                                    {item.Overview}
-                                </p>
+                                {item.OfficialRating && (
+                                    <Badge
+                                        variant="outline"
+                                        className="border-white/20 text-white/90 font-medium rounded-xs px-2 py-0.5 bg-transparent text-sm"
+                                    >
+                                        {getCleanRating(item.OfficialRating)}
+                                    </Badge>
+                                )}
+                                {item.RunTimeTicks && (
+                                    <span>{ticksToReadableTime(item.RunTimeTicks)}</span>
+                                )}
                             </div>
 
-                            {/* Playback Progress Section */}
-                            <div className="w-full space-y-3 mt-8 lg:mt-auto pt-4 pb-16 lg:pb-24">
-                                {/* Visual progress bar */}
-                                <div className="w-full h-[3px] rounded-full bg-white/20 relative">
-                                    <div
-                                        className="h-full bg-white rounded-full transition-all duration-300"
-                                        style={{ width: `${progressPercentage}%` }}
-                                    />
-                                </div>
-                                {/* Progress text details */}
-                                <div className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-white/60 font-medium tracking-wide">
-                                    <span>•</span>
-                                    <span>
-                                        {formatPlayTime(clampedCurrentTime)} /{' '}
-                                        {formatPlayTime(duration)}
-                                    </span>
-                                    <span>•</span>
-                                    <span>{progressPercentage.toFixed(0)}% watched</span>
-                                    <span>•</span>
-                                    <span>
-                                        Ends at{' '}
-                                        {(() => {
-                                            const remainingTicks =
-                                                (duration - clampedCurrentTime) * 10000000;
-                                            return getEndsAt(remainingTicks).toLocaleTimeString(
-                                                [],
-                                                {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                }
-                                            );
-                                        })()}
-                                    </span>
-                                    <span>•</span>
-                                </div>
-                            </div>
+                            {/* Overview / Synopsis */}
+                            <p className="text-base sm:text-xl text-white/90 leading-relaxed font-normal line-clamp-4 max-w-3xl">
+                                {item.Overview}
+                            </p>
                         </div>
 
-                        {/* Right Disc Art Panel */}
-                        {item.Id && (
-                            <div
-                                className="shrink-0 flex items-center justify-center z-20"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[26rem] lg:h-[26rem] rounded-full border-[6px] border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95)] overflow-hidden bg-zinc-950 flex items-center justify-center">
-                                    {/* Spinning Disc content wrapper */}
-                                    <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden animate-cd-spin">
-                                        {/* Disc art: the actual disc image or fallback */}
-                                        {!discImageFailed ? (
-                                            <img
-                                                src={getItemImageUrl(item.Id, 'Disc', 0)}
-                                                alt=""
-                                                className="w-full h-full object-contain z-10"
-                                                draggable={false}
-                                                onError={() => setDiscImageFailed(true)}
-                                            />
-                                        ) : (
-                                            <>
-                                                {/* Fallback generic CD design */}
-                                                <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-10" />
-
-                                                {/* Top Crest / Studio Logo printed on fallback disc */}
-                                                <div className="absolute top-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-25 opacity-70 select-none pointer-events-none">
-                                                    <div className="w-5 h-5 border border-yellow-500/40 rounded-full flex items-center justify-center bg-yellow-500/5">
-                                                        <span className="text-[5px] text-yellow-400 font-bold uppercase tracking-tighter">
-                                                            BD
-                                                        </span>
-                                                    </div>
-                                                    <span className="text-[4px] text-yellow-400/80 font-bold tracking-widest uppercase mt-0.5">
-                                                        PELAGICA PICTURES
-                                                    </span>
-                                                </div>
-
-                                                {/* Movie Logo printed on fallback disc */}
-                                                <div className="absolute right-6 top-1/2 -translate-y-1/2 w-32 sm:w-40 lg:w-44 z-25 pointer-events-none select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] rotate-[6deg] flex justify-center">
-                                                    {!failedLogo ? (
-                                                        <img
-                                                            src={getLogoUrl(item.Id)}
-                                                            alt=""
-                                                            className="w-full object-contain max-h-14 opacity-90 filter brightness-110"
-                                                            onError={() => setFailedLogo(true)}
-                                                        />
-                                                    ) : (
-                                                        <span className="text-white text-xs sm:text-sm font-bold tracking-tight uppercase text-center line-clamp-2">
-                                                            {item.Name}
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                {/* DTS and Blu-ray Logos printed on fallback disc */}
-                                                <div className="absolute right-10 top-2/3 -translate-y-1/2 flex flex-col items-center gap-0.5 bg-brand/35 backdrop-blur-xs py-1.5 px-2 rounded-md border border-brand/20 max-w-[80px] text-center rotate-[6deg] z-25 select-none pointer-events-none shadow-[0_4px_6px_rgba(0,0,0,0.4)]">
-                                                    <span className="text-[9px] font-extrabold tracking-widest text-white uppercase leading-none">
-                                                        dts-HD
-                                                    </span>
-                                                    <span className="text-[6px] text-white/95 font-bold uppercase tracking-wider leading-none">
-                                                        Master Audio
-                                                    </span>
-                                                    <div className="w-10 h-px bg-white/20 my-0.5" />
-                                                    <span className="text-[8px] font-extrabold text-white uppercase tracking-wider leading-none">
-                                                        Blu-ray Disc
-                                                    </span>
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-
-                                    {/* Transparent outer plastic edge rim */}
-                                    <div className="absolute inset-0 rounded-full border-[6px] border-white/5 pointer-events-none z-30" />
-                                    <div className="absolute inset-[6px] rounded-full border border-black/40 pointer-events-none z-30" />
-
-                                    {/* Outer colored ring matching the brand */}
-                                    <div className="absolute inset-0 rounded-full border-[10px] border-brand/20 pointer-events-none z-20" />
-                                    <div className="absolute inset-[10px] rounded-full border border-white/10 pointer-events-none z-20" />
-
-                                    {/* Spindle hole area */}
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-transparent border-[6px] border-black/40 shadow-lg flex items-center justify-center z-30">
-                                        {/* Clear frosted plastic inner ring */}
-                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border border-white/20 bg-white/5 flex items-center justify-center backdrop-blur-[1px]">
-                                            {/* Inner silver/grey bevel */}
-                                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-zinc-600 bg-zinc-900 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
-                                                {/* Actual black hole */}
-                                                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-black shadow-[inset_0_4px_10px_rgba(0,0,0,0.9)]" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Metallic / Rainbow reflection layers */}
-                                    <div
-                                        className="absolute inset-0 pointer-events-none mix-blend-screen opacity-25 z-30"
-                                        style={{
-                                            background:
-                                                'conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(255,255,255,0.3) 8%, transparent 15%, transparent 40%, rgba(255,255,255,0.3) 48%, transparent 55%, transparent 90%, rgba(255,255,255,0.3) 95%, transparent 100%)',
-                                        }}
-                                    />
-                                    <div
-                                        className="absolute inset-0 pointer-events-none mix-blend-color-dodge opacity-20 z-30"
-                                        style={{
-                                            background:
-                                                'conic-gradient(from 180deg at 50% 50%, transparent 0%, rgba(120,119,198,0.2) 12%, rgba(222,0,75,0.2) 24%, transparent 35%, transparent 70%, rgba(0,222,150,0.2) 82%, transparent 95%, transparent 100%)',
-                                        }}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none mix-blend-overlay z-30" />
-                                    <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-white/5 to-transparent pointer-events-none mix-blend-overlay z-30" />
-                                </div>
+                        {/* Playback Progress Section */}
+                        <div className="w-full space-y-3">
+                            {/* Visual progress bar */}
+                            <div className="w-full h-1 rounded-full bg-white/20 relative overflow-hidden">
+                                <div
+                                    className="absolute top-0 left-0 h-full bg-white/40 rounded-full"
+                                    style={{ width: `${bufferedPercentage}%` }}
+                                />
+                                <div
+                                    className="absolute top-0 left-0 h-full bg-white rounded-full transition-all duration-300"
+                                    style={{ width: `${progressPercentage}%` }}
+                                />
                             </div>
-                        )}
+                            {/* Progress text details */}
+                            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-white/70 font-medium tracking-wide">
+                                <span>•</span>
+                                <span>
+                                    {formatPlayTime(clampedCurrentTime)} /{' '}
+                                    {formatPlayTime(duration)}
+                                </span>
+                                <span>•</span>
+                                <span>{progressPercentage.toFixed(0)}% watched</span>
+                                <span>•</span>
+                                <span>
+                                    Ends at{' '}
+                                    {(() => {
+                                        const remainingTicks =
+                                            (duration - clampedCurrentTime) * 10000000;
+                                        return getEndsAt(remainingTicks).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        });
+                                    })()}
+                                </span>
+                                <span>•</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
