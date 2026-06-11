@@ -298,7 +298,7 @@ const DEFAULT_CONFIG: AppConfig = {
     showGenreTags: true,
     topBarBehavior: 'sticky',
     links: [],
-    serverName: 'Pelagica',
+    serverName: 'Palcia',
     logoLightUrl: '',
     logoDarkUrl: '',
     homeScreenSections: [
