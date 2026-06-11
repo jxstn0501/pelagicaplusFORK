@@ -14,7 +14,7 @@
   "audio_language_preference": "Inställning för ljudspråk",
   "subtitle_language_preference": "Inställning för undertextspråk",
   "select_language": "Välj språk",
-  "pelagica_config": "Pelagica-konfiguration",
+  "pelagica_config": "Palcia-konfiguration",
   "quick_connect": "Snabbanslutning",
   "authorize_quick_connect": "Auktorisera snabbanslutning",
   "enter_quick_connect_code": "Ange den 6-siffriga koden som visas på den enhet du vill auktorisera.",
@@ -23,6 +23,6 @@
   "theme_preference": "Temainställning",
   "select_theme": "Välj tema",
   "server_default": "Serverstandard",
-  "pelagica_default": "Pelagica Standard",
+  "pelagica_default": "Palcia Standard",
   "category_links": "Länkar"
 }

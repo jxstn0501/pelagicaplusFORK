@@ -73,7 +73,7 @@ const HomePage = () => {
 
     return (
         <Page
-            title={config?.serverName || 'Pelagica'}
+            title={config?.serverName || 'Palcia'}
             requiresAuth={true}
             overlayHeader={true}
             pagePadding={false}

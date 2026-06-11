@@ -103,7 +103,7 @@
     "select_theme_default": "Select Theme (Default)",
     "select_theme_placeholder": "Select a theme",
     "theme_selection_label": "Select Theme",
-    "themes_description": "Choose a theme for the Pelagica. Themes change the overall appearance and style.",
+    "themes_description": "Choose a theme for the Palcia. Themes change the overall appearance and style.",
     "default_theme": "Default Theme",
     "upload_new_theme": "Upload New Theme",
     "browse_themes": "Browse Themes",
@@ -142,5 +142,5 @@
     "show_download_button_label": "Show Download Button",
     "usage_statistics_label": "Allow anonymous usage statistics collection",
     "usage_statistics": "Usage Statistics",
-    "usage_statistics_description": "We have no way to know how many people use Pelagica unless you tell us. Opting in sends a daily ping with your version and a random ID. That's it."
+    "usage_statistics_description": "We have no way to know how many people use Palcia unless you tell us. Opting in sends a daily ping with your version and a random ID. That's it."
 }

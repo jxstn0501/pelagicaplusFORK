@@ -3,7 +3,7 @@ import { VERSION } from '../utils/version';
 import { getDeviceId } from '@/utils/deviceId';
 
 export const jellyfin = new Jellyfin({
-    clientInfo: { name: 'Pelagica', version: VERSION },
+    clientInfo: { name: 'Palcia', version: VERSION },
     deviceInfo: { name: 'Web', id: getDeviceId() },
 });
 

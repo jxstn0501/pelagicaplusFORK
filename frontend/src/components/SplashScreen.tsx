@@ -20,7 +20,7 @@ export default function SplashScreen({ progress, message, logoSrc, fadeOut }: Sp
                 <div className="relative w-20 h-20 flex items-center justify-center select-none animate-pulse">
                     <img
                         src={logoSrc}
-                        alt="Pelagica Logo"
+                        alt="Palcia Logo"
                         className="w-16 h-16 object-contain relative z-10"
                         onError={(e) => {
                             (e.currentTarget as HTMLImageElement).src = '/logo.svg';
