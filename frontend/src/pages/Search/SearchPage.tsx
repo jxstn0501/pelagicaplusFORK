@@ -54,6 +54,13 @@ const ITEM_TYPE_GROUPS = {
     people: ['Person'] as BaseItemKind[],
 } as const;
 
+const ITEM_GROUP_GRIDS = {
+    episodes: EpisodesGrid,
+    moviesTv: MovieTvGrid,
+    music: MusicGrid,
+    people: PeopleGrid,
+} as const;
+
 const LoadingSkeleton = memo(() => (
     <div className="space-y-8 mt-4 w-full max-w-7xl">
         {[1, 2].map((section) => (
@@ -190,6 +197,30 @@ const SearchPage = () => {
     const hasAnyResults =
         (results && results.length > 0) || (seerrResults && seerrResults.length > 0);
 
+    const renderItemGroup = (groupKey: keyof typeof ITEM_TYPE_GROUPS) => {
+        if (!results || typeFilter === 'seerr') return null;
+        if (
+            typeFilter !== 'all' &&
+            ((typeFilter === 'music' && groupKey !== 'music') ||
+                (typeFilter === 'movies-tv' && groupKey === 'music'))
+        ) {
+            return null;
+        }
+
+        const groupResults = results.filter((item) =>
+            ITEM_TYPE_GROUPS[groupKey].includes(item.Type as BaseItemKind)
+        );
+        if (groupResults.length === 0) return null;
+
+        const Grid = ITEM_GROUP_GRIDS[groupKey];
+        return (
+            <div className="mt-4 w-full max-w-7xl text-left">
+                <h2 className="text-xl font-semibold mb-2">{t('group_' + groupKey)}</h2>
+                <Grid items={groupResults} />
+            </div>
+        );
+    };
+
     return (
         <Page title="Search" className="flex-1 flex flex-col items-center">
             <ButtonGroup className="w-full mt-0.5 max-w-2xl mb-1">
@@ -254,72 +285,16 @@ const SearchPage = () => {
                     </EmptyHeader>
                 </Empty>
             )}
-            {results &&
-                typeFilter !== 'seerr' &&
-                Object.keys(ITEM_TYPE_GROUPS).map((groupKey) => {
-                    const groupItemTypes =
-                        ITEM_TYPE_GROUPS[groupKey as keyof typeof ITEM_TYPE_GROUPS];
-                    if (
-                        typeFilter !== 'all' &&
-                        ((typeFilter === 'music' && groupKey !== 'music') ||
-                            (typeFilter === 'movies-tv' && groupKey === 'music'))
-                    ) {
-                        return null;
-                    }
-
-                    const groupResults = results.filter((item) =>
-                        groupItemTypes.includes(item.Type as BaseItemKind)
-                    );
-                    if (groupResults.length === 0) return null;
-
-                    if (groupKey === 'moviesTv') {
-                        return (
-                            <div key={groupKey} className="mt-4 w-full max-w-7xl text-left">
-                                <h2 className="text-xl font-semibold mb-2">
-                                    {t('group_moviesTv')}
-                                </h2>
-                                <MovieTvGrid items={groupResults} />
-                            </div>
-                        );
-                    }
-
-                    if (groupKey === 'music') {
-                        return (
-                            <div key={groupKey} className="mt-4 w-full max-w-7xl text-left">
-                                <h2 className="text-xl font-semibold mb-2">{t('group_music')}</h2>
-                                <MusicGrid items={groupResults} />
-                            </div>
-                        );
-                    }
-
-                    if (groupKey === 'people') {
-                        return (
-                            <div key={groupKey} className="mt-4 w-full max-w-7xl text-left">
-                                <h2 className="text-xl font-semibold mb-2">{t('group_people')}</h2>
-                                <PeopleGrid items={groupResults} />
-                            </div>
-                        );
-                    }
-
-                    if (groupKey === 'episodes') {
-                        return (
-                            <div key={groupKey} className="mt-4 w-full max-w-7xl text-left">
-                                <h2 className="text-xl font-semibold mb-2">
-                                    {t('group_episodes')}
-                                </h2>
-                                <EpisodesGrid items={groupResults} />
-                            </div>
-                        );
-                    }
-
-                    return null;
-                })}
+            {renderItemGroup('episodes')}
+            {renderItemGroup('moviesTv')}
+            {renderItemGroup('music')}
             {seerrResults.length > 0 && (typeFilter === 'all' || typeFilter === 'seerr') && (
                 <div className="mt-4 w-full max-w-7xl text-left">
                     <h2 className="text-xl font-semibold mb-2">Seerr</h2>
                     <SeerrGrid items={seerrResults} />
                 </div>
             )}
+            {renderItemGroup('people')}
             {isUnauthorized && (typeFilter === 'all' || typeFilter === 'seerr') && (
                 <div className="mt-6 w-full max-w-2xl p-6 rounded-xl border border-border bg-card/65 backdrop-blur-md shadow-lg flex flex-col gap-4">
                     <div className="flex items-start gap-4 text-left">
