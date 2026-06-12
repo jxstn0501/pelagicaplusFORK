@@ -123,6 +123,8 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
                             isCurrentlyPlaying={isCurrentlyPlaying}
                             playLabel={t('play')}
                             resumeLabel={t('resume')}
+                            resumePositionTicks={watched}
+                            runtimeTicks={runtime}
                         />
                         <FavoriteButton
                             item={item}

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { ButtonGroup, ButtonGroupSeparator } from './ui/button-group';
+import { formatPlayTime, ticksToSeconds } from '@/utils/timeConversion';
 
 type MediaSource = NonNullable<BaseItemDto['MediaSources']>[number];
 
@@ -21,6 +22,10 @@ interface SourcePickerButtonProps {
     isCurrentlyPlaying: boolean;
     playLabel: string;
     resumeLabel: string;
+    /** Playback position to resume from, in ticks */
+    resumePositionTicks?: number;
+    /** Total runtime in ticks, used to render the resume progress bar */
+    runtimeTicks?: number;
 }
 
 const SourcePickerButton = ({
@@ -29,6 +34,8 @@ const SourcePickerButton = ({
     isCurrentlyPlaying,
     playLabel,
     resumeLabel,
+    resumePositionTicks = 0,
+    runtimeTicks = 0,
 }: SourcePickerButtonProps) => {
     const [selectedSourceId, setSelectedSourceId] = useState<string | undefined>(
         mediaSources?.[0]?.Id ?? undefined
@@ -38,12 +45,37 @@ const SourcePickerButton = ({
 
     const hasMultipleSources = (mediaSources?.length ?? 0) > 1;
 
+    const showResumeInfo = isCurrentlyPlaying && resumePositionTicks > 0;
+    const resumeClock = showResumeInfo ? formatPlayTime(ticksToSeconds(resumePositionTicks)) : null;
+    const resumePercentage =
+        showResumeInfo && runtimeTicks > 0
+            ? Math.min(100, (resumePositionTicks / runtimeTicks) * 100)
+            : 0;
+
     return (
         <ButtonGroup className="relative inline-flex hover:scale-105 active:scale-95 transition-transform duration-200 ease-out">
-            <Button className={hasMultipleSources ? 'rounded-r-none w-min' : 'w-min'} asChild>
+            <Button
+                className={cn(
+                    'relative overflow-hidden',
+                    hasMultipleSources ? 'rounded-r-none w-min' : 'w-min'
+                )}
+                asChild
+            >
                 <Link to={`/play/${selectedSource?.Id ?? itemId}`}>
                     <Play />
-                    {isCurrentlyPlaying ? resumeLabel : playLabel}
+                    {showResumeInfo
+                        ? `${resumeLabel} · ${resumeClock}`
+                        : isCurrentlyPlaying
+                          ? resumeLabel
+                          : playLabel}
+                    {resumePercentage > 0 && (
+                        <span className="pointer-events-none absolute bottom-0 left-0 right-0 h-[3px] bg-primary-foreground/25">
+                            <span
+                                className="absolute inset-y-0 left-0 bg-brand"
+                                style={{ width: `${resumePercentage}%` }}
+                            />
+                        </span>
+                    )}
                 </Link>
             </Button>
 

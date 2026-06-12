@@ -114,6 +114,8 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                 isCurrentlyPlaying={Boolean(isCurrentlyPlaying)}
                                 playLabel={t('play')}
                                 resumeLabel={t('resume')}
+                                resumePositionTicks={item.UserData?.PlaybackPositionTicks || 0}
+                                runtimeTicks={item.RunTimeTicks || 0}
                             />
                             <TrailerButton item={item} />
                             <FavoriteButton
