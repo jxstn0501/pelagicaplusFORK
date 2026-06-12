@@ -11,6 +11,8 @@ import { useMusicPlayback } from '@/hooks/useMusicPlayback';
 interface PosterPlayButtonProps {
     item: BaseItemDto | undefined;
     itemId?: string;
+    /** When true, renders just the play circle without absolute positioning (for use inside overlays) */
+    inline?: boolean;
 }
 
 /**
@@ -21,7 +23,7 @@ interface PosterPlayButtonProps {
  * - Audio    → navigates to /play/<trackId>
  * - Movie / everything else → navigates to /play/<itemId>
  */
-const PosterPlayButton = ({ item, itemId }: PosterPlayButtonProps) => {
+const PosterPlayButton = ({ item, itemId, inline = false }: PosterPlayButtonProps) => {
     const navigate = useNavigate();
     const { loadQueue } = useMusicPlayback();
     const [isLoading, setIsLoading] = useState(false);
@@ -141,20 +143,34 @@ const PosterPlayButton = ({ item, itemId }: PosterPlayButtonProps) => {
         }
     };
 
+    const circle = (
+        <div
+            className={
+                inline
+                    ? 'flex items-center justify-center bg-white text-black rounded-full w-9 h-9 cursor-pointer hover:bg-white/85 transition-colors shadow-md'
+                    : 'flex items-center justify-center backdrop-blur-md bg-black/40 border border-white/15 rounded-full w-9 h-9 cursor-pointer hover:bg-black/60'
+            }
+            role="button"
+            aria-label="Play"
+            onClick={handleClick}
+        >
+            {isLoading ? (
+                <Loader2
+                    className={`w-4 h-4 animate-spin ${inline ? 'text-black' : 'text-white'}`}
+                />
+            ) : (
+                <Play
+                    className={`w-4 h-4 translate-x-px ${inline ? 'text-black fill-black' : 'text-white fill-white'}`}
+                />
+            )}
+        </div>
+    );
+
+    if (inline) return circle;
+
     return (
         <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-30">
-            <div
-                className="flex items-center justify-center backdrop-blur-md bg-black/40 border border-white/15 rounded-full w-9 h-9 cursor-pointer hover:bg-black/60"
-                role="button"
-                aria-label="Play"
-                onClick={handleClick}
-            >
-                {isLoading ? (
-                    <Loader2 className="w-4 h-4 text-white animate-spin" />
-                ) : (
-                    <Play className="w-4 h-4 text-white fill-white translate-x-px" />
-                )}
-            </div>
+            {circle}
         </div>
     );
 };

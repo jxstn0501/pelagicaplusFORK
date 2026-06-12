@@ -1,5 +1,8 @@
 {
   "title": "Início",
+  "top_10_today": "Top 10 de hoje",
+  "new_badge": "Novo",
+  "match": "Match",
   "continue_watching": "Continue Assistindo",
   "recently_added": "Adicionado Recentemente em {{category}}",
   "no_title": "Título desconhecido",

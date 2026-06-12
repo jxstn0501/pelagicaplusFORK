@@ -1,5 +1,8 @@
 {
     "title": "ホーム",
+    "top_10_today": "本日のトップ10",
+    "new_badge": "新着",
+    "match": "マッチ",
     "continue_watching": "視聴を続ける",
     "recently_added": "{{category}} に最近追加されたもの",
     "no_title": "タイトルなし",

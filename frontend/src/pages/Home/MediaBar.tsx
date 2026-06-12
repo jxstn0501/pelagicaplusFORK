@@ -16,6 +16,7 @@ import type { SectionItemsConfig } from '@/hooks/api/useConfig';
 import { useMediaBarItems } from '@/hooks/api/useMediaBarItems';
 import { getBackdropUrl, getLogoUrl } from '@/utils/jellyfinUrls';
 import { getEndsAt, ticksToReadableTime } from '@/utils/timeConversion';
+import { getMatchScore } from '@/utils/matchScore';
 import { Play, Star, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,6 +46,7 @@ const MediaBar = ({
     const [logoErrors, setLogoErrors] = useState<Set<string>>(new Set());
     const [api, setApi] = useState<CarouselApi>();
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
         if (!api) return;
@@ -54,6 +56,15 @@ const MediaBar = ({
             api.off('select', onSelect);
         };
     }, [api]);
+
+    // Auto-rotate the billboard like Netflix; pause on hover/focus
+    useEffect(() => {
+        if (!api || isPaused) return;
+        const count = api.scrollSnapList().length;
+        if (count <= 1) return;
+        const id = setInterval(() => api.scrollNext(), 8000);
+        return () => clearInterval(id);
+    }, [api, isPaused, mediabarItems]);
 
     const handleLogoError = (itemId: string) => {
         setLogoErrors((prev) => new Set([...prev, itemId]));
@@ -78,7 +89,13 @@ const MediaBar = ({
                 : 'max-h-30 sm:max-h-50';
 
     return (
-        <div className={cn('relative mt-14', className)}>
+        <div
+            className={cn('relative mt-14', className)}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onFocusCapture={() => setIsPaused(true)}
+            onBlurCapture={() => setIsPaused(false)}
+        >
             {title && <h2 className="text-2xl font-bold mb-3 pl-12 pt-4">{title}</h2>}
 
             <div
@@ -164,6 +181,11 @@ const MediaBar = ({
                                             </div>
                                         )}
                                         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
+                                            {getMatchScore(item) != null && (
+                                                <span className="match-score font-semibold">
+                                                    {getMatchScore(item)}% {t('match')}
+                                                </span>
+                                            )}
                                             {item.PremiereDate && (
                                                 <span>
                                                     {new Date(item.PremiereDate).getFullYear()}
@@ -270,6 +292,24 @@ const MediaBar = ({
                     </>
                 )}
             </Carousel>
+
+            {mediabarItems && mediabarItems.length > 1 && (
+                <div className="absolute bottom-6 right-6 sm:right-12 z-10 flex items-center gap-2">
+                    {mediabarItems.map((item, i) => (
+                        <button
+                            key={item.Id}
+                            aria-label={`Slide ${i + 1}`}
+                            onClick={() => api?.scrollTo(i)}
+                            className={cn(
+                                'h-1.5 rounded-full transition-all duration-300',
+                                i === activeIndex
+                                    ? 'w-6 bg-brand'
+                                    : 'w-1.5 bg-white/40 hover:bg-white/70'
+                            )}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

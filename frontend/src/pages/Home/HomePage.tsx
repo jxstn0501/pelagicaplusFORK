@@ -14,6 +14,7 @@ import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
+import TopTenRow from './TopTenRow';
 import LazyRow from '@/components/LazyRow';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -286,6 +287,16 @@ const HomePage = () => {
                                     mediaType={section.mediaType}
                                     sortBy={section.sortBy}
                                 />
+                            );
+
+                        case 'top10':
+                            return (
+                                <LazyRow key={index} placeholderHeight="360px">
+                                    <TopTenRow
+                                        title={section.title || t('top_10_today')}
+                                        items={section.items}
+                                    />
+                                </LazyRow>
                             );
 
                         case 'genres':

@@ -1,5 +1,8 @@
 {
   "title": "Acceuil",
+  "top_10_today": "Top 10 aujourd'hui",
+  "new_badge": "Nouveau",
+  "match": "Match",
   "continue_watching": "Continuer à regarder",
   "recently_added": "Ajouts récents dans {{category}}",
   "no_title": "Sans titre",
