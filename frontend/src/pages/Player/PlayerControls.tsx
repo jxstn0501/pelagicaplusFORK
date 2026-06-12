@@ -167,6 +167,11 @@ const PlayerControls = ({
     const [hoverTime, setHoverTime] = useState<number | null>(null);
     const [hoverPosition, setHoverPosition] = useState<number>(0);
     const [showControls, setShowControls] = useState(true);
+    // Mirror of showControls for use inside event handlers (avoids stale closures
+    // when a single tap synthesises mousemove + click on touch devices)
+    const showControlsRef = useRef(true);
+    // Tracks whether the last interaction came from touch/pen vs a mouse
+    const lastPointerTypeRef = useRef<string>('mouse');
     const [isPiP, setIsPiP] = useState(false);
     const progressRef = useRef<HTMLDivElement>(null);
     const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -251,17 +256,32 @@ const PlayerControls = ({
         };
     }, [isPlaying, resetPauseTimer, config.showPauseOverlay]);
 
+    const setControlsVisible = (visible: boolean) => {
+        showControlsRef.current = visible;
+        setShowControls(visible);
+    };
+
     const resetHideTimeout = () => {
-        setShowControls(true);
+        setControlsVisible(true);
         if (hideTimeoutRef.current) {
             clearTimeout(hideTimeoutRef.current);
         }
         hideTimeoutRef.current = setTimeout(() => {
-            setShowControls(false);
+            setControlsVisible(false);
         }, 3000);
     };
 
+    const hideControls = () => {
+        setControlsVisible(false);
+        if (hideTimeoutRef.current) {
+            clearTimeout(hideTimeoutRef.current);
+        }
+    };
+
     const handleMouseMove = () => {
+        // Synthesised mouse events from a touch tap shouldn't pop the controls
+        // back open — the tap handler owns visibility on touch devices.
+        if (lastPointerTypeRef.current === 'touch' || lastPointerTypeRef.current === 'pen') return;
         resetHideTimeout();
         if (!isPlaying) {
             resetPauseTimer();
@@ -269,10 +289,30 @@ const PlayerControls = ({
     };
 
     const handleMouseLeave = () => {
-        setShowControls(false);
-        if (hideTimeoutRef.current) {
-            clearTimeout(hideTimeoutRef.current);
+        hideControls();
+    };
+
+    // Remember how the surface is being interacted with so the click handler can
+    // tell a touch tap apart from a mouse click.
+    const handleSurfacePointerDown = (e: React.PointerEvent) => {
+        lastPointerTypeRef.current = e.pointerType || 'mouse';
+    };
+
+    // Center surface tap/click:
+    //  - mouse  → classic click-to-play/pause
+    //  - touch  → just toggle the controls overlay, never pause
+    const handleSurfaceClick = () => {
+        const isTouch =
+            lastPointerTypeRef.current === 'touch' || lastPointerTypeRef.current === 'pen';
+        if (isTouch) {
+            if (showControlsRef.current) {
+                hideControls();
+            } else {
+                resetHideTimeout();
+            }
+            return;
         }
+        togglePlay();
     };
 
     const markItemAsCompleted = useCallback(
@@ -567,6 +607,9 @@ const PlayerControls = ({
                 style={{
                     opacity: showControls && !showPauseOverlay ? 1 : 0,
                     pointerEvents: showControls && !showPauseOverlay ? 'auto' : 'none',
+                    paddingTop: 'max(1rem, env(safe-area-inset-top))',
+                    paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+                    paddingRight: 'max(1rem, env(safe-area-inset-right))',
                 }}
                 onMouseMove={handleMouseMove}
             >
@@ -586,7 +629,8 @@ const PlayerControls = ({
             </div>
             <div
                 className={`absolute inset-0 z-10 p-4 ${showControls ? '' : 'cursor-none'}`}
-                onClick={togglePlay}
+                onPointerDown={handleSurfacePointerDown}
+                onClick={handleSurfaceClick}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
             />
@@ -745,6 +789,9 @@ const PlayerControls = ({
                 style={{
                     opacity: showControls && !showPauseOverlay ? 1 : 0,
                     pointerEvents: showControls && !showPauseOverlay ? 'auto' : 'none',
+                    paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+                    paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+                    paddingRight: 'max(1rem, env(safe-area-inset-right))',
                 }}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
