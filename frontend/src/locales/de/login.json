@@ -1,5 +1,8 @@
 {
     "title": "Anmelden",
+    "who_is_watching": "Wer schaut?",
+    "other_user": "Anderer",
+    "back_to_profiles": "Zurück",
     "connect_to_jellyfin": "Mit Jellyfin verbinden",
     "enter_server_address": "Bitte gib die Adresse deines Servers ein.",
     "server_address": "Serveradresse",

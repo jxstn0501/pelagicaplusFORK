@@ -3,8 +3,10 @@ import Page from '../Page';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@radix-ui/react-label';
-import { Server, TriangleAlert, User } from 'lucide-react';
+import { Server, TriangleAlert, User, UserPlus } from 'lucide-react';
+import { usePublicUsers, getPublicUserImageUrl } from '@/hooks/api/usePublicUsers';
 import { jellyfin } from '@/api/jellyfinClient';
 import { useLogin } from '@/hooks/api/useLogin';
 import {
@@ -51,6 +53,32 @@ const LoginPage = () => {
     const login = useLogin();
     const [loggingIn, setLoggingIn] = useState(false);
     const [loginError, setLoginError] = useState<string | null>(null);
+    const [showManual, setShowManual] = useState(false);
+    const [selectedUsername, setSelectedUsername] = useState('');
+    const { data: publicUsers } = usePublicUsers(step === 'login');
+    const hasProfiles = !!publicUsers && publicUsers.length > 0;
+
+    const handleProfileSelect = async (name: string, hasPassword: boolean) => {
+        setSelectedUsername(name);
+        setLoginError(null);
+        if (!hasPassword) {
+            setLoggingIn(true);
+            try {
+                await login.mutateAsync({
+                    server: getServerUrl() || '',
+                    username: name,
+                    password: '',
+                });
+                navigate('/', { replace: true });
+                return;
+            } catch {
+                // Password actually required — fall through to the manual form
+            } finally {
+                setLoggingIn(false);
+            }
+        }
+        setShowManual(true);
+    };
 
     const quickConnectInitiate = useQuickConnectInitiate();
     const quickConnectAuthenticate = useQuickConnectAuthenticate();
@@ -292,7 +320,86 @@ const LoginPage = () => {
                     </CardContent>
                 </Card>
             )}
-            {step === 'login' && (
+            {step === 'login' && hasProfiles && !showManual && (
+                <Card className="max-w-md w-full mx-auto -translate-y-12">
+                    <CardHeader className="flex flex-col items-center">
+                        <CardTitle className="text-2xl font-bold">
+                            {t('who_is_watching', { defaultValue: "Who's watching?" })}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-3 gap-4">
+                            {publicUsers!.map((u) => {
+                                const img = getPublicUserImageUrl(u.Id, u.PrimaryImageTag);
+                                const initials = (u.Name || '?')
+                                    .split(' ')
+                                    .map((n) => n[0])
+                                    .join('')
+                                    .slice(0, 2)
+                                    .toUpperCase();
+                                return (
+                                    <button
+                                        key={u.Id}
+                                        type="button"
+                                        disabled={loggingIn}
+                                        onClick={() =>
+                                            handleProfileSelect(u.Name || '', !!u.HasPassword)
+                                        }
+                                        className="flex flex-col items-center gap-2 group focus:outline-none"
+                                    >
+                                        <Avatar className="h-20 w-20 rounded-lg ring-2 ring-transparent group-hover:ring-brand group-focus-visible:ring-brand transition-all group-hover:scale-105">
+                                            <AvatarImage src={img} alt={u.Name || ''} />
+                                            <AvatarFallback className="rounded-lg text-lg">
+                                                {initials}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <span className="text-sm truncate max-w-20 text-muted-foreground group-hover:text-foreground">
+                                            {u.Name}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSelectedUsername('');
+                                    setShowManual(true);
+                                }}
+                                className="flex flex-col items-center gap-2 group focus:outline-none"
+                            >
+                                <div className="h-20 w-20 rounded-lg border-2 border-dashed border-muted-foreground/40 flex items-center justify-center group-hover:border-brand group-hover:scale-105 transition-all">
+                                    <UserPlus className="h-7 w-7 text-muted-foreground group-hover:text-foreground" />
+                                </div>
+                                <span className="text-sm truncate max-w-20 text-muted-foreground group-hover:text-foreground">
+                                    {t('other_user', { defaultValue: 'Other' })}
+                                </span>
+                            </button>
+                        </div>
+                        {loginError && (
+                            <p className="mt-4 text-sm text-destructive flex items-center gap-2">
+                                <TriangleAlert size={16} />
+                                {loginError}
+                            </p>
+                        )}
+                        <Button
+                            className="mt-6 w-full"
+                            variant="secondary"
+                            onClick={() => setStep('quickconnect')}
+                        >
+                            {t('quick_connect')}
+                        </Button>
+                        <Button
+                            variant="link"
+                            className="w-full mt-2"
+                            onClick={() => setStep('server')}
+                        >
+                            {t('back_to_server')}
+                        </Button>
+                        <Disclaimer text={branding?.LoginDisclaimer} />
+                    </CardContent>
+                </Card>
+            )}
+            {step === 'login' && (!hasProfiles || showManual) && (
                 <Card className="max-w-md w-full mx-auto -translate-y-12">
                     <CardHeader className="flex flex-col items-center">
                         <div className="mb-1 h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
@@ -313,7 +420,8 @@ const LoginPage = () => {
                                 type="text"
                                 placeholder={t('username')}
                                 className="mb-4 w-full"
-                                autoFocus
+                                defaultValue={selectedUsername}
+                                autoFocus={!selectedUsername}
                             />
                             <Label htmlFor="password" className="mb-2 block font-medium">
                                 {t('password')}
@@ -323,6 +431,7 @@ const LoginPage = () => {
                                 type="password"
                                 placeholder={t('password')}
                                 className="w-full"
+                                autoFocus={!!selectedUsername}
                             />
                             {loginError && (
                                 <p className="mt-4 text-sm text-destructive flex items-center gap-2">
@@ -350,9 +459,13 @@ const LoginPage = () => {
                             <Button
                                 variant="link"
                                 className="w-full mt-2"
-                                onClick={() => setStep('server')}
+                                onClick={() =>
+                                    hasProfiles ? setShowManual(false) : setStep('server')
+                                }
                             >
-                                {t('back_to_server')}
+                                {hasProfiles
+                                    ? t('back_to_profiles', { defaultValue: 'Back' })
+                                    : t('back_to_server')}
                             </Button>
                         </form>
 

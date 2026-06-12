@@ -1,5 +1,8 @@
 {
     "title": "Login",
+    "who_is_watching": "Who's watching?",
+    "other_user": "Other",
+    "back_to_profiles": "Back",
     "connect_to_jellyfin": "Connect to Jellyfin",
     "enter_server_address": "Please enter the address of your server.",
     "server_address": "Server Address",
