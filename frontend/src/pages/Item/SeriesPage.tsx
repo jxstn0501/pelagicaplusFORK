@@ -82,6 +82,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
             name={item.Name || ''}
             showLogo={false}
             topPadding={false}
+            trailerItem={item}
         >
             <div className="pt-24 sm:pt-32 pb-12 px-4 sm:px-12 max-w-7xl mx-auto w-full flex flex-col gap-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative z-10 w-full">

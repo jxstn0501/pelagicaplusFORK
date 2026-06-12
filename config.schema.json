@@ -4,6 +4,10 @@
   "definitions": {
     "AppConfig": {
       "properties": {
+        "autoplayTrailers": {
+          "description": "Whether detail pages auto-play the title's trailer over the backdrop (default true)",
+          "type": "boolean"
+        },
         "enableBlur": {
           "description": "Whether to enable backdrop blur effects (can make the app feel heavy if disabled)",
           "type": "boolean"
