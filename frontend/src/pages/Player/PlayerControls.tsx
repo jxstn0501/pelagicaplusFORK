@@ -44,6 +44,8 @@ import {
 } from '@/utils/timeConversion';
 import { useTranslation } from 'react-i18next';
 import { usePlayerKeyboardControls } from '@/hooks/usePlayerKeyboardControls';
+import { useVideoMediaSession } from '@/hooks/useVideoMediaSession';
+import { useWakeLock } from '@/hooks/useWakeLock';
 import NextEpisodeOverlay from '@/components/NextEpisodeOverlay';
 import { getTrickplayImageUrl, getLogoUrl, getBackdropUrl } from '@/utils/jellyfinUrls';
 import { useReportPlaybackProgress } from '@/hooks/api/usePlaybackProgress';
@@ -172,6 +174,10 @@ const PlayerControls = ({
     const showControlsRef = useRef(true);
     // Tracks whether the last interaction came from touch/pen vs a mouse
     const lastPointerTypeRef = useRef<string>('mouse');
+    // Distinguishes a single tap (toggle controls) from a double tap (seek)
+    const singleTapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [seekFeedback, setSeekFeedback] = useState<'back' | 'forward' | null>(null);
+    const seekFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [isPiP, setIsPiP] = useState(false);
     const progressRef = useRef<HTMLDivElement>(null);
     const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -298,21 +304,51 @@ const PlayerControls = ({
         lastPointerTypeRef.current = e.pointerType || 'mouse';
     };
 
+    const showSeekFeedback = (dir: 'back' | 'forward') => {
+        setSeekFeedback(dir);
+        if (seekFeedbackTimerRef.current) clearTimeout(seekFeedbackTimerRef.current);
+        seekFeedbackTimerRef.current = setTimeout(() => setSeekFeedback(null), 550);
+    };
+
     // Center surface tap/click:
-    //  - mouse  → classic click-to-play/pause
-    //  - touch  → just toggle the controls overlay, never pause
-    const handleSurfaceClick = () => {
+    //  - mouse → classic click-to-play/pause
+    //  - touch single tap → toggle the controls overlay, never pause
+    //  - touch double tap left/right third → seek -/+10s (YouTube/Netflix style)
+    const handleSurfaceClick = (e: React.MouseEvent<HTMLDivElement>) => {
         const isTouch =
             lastPointerTypeRef.current === 'touch' || lastPointerTypeRef.current === 'pen';
-        if (isTouch) {
-            if (showControlsRef.current) {
-                hideControls();
+        if (!isTouch) {
+            togglePlay();
+            return;
+        }
+
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const zone: 'left' | 'right' | 'center' =
+            x < rect.width * 0.35 ? 'left' : x > rect.width * 0.65 ? 'right' : 'center';
+
+        if (singleTapTimerRef.current) {
+            // Second tap within the window → double tap
+            clearTimeout(singleTapTimerRef.current);
+            singleTapTimerRef.current = null;
+            if (zone === 'left') {
+                handleSeekBackward();
+                showSeekFeedback('back');
+            } else if (zone === 'right') {
+                handleSeekForward();
+                showSeekFeedback('forward');
             } else {
-                resetHideTimeout();
+                togglePlay();
             }
             return;
         }
-        togglePlay();
+
+        // First tap → briefly wait to see whether a double tap follows
+        singleTapTimerRef.current = setTimeout(() => {
+            singleTapTimerRef.current = null;
+            if (showControlsRef.current) hideControls();
+            else resetHideTimeout();
+        }, 250);
     };
 
     const markItemAsCompleted = useCallback(
@@ -331,6 +367,12 @@ const PlayerControls = ({
         return () => {
             if (hideTimeoutRef.current) {
                 clearTimeout(hideTimeoutRef.current);
+            }
+            if (singleTapTimerRef.current) {
+                clearTimeout(singleTapTimerRef.current);
+            }
+            if (seekFeedbackTimerRef.current) {
+                clearTimeout(seekFeedbackTimerRef.current);
             }
         };
     }, []);
@@ -557,6 +599,34 @@ const PlayerControls = ({
         handleSeekForward,
     });
 
+    // Keep the screen awake during playback (installed PWA / mobile)
+    useWakeLock(isPlaying);
+
+    // OS-level media controls (lock screen, Control Center, media keys)
+    const msPlay = useCallback(() => void player?.play(), [player]);
+    const msPause = useCallback(() => player?.pause(), [player]);
+    const msSeekTo = useCallback((time: number) => player?.currentTime(time), [player]);
+    const msNext = useCallback(() => {
+        if (nextItem) navigate(`/play/${nextItem.Id}`);
+    }, [nextItem, navigate]);
+    const msPrevious = useCallback(() => {
+        if (previousItem) navigate(`/play/${previousItem.Id}`);
+    }, [previousItem, navigate]);
+
+    useVideoMediaSession({
+        item,
+        isPlaying,
+        currentTime,
+        duration,
+        onPlay: msPlay,
+        onPause: msPause,
+        onSeekBackward: handleSeekBackward,
+        onSeekForward: handleSeekForward,
+        onSeekTo: msSeekTo,
+        onNextTrack: nextItem ? msNext : undefined,
+        onPreviousTrack: previousItem ? msPrevious : undefined,
+    });
+
     const introSegment = getMediaSegment('Intro');
     const showSkipIntroButton =
         introSegment &&
@@ -634,6 +704,23 @@ const PlayerControls = ({
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
             />
+            {/* Double-tap seek feedback (touch) */}
+            {seekFeedback && (
+                <div
+                    className={`absolute top-1/2 -translate-y-1/2 z-30 pointer-events-none flex flex-col items-center gap-1 text-white animate-pop-in ${
+                        seekFeedback === 'back' ? 'left-[12%]' : 'right-[12%]'
+                    }`}
+                >
+                    <div className="bg-black/50 rounded-full p-4 backdrop-blur-sm">
+                        {seekFeedback === 'back' ? (
+                            <SkipBack className="w-7 h-7 fill-white" />
+                        ) : (
+                            <SkipForward className="w-7 h-7 fill-white" />
+                        )}
+                    </div>
+                    <span className="text-sm font-medium">10s</span>
+                </div>
+            )}
             <div className="absolute bottom-28 right-8 z-30 flex gap-2">
                 {showSkipIntroButton && !showNextItemPrompt && (
                     <Button
