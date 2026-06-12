@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useDominantColor } from '@/hooks/useDominantColor';
+import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
+import BackdropTrailer from '@/components/BackdropTrailer';
+import { useConfig } from '@/hooks/api/useConfig';
 
 interface BaseMediaPageProps {
     itemId: string;
@@ -14,6 +17,8 @@ interface BaseMediaPageProps {
     topPadding?: boolean;
     topPaddingMinHeight?: string;
     logo?: React.ReactNode;
+    /** When provided (and enabled in config), auto-plays the item's trailer over the backdrop */
+    trailerItem?: BaseItemDto;
 }
 
 const BaseMediaPage = ({
@@ -24,8 +29,10 @@ const BaseMediaPage = ({
     topPadding = true,
     topPaddingMinHeight = '45dvh',
     logo,
+    trailerItem,
 }: BaseMediaPageProps) => {
     const { setBackground } = usePageBackground();
+    const { config } = useConfig();
     const navigate = useNavigate();
     const [failedBackdrop, setFailedBackdrop] = useState(false);
     const [failedLogo, setFailedLogo] = useState(false);
@@ -90,6 +97,11 @@ const BaseMediaPage = ({
                                     opacity: isBgLoaded ? 1 : 0,
                                 }}
                             />
+                        )}
+                        {/* Auto-playing trailer preview (sits above the static backdrop,
+                            below the readability gradients) */}
+                        {trailerItem && config.autoplayTrailers !== false && (
+                            <BackdropTrailer key={trailerItem.Id} item={trailerItem} />
                         )}
                         {/* Left-to-right dark fade to ensure text readability */}
                         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/75 to-transparent" />

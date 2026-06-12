@@ -269,6 +269,8 @@ export interface AppConfig {
     showContentAdvisory?: boolean;
     /** Whether to show the immersive pause overlay screensaver after 15 seconds */
     showPauseOverlay?: boolean;
+    /** Whether detail pages auto-play the title's trailer over the backdrop (default true) */
+    autoplayTrailers?: boolean;
     /** Whether to enable backdrop blur effects (can make the app feel heavy if disabled) */
     enableBlur?: boolean;
     /** Whether to show poster tags like HD/4K/CC on the home screen library items */
