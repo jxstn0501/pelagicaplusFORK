@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
+    Bookmark,
     ChartLine,
     Check,
     ChevronDown,
@@ -631,6 +632,13 @@ const TopBar = (_props: { overlay?: boolean }) => {
                     </Button>
 
                     <Button asChild variant="ghost" size="sm">
+                        <Link to="/my-list">
+                            <Bookmark className="h-4 w-4" />
+                            {t('my_list', { defaultValue: 'My List' })}
+                        </Link>
+                    </Button>
+
+                    <Button asChild variant="ghost" size="sm">
                         <Link to="/search">
                             <Search className="h-4 w-4" />
                             {t('search')}
@@ -734,6 +742,17 @@ const TopBar = (_props: { overlay?: boolean }) => {
                             </Link>
                         </Button>
                     ))}
+                    <Button
+                        asChild
+                        variant="ghost"
+                        className="justify-start"
+                        onClick={() => setMobileOpen(false)}
+                    >
+                        <Link to="/my-list">
+                            <Bookmark className="h-4 w-4" />
+                            {t('my_list', { defaultValue: 'My List' })}
+                        </Link>
+                    </Button>
                     <Button
                         asChild
                         variant="ghost"

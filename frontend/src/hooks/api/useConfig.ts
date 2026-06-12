@@ -182,6 +182,14 @@ export interface Top10Section extends BaseHomeScreenSection {
     items?: SectionItemsConfig;
 }
 
+export interface BecauseYouWatchedSection extends BaseHomeScreenSection {
+    type: 'becauseYouWatched';
+    /** How many "Because you watched X" rows to show */
+    seedLimit?: number;
+    /** Items per row */
+    limit?: number;
+}
+
 export type HomeScreenSection =
     | MediaBarSection
     | RecentlyAddedSection
@@ -196,7 +204,8 @@ export type HomeScreenSection =
     | GenreRecommendedSection
     | TrailersSection
     | MoodBarSection
-    | Top10Section;
+    | Top10Section
+    | BecauseYouWatchedSection;
 
 export const EPISODE_DISPLAYS = ['grid', 'row'] as const;
 export type EpisodeDisplay = (typeof EPISODE_DISPLAYS)[number];
@@ -363,6 +372,12 @@ const DEFAULT_CONFIG: AppConfig = {
             limit: 20,
             showSimilarity: false,
             showBasedOn: false,
+        },
+        // 5b. ERINNERUNG — "weil du X geschaut hast", knüpft an die History an
+        {
+            type: 'becauseYouWatched',
+            seedLimit: 3,
+            limit: 12,
         },
         // 6. FOMO — frisch hinzugefügt, verpasst du das gerade?
         {

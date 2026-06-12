@@ -15,6 +15,7 @@ import LibrariesRow from './LibrariesRow';
 import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
 import TopTenRow from './TopTenRow';
+import BecauseYouWatchedRows from './BecauseYouWatchedRows';
 import LazyRow from '@/components/LazyRow';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -297,6 +298,15 @@ const HomePage = () => {
                                         items={section.items}
                                     />
                                 </LazyRow>
+                            );
+
+                        case 'becauseYouWatched':
+                            return (
+                                <BecauseYouWatchedRows
+                                    key={index}
+                                    seedLimit={section.seedLimit}
+                                    limit={section.limit}
+                                />
                             );
 
                         case 'genres':
