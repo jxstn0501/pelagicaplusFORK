@@ -365,7 +365,7 @@ const PlayerPage = () => {
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-screen bg-black flex overflow-hidden"
+            className="player-surface relative w-full h-screen bg-black flex overflow-hidden"
             style={
                 {
                     '--subtitle-size': `${subtitleSize}%`,

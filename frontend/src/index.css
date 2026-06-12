@@ -124,10 +124,34 @@ body {
 @layer base {
     * {
         @apply border-border outline-ring/50;
+        /* No grey tap-flash on touch / installed PWA */
+        -webkit-tap-highlight-color: transparent;
     }
     body {
         @apply bg-background text-foreground;
+        /* Avoid rubber-band/overscroll chaining in the installed PWA */
+        overscroll-behavior-y: none;
     }
+    /* Keep text selectable where it is actually content */
+    input,
+    textarea,
+    [contenteditable='true'] {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+}
+
+/*
+ * Player surface — disable text selection, the iOS long-press callout and the
+ * tap highlight so dragging / long-pressing on the video never selects the
+ * title, timecode or other UI text (notably in the iPad home-screen PWA).
+ */
+.player-surface,
+.player-surface * {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 @keyframes pop-in {
