@@ -164,6 +164,7 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                                   item={item}
                                   posterUrl={`${posterUrls[item.Id!]}&maxWidth=416&maxHeight=640&quality=85`}
                                   showPlayButton={true}
+                                  hoverPreview={true}
                               >
                                   <div className="flex flex-wrap items-center mt-1">
                                       {detailFields && detailFields.length > 0

@@ -1,5 +1,8 @@
 {
   "title": "Hem",
+  "top_10_today": "Topp 10 idag",
+  "new_badge": "Ny",
+  "match": "Match",
   "continue_watching": "Fortsätt titta",
   "recently_added": "Nyligen tillagd i {{category}}",
   "no_title": "Ingen titel",

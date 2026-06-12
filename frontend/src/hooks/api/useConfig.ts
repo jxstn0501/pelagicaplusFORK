@@ -176,6 +176,12 @@ export interface MoodBarSection extends BaseHomeScreenSection {
     limit?: number;
 }
 
+export interface Top10Section extends BaseHomeScreenSection {
+    type: 'top10';
+    /** Configuration for which items to rank */
+    items?: SectionItemsConfig;
+}
+
 export type HomeScreenSection =
     | MediaBarSection
     | RecentlyAddedSection
@@ -189,7 +195,8 @@ export type HomeScreenSection =
     | StudiosSection
     | GenreRecommendedSection
     | TrailersSection
-    | MoodBarSection;
+    | MoodBarSection
+    | Top10Section;
 
 export const EPISODE_DISPLAYS = ['grid', 'row'] as const;
 export type EpisodeDisplay = (typeof EPISODE_DISPLAYS)[number];
@@ -328,6 +335,17 @@ const DEFAULT_CONFIG: AppConfig = {
             titleLine: 'ItemTitleWithEpisodeInfo',
             detailLine: ['EpisodeInfo'],
             limit: 20,
+        },
+        // 3b. SOCIAL PROOF / RANKING — die Top 10, erzeugt sofortige Orientierung
+        {
+            type: 'top10',
+            title: 'Top 10 heute',
+            items: {
+                sortBy: ['PlayCount'],
+                sortOrder: 'Descending',
+                types: ['Movie', 'Series'],
+                limit: 10,
+            },
         },
         // 4+5. PERSONALISIERUNG — "Wir kennen dich", fühlt sich persönlich an
         {
