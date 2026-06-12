@@ -145,6 +145,34 @@
       ],
       "type": "string"
     },
+    "BecauseYouWatchedSection": {
+      "properties": {
+        "enabled": {
+          "description": "Whether the section is enabled. Mostly intended for testing purposes",
+          "type": "boolean"
+        },
+        "limit": {
+          "description": "Items per row",
+          "type": "number"
+        },
+        "seedLimit": {
+          "description": "How many \"Because you watched X\" rows to show",
+          "type": "number"
+        },
+        "title": {
+          "description": "The title of the section",
+          "type": "string"
+        },
+        "type": {
+          "const": "becauseYouWatched",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
     "ConfigLink": {
       "properties": {
         "icon": {
@@ -373,6 +401,9 @@
         },
         {
           "$ref": "#/definitions/Top10Section"
+        },
+        {
+          "$ref": "#/definitions/BecauseYouWatchedSection"
         }
       ]
     },

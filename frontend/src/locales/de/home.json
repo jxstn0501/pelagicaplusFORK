@@ -26,6 +26,7 @@
   "not_rated": "Nicht bewertet",
   "recommended_for_you": "Für dich empfohlen",
   "because_you_watched": "Weil du folgendes gesehen hast:",
+  "because_you_watched_title": "Weil du {{name}} gesehen hast",
   "next_up": "Als nächstes",
   "resume": "Fortsetzen",
   "unknown_artist": "Unbekannter Künstler",

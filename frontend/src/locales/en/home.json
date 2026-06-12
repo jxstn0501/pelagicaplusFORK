@@ -26,6 +26,7 @@
     "not_rated": "Not Rated",
     "recommended_for_you": "Recommended for You",
     "because_you_watched": "Because you watched:",
+    "because_you_watched_title": "Because you watched {{name}}",
     "next_up": "Next Up",
     "resume": "Resume",
     "unknown_artist": "Unknown Artist",
