@@ -14,6 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useEpisodes } from '@/hooks/api/useEpisodes';
+import { formatPlayTime, ticksToSeconds } from '@/utils/timeConversion';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import PeopleRow from './PeopleRow';
@@ -137,20 +138,45 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         <div className="flex flex-wrap gap-2.5 items-center mt-2">
                             {episodeToContinue ? (
                                 <Button
-                                    className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
+                                    className="relative overflow-hidden w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 shadow-lg hover:scale-105 active:scale-95 transition-transform duration-200 ease-out"
                                     asChild
                                 >
                                     <Link to={`/play/${episodeToContinue.Id}`}>
                                         <Play className="mr-2 h-4 w-4 fill-current" />
                                         {episodeToContinue.UserData?.PlaybackPositionTicks
-                                            ? t('continue_episode', {
+                                            ? `${t('continue_episode', {
                                                   season: episodeToContinue.ParentIndexNumber,
                                                   episode: episodeToContinue.IndexNumber,
-                                              })
+                                              })} · ${formatPlayTime(
+                                                  ticksToSeconds(
+                                                      episodeToContinue.UserData
+                                                          .PlaybackPositionTicks
+                                                  )
+                                              )}`
                                             : t('play_episode', {
                                                   season: episodeToContinue.ParentIndexNumber,
                                                   episode: episodeToContinue.IndexNumber,
                                               })}
+                                        {episodeToContinue.UserData?.PlaybackPositionTicks !=
+                                            null &&
+                                            episodeToContinue.UserData.PlaybackPositionTicks > 0 &&
+                                            episodeToContinue.RunTimeTicks != null &&
+                                            episodeToContinue.RunTimeTicks > 0 && (
+                                                <span className="pointer-events-none absolute bottom-0 left-0 right-0 h-[3px] bg-primary-foreground/25">
+                                                    <span
+                                                        className="absolute inset-y-0 left-0 bg-brand"
+                                                        style={{
+                                                            width: `${Math.min(
+                                                                100,
+                                                                (episodeToContinue.UserData
+                                                                    .PlaybackPositionTicks /
+                                                                    episodeToContinue.RunTimeTicks) *
+                                                                    100
+                                                            )}%`,
+                                                        }}
+                                                    />
+                                                </span>
+                                            )}
                                     </Link>
                                 </Button>
                             ) : (
