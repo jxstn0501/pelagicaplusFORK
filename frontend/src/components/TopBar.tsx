@@ -599,7 +599,10 @@ const TopBar = (_props: { overlay?: boolean }) => {
     const validLinks = config?.links?.filter((l) => l.url && l.text) ?? [];
 
     return (
-        <header className="fixed top-0 z-50 w-full">
+        <header
+            className="fixed top-0 z-50 w-full"
+            style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+        >
             <div
                 className={`relative flex h-14 items-center gap-2 px-4 sm:px-12 transition-all duration-500 border-b ${
                     scrolled
@@ -705,7 +708,7 @@ const TopBar = (_props: { overlay?: boolean }) => {
 
             {/* Mobile nav drawer */}
             {mobileOpen && (
-                <div className="md:hidden border-t px-3 py-2 flex flex-col gap-0.5 bg-background">
+                <div className="md:hidden border-t px-3 py-3 flex flex-col gap-1 bg-background shadow-lg">
                     <Button
                         asChild
                         variant="ghost"

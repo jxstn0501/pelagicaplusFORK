@@ -110,7 +110,7 @@ const PageContent = ({
                 className={cn(
                     'relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto z-5 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted-foreground [&::-webkit-scrollbar-thumb]:rounded-full',
                     pagePadding && 'py-4 px-4 sm:px-12',
-                    hasTopBarSpace && 'pt-18' // Topbar has height of 14 + 4 (padding) = 18
+                    hasTopBarSpace && 'pt-[calc(4.5rem+env(safe-area-inset-top,0px))]' // Topbar h-14 + 1rem gap + safe-area-inset-top
                 )}
             >
                 {breadcrumbs && <div className="flex items-center gap-2 mb-4">{breadcrumbs}</div>}

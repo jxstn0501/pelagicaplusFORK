@@ -274,7 +274,7 @@ const LoginPage = () => {
             }
         >
             {step === 'server' && (
-                <Card className="max-w-md w-full mx-auto -translate-y-12">
+                <Card className="max-w-md w-full mx-auto sm:-translate-y-12">
                     <CardHeader className="flex flex-col items-center">
                         <div className="mb-1 h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
                             <Server size={24} className="text-gray-600" />
@@ -321,7 +321,7 @@ const LoginPage = () => {
                 </Card>
             )}
             {step === 'login' && hasProfiles && !showManual && (
-                <Card className="max-w-md w-full mx-auto -translate-y-12">
+                <Card className="max-w-md w-full mx-auto sm:-translate-y-12">
                     <CardHeader className="flex flex-col items-center">
                         <CardTitle className="text-2xl font-bold">
                             {t('who_is_watching', { defaultValue: "Who's watching?" })}
@@ -400,7 +400,7 @@ const LoginPage = () => {
                 </Card>
             )}
             {step === 'login' && (!hasProfiles || showManual) && (
-                <Card className="max-w-md w-full mx-auto -translate-y-12">
+                <Card className="max-w-md w-full mx-auto sm:-translate-y-12">
                     <CardHeader className="flex flex-col items-center">
                         <div className="mb-1 h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
                             <User size={24} className="text-gray-600" />
@@ -474,7 +474,7 @@ const LoginPage = () => {
                 </Card>
             )}
             {step === 'quickconnect' && (
-                <Card className="max-w-md w-full mx-auto -translate-y-12">
+                <Card className="max-w-md w-full mx-auto sm:-translate-y-12">
                     <CardHeader className="flex flex-col items-center">
                         <div className="mb-1 h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
                             <Server size={24} className="text-gray-600" />

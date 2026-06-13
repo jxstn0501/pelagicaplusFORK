@@ -100,13 +100,14 @@ const MediaBar = ({
 
     return (
         <div
-            className={cn('relative mt-14', className)}
+            className={cn('relative', className)}
+            style={{ marginTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))' }}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             onFocusCapture={() => setIsPaused(true)}
             onBlurCapture={() => setIsPaused(false)}
         >
-            {title && <h2 className="text-2xl font-bold mb-3 pl-12 pt-4">{title}</h2>}
+            {title && <h2 className="text-2xl font-bold mb-3 pl-4 sm:pl-12 pt-4">{title}</h2>}
 
             <div
                 className="absolute inset-x-0 top-0 -z-10 pointer-events-none"
