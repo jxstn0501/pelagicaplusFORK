@@ -16,6 +16,7 @@ function deduplicateById(items: BaseItemDto[]): BaseItemDto[] {
 
 interface ContinueWatchingAndNextUpResult {
     items: BaseItemDto[];
+    nextUpIds: Set<string>;
 }
 
 export function useContinueWatchingAndNextUp(
@@ -54,6 +55,7 @@ export function useContinueWatchingAndNextUp(
 
             const resumeItems = resumeResponse.data.Items || [];
             const nextUpItems = nextUpResponse.data.Items || [];
+            const nextUpIds = new Set(nextUpItems.map((i) => i.Id!).filter(Boolean));
             const continueWatchingItems = [...resumeItems, ...nextUpItems];
             console.log(
                 'Continue Watching & Next Up Items:',
@@ -113,7 +115,7 @@ export function useContinueWatchingAndNextUp(
 
             const deduplicated = deduplicateById(sorted);
 
-            return { items: deduplicated.slice(0, limit) };
+            return { items: deduplicated.slice(0, limit), nextUpIds };
         },
         enabled: !!userId,
         ...getRetryConfig(),

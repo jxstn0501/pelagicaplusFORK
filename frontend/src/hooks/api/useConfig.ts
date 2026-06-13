@@ -339,15 +339,7 @@ const DEFAULT_CONFIG: AppConfig = {
             accurateSorting: true,
             limit: 20,
         },
-        // 3. SERIEN-BINGER — nächste Folge sofort greifbar
-        {
-            type: 'nextUp',
-            title: 'Nächste Folge',
-            titleLine: 'ItemTitleWithEpisodeInfo',
-            detailLine: ['EpisodeInfo'],
-            limit: 20,
-        },
-        // 3b. SOCIAL PROOF / RANKING — die Top 10, erzeugt sofortige Orientierung
+        // 3. SOCIAL PROOF / RANKING — die Top 10, erzeugt sofortige Orientierung
         {
             type: 'top10',
             title: 'Top 10 heute',
