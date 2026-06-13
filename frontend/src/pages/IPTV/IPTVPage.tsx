@@ -419,6 +419,7 @@ function ChannelList({
     // Auto-open first group on load
     useEffect(() => {
         if (groupNames.length > 0 && openGroups.size === 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setOpenGroups(new Set([groupNames[0]]));
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -562,7 +563,7 @@ export default function IPTVPage() {
         } finally {
             setLoadingM3U(false);
         }
-    }, [config?.iptvM3uUrl]);
+    }, [config]);
 
     // Load EPG
     const loadEPG = useCallback(async () => {
@@ -585,6 +586,7 @@ export default function IPTVPage() {
     useEffect(() => {
         const cached = sessionStorage.getItem(STORAGE_KEY_M3U);
         if (cached) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setChannels(parseM3U(cached));
         } else if (config?.iptvM3uUrl) {
             void loadM3U('config');
