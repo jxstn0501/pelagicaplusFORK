@@ -68,9 +68,16 @@ export function BaseContinueRow({
                                   const progress = runtime > 0 ? (watched / runtime) * 100 : 0;
 
                                   const isNextUp = nextUpIds?.has(item.Id!) ?? false;
-                                  const seriesLogoUrl = item.SeriesId
-                                      ? getLogoUrl(item.SeriesId, { width: 200 })
-                                      : null;
+                                  // Use ParentLogoItemId + ParentLogoImageTag so the logo
+                                  // URL contains the real cache tag and disappears when deleted
+                                  const seriesLogoUrl =
+                                      item.ParentLogoItemId && item.ParentLogoImageTag
+                                          ? getLogoUrl(
+                                                item.ParentLogoItemId,
+                                                { width: 200 },
+                                                item.ParentLogoImageTag
+                                            )
+                                          : null;
 
                                   return (
                                       <Link
@@ -120,14 +127,14 @@ export function BaseContinueRow({
                                                       <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
                                                       {/* Series logo overlay */}
                                                       {seriesLogoUrl &&
-                                                          !logoErrors[item.SeriesId!] && (
+                                                          !logoErrors[item.ParentLogoItemId!] && (
                                                               <img
                                                                   src={seriesLogoUrl}
                                                                   alt=""
                                                                   onError={() =>
                                                                       setLogoErrors((prev) => ({
                                                                           ...prev,
-                                                                          [item.SeriesId!]: true,
+                                                                          [item.ParentLogoItemId!]: true,
                                                                       }))
                                                                   }
                                                                   className="absolute bottom-6 left-3 max-h-8 max-w-[45%] object-contain drop-shadow-lg z-25 opacity-90"
