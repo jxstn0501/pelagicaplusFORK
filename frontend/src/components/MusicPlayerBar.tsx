@@ -104,7 +104,10 @@ const MusicPlayerBar = () => {
 
     if (isMobile && !isExpanded) {
         return (
-            <div className="px-4 pt-4 sm:px-12 sticky bottom-0 z-100" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
+            <div
+                className="px-4 pt-4 sm:px-12 sticky bottom-0 z-100"
+                style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
+            >
                 <div
                     className="bg-sidebar/90 border-sidebar-border flex justify-between items-center h-full w-full rounded-lg border shadow-sm p-3 backdrop-blur-lg cursor-pointer"
                     onClick={() => setIsExpanded(true)}
@@ -143,7 +146,13 @@ const MusicPlayerBar = () => {
 
     if (isMobile && isExpanded) {
         return (
-            <div className="fixed inset-0 z-200 bg-background/95 backdrop-blur-lg flex flex-col animate-in slide-in-from-bottom duration-300" style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+            <div
+                className="fixed inset-0 z-200 bg-background/95 backdrop-blur-lg flex flex-col animate-in slide-in-from-bottom duration-300"
+                style={{
+                    paddingTop: 'env(safe-area-inset-top, 0px)',
+                    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+                }}
+            >
                 <div className="flex justify-between items-center p-4 border-b">
                     <Button variant="ghost" size="icon" onClick={() => setIsExpanded(false)}>
                         <ChevronDown />
@@ -286,7 +295,10 @@ const MusicPlayerBar = () => {
     }
 
     return (
-        <div className="sticky bottom-0 z-100 w-full px-4 pt-4 sm:px-12" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
+        <div
+            className="sticky bottom-0 z-100 w-full px-4 pt-4 sm:px-12"
+            style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
+        >
             <div className="relative">
                 <div className="relative z-10 flex w-full items-center justify-between rounded-lg border border-sidebar-border bg-sidebar/90 p-3 shadow-sm backdrop-blur-lg">
                     <div className="flex flex-1 items-center gap-2">
