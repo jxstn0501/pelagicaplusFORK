@@ -1,5 +1,7 @@
 # Palcia
 
+> ⚠️ **This is a personal fork and experimental playground.** This repository is not an independent project, but rather my personal experimentation space using Claude Code. I'm testing and adding features here that I'd like to contribute back or use for my own needs. For the original project, see [Pelagica](https://github.com/KartoffelChipss/pelagica).
+
 Palcia is a modern, fast and configurable web frontend for [Jellyfin](https://jellyfin.org) built with React and Go. It started as a fork of [Pelagica](https://github.com/KartoffelChipss/pelagica) and has since grown into its own project with a redesigned player experience, a smarter home screen and many quality-of-life improvements.
 
 ![Home](./.github/assets/home.webp)
