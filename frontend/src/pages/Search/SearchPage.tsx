@@ -44,7 +44,6 @@ import { Input } from '@/components/ui/input';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-
 const LoadingSkeleton = memo(() => (
     <div className="mt-4 w-full max-w-7xl">
         <div className="w-full gap-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
