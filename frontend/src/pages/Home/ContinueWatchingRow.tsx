@@ -30,6 +30,7 @@ const ContinueWatchingRow = ({
             titleLine={titleLine}
             detailLine={detailLine}
             items={continueWatchingData?.items || []}
+            nextUpIds={continueWatchingData?.nextUpIds}
             isLoading={isLoading}
             error={error}
         />

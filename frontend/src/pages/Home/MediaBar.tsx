@@ -57,6 +57,16 @@ const MediaBar = ({
         };
     }, [api]);
 
+    // Arrow key navigation
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft') api?.scrollPrev();
+            else if (e.key === 'ArrowRight') api?.scrollNext();
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [api]);
+
     // Auto-rotate the billboard like Netflix; pause on hover/focus
     useEffect(() => {
         if (!api || isPaused) return;

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import { getDetailLineText, getTitleLineText } from './continueWatchingLines';
 import { Dot, ImageOff, Play } from 'lucide-react';
-import { getPrimaryImageUrl, getThumbUrl } from '@/utils/jellyfinUrls';
+import { getPrimaryImageUrl, getThumbUrl, getLogoUrl } from '@/utils/jellyfinUrls';
 import { Skeleton } from '@/components/ui/skeleton';
 import SectionScroller from '@/components/SectionScroller';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
@@ -15,6 +15,7 @@ interface BaseContinueRowProps {
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
     items: BaseItemDto[];
+    nextUpIds?: Set<string>;
     isLoading: boolean;
     error: unknown;
 }
@@ -24,6 +25,7 @@ export function BaseContinueRow({
     titleLine,
     detailLine,
     items,
+    nextUpIds,
     isLoading,
     error,
 }: BaseContinueRowProps) {
@@ -32,6 +34,7 @@ export function BaseContinueRow({
 
     const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+    const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({});
 
     const handleImageError = (itemId: string) => {
         setImageErrors((prev) => ({ ...prev, [itemId]: true }));
@@ -63,6 +66,11 @@ export function BaseContinueRow({
                                   const watched = item.UserData?.PlaybackPositionTicks ?? 0;
                                   const runtime = item.RunTimeTicks ?? 0;
                                   const progress = runtime > 0 ? (watched / runtime) * 100 : 0;
+
+                                  const isNextUp = nextUpIds?.has(item.Id!) ?? false;
+                                  const seriesLogoUrl = item.SeriesId
+                                      ? getLogoUrl(item.SeriesId, { width: 200 })
+                                      : null;
 
                                   return (
                                       <Link
@@ -110,7 +118,30 @@ export function BaseContinueRow({
                                                       />
                                                       <Skeleton className="absolute bottom-0 left-0 right-0 top-0 -z-1" />
                                                       <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-20" />
+                                                      {/* Series logo overlay */}
+                                                      {seriesLogoUrl &&
+                                                          !logoErrors[item.SeriesId!] && (
+                                                              <img
+                                                                  src={seriesLogoUrl}
+                                                                  alt=""
+                                                                  onError={() =>
+                                                                      setLogoErrors((prev) => ({
+                                                                          ...prev,
+                                                                          [item.SeriesId!]: true,
+                                                                      }))
+                                                                  }
+                                                                  className="absolute bottom-6 left-3 max-h-8 max-w-[45%] object-contain drop-shadow-lg z-25 opacity-90"
+                                                              />
+                                                          )}
                                                   </>
+                                              )}
+                                              {/* Next-up badge */}
+                                              {isNextUp && (
+                                                  <div className="absolute top-2 left-2 z-30 px-2 py-0.5 rounded-full bg-brand text-white text-[10px] font-semibold tracking-wide shadow">
+                                                      {t('next_episode', {
+                                                          defaultValue: 'Nächste Folge',
+                                                      })}
+                                                  </div>
                                               )}
                                               {progress > 0 && (
                                                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/60 rounded-b-md overflow-hidden z-15">
