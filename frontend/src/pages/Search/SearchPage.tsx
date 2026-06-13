@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useTransition, type JSX } from 'react';
+import { Fragment, memo, useEffect, useMemo, useState, useTransition, type JSX } from 'react';
 import { useSearchParams } from 'react-router';
 import Page from '../Page';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
@@ -197,6 +197,20 @@ const SearchPage = () => {
     const hasAnyResults =
         (results && results.length > 0) || (seerrResults && seerrResults.length > 0);
 
+    const orderedGroups = useMemo(() => {
+        const groupKeys = ['moviesTv', 'episodes', 'music', 'people'] as const;
+        if (!results) return groupKeys;
+        return [...groupKeys].sort((a, b) => {
+            const idxA = results.findIndex((item) =>
+                ITEM_TYPE_GROUPS[a].includes(item.Type as BaseItemKind)
+            );
+            const idxB = results.findIndex((item) =>
+                ITEM_TYPE_GROUPS[b].includes(item.Type as BaseItemKind)
+            );
+            return (idxA === -1 ? Infinity : idxA) - (idxB === -1 ? Infinity : idxB);
+        });
+    }, [results]);
+
     const renderItemGroup = (groupKey: keyof typeof ITEM_TYPE_GROUPS) => {
         if (!results || typeFilter === 'seerr') return null;
         if (
@@ -285,16 +299,15 @@ const SearchPage = () => {
                     </EmptyHeader>
                 </Empty>
             )}
-            {renderItemGroup('moviesTv')}
-            {renderItemGroup('episodes')}
-            {renderItemGroup('music')}
+            {orderedGroups.map((groupKey) => (
+                <Fragment key={groupKey}>{renderItemGroup(groupKey)}</Fragment>
+            ))}
             {seerrResults.length > 0 && (typeFilter === 'all' || typeFilter === 'seerr') && (
                 <div className="mt-4 w-full max-w-7xl text-left">
                     <h2 className="text-xl font-semibold mb-2">Seerr</h2>
                     <SeerrGrid items={seerrResults} />
                 </div>
             )}
-            {renderItemGroup('people')}
             {isUnauthorized && (typeFilter === 'all' || typeFilter === 'seerr') && (
                 <div className="mt-6 w-full max-w-2xl p-6 rounded-xl border border-border bg-card/65 backdrop-blur-md shadow-lg flex flex-col gap-4">
                     <div className="flex items-start gap-4 text-left">
