@@ -3,7 +3,7 @@ import Page from '../Page';
 import { useConfig } from '@/hooks/api/useConfig';
 import { useSeerrSearch } from '@/hooks/api/useSeerrSearch';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
-import { getUserId, getPassword, setPassword } from '@/utils/localstorageCredentials';
+import { getPassword, setPassword } from '@/utils/localstorageCredentials';
 import SeerrGrid from '../Search/SeerrGrid';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
