@@ -84,7 +84,6 @@ const BackdropTrailer = ({ item, delay = 6000 }: BackdropTrailerProps) => {
                     }}
                 />
             </div>
-
         </>
     );
 };

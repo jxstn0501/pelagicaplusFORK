@@ -91,7 +91,8 @@ const SeerrPage = () => {
                     <Earth className="h-12 w-12" />
                     <p className="text-lg font-medium">Seerr nicht konfiguriert</p>
                     <p className="text-sm text-center max-w-sm">
-                        Bitte konfiguriere die Seerr-URL in den Einstellungen, um diese Funktion zu nutzen.
+                        Bitte konfiguriere die Seerr-URL in den Einstellungen, um diese Funktion zu
+                        nutzen.
                     </p>
                 </div>
             </Page>
