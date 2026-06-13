@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import { getDetailLineText, getTitleLineText } from './continueWatchingLines';
-import { Dot, ImageOff, Play } from 'lucide-react';
+import { Dot, ImageOff, Play, X } from 'lucide-react';
 import { getPrimaryImageUrl, getThumbUrl, getLogoUrl } from '@/utils/jellyfinUrls';
 import { Skeleton } from '@/components/ui/skeleton';
 import SectionScroller from '@/components/SectionScroller';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { cn } from '@/lib/utils';
+import { useMarkItemUnplayed } from '@/hooks/api/playState/useMarkItemUnplayed';
 
 interface BaseContinueRowProps {
     title: string;
@@ -17,6 +18,7 @@ interface BaseContinueRowProps {
     items: BaseItemDto[];
     isLoading: boolean;
     error: unknown;
+    userId?: string | null;
 }
 
 export function BaseContinueRow({
@@ -26,9 +28,11 @@ export function BaseContinueRow({
     items,
     isLoading,
     error,
+    userId,
 }: BaseContinueRowProps) {
     const { t } = useTranslation('home');
     const navigate = useNavigate();
+    const markUnplayed = useMarkItemUnplayed();
 
     const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
@@ -148,7 +152,7 @@ export function BaseContinueRow({
                                                       />
                                                   </div>
                                               )}
-                                              <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-30">
+                                              <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-30 flex items-center gap-1.5">
                                                   <div
                                                       className="flex items-center justify-center backdrop-blur-md bg-black/40 border border-white/15 rounded-full w-9 h-9 cursor-pointer hover:bg-black/60"
                                                       role="button"
@@ -159,6 +163,22 @@ export function BaseContinueRow({
                                                   >
                                                       <Play className="w-4 h-4 text-white fill-white translate-x-px" />
                                                   </div>
+                                                  {item.SeriesId && userId && (
+                                                      <div
+                                                          className="flex items-center justify-center backdrop-blur-md bg-black/40 border border-white/15 rounded-full w-9 h-9 cursor-pointer hover:bg-black/60"
+                                                          role="button"
+                                                          title={t('remove_from_continue_watching')}
+                                                          onClick={(e) => {
+                                                              e.preventDefault();
+                                                              markUnplayed.mutate({
+                                                                  itemId: item.Id!,
+                                                                  userId,
+                                                              });
+                                                          }}
+                                                      >
+                                                          <X className="w-4 h-4 text-white" />
+                                                      </div>
+                                                  )}
                                               </div>
                                           </div>
                                           <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all">

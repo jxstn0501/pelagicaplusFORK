@@ -32,6 +32,7 @@ const ContinueWatchingRow = ({
             items={continueWatchingData?.items || []}
             isLoading={isLoading}
             error={error}
+            userId={getUserId()}
         />
     );
 };
