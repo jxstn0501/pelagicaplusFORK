@@ -51,7 +51,11 @@ const EpisodePage = ({ item, config }: EpisodePageProps) => {
     const isCurrentlyPlaying = watched > 0 && runtime > 0 && watched < runtime;
 
     return (
-        <BaseMediaPage itemId={item.SeriesId || ''} name={item.SeriesName || item.Name || ''}>
+        <BaseMediaPage
+            itemId={item.SeriesId || ''}
+            name={item.SeriesName || item.Name || ''}
+            logoTag={item.ParentLogoImageTag || undefined}
+        >
             <div className="flex flex-col md:flex-row gap-6 max-w-7xl">
                 <div className="w-full sm:w-1/3 lg:w-1/4 flex flex-col">
                     <div className="relative w-full aspect-video rounded-md overflow-hidden">

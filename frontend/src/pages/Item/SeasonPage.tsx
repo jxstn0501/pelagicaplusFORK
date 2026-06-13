@@ -42,7 +42,11 @@ const SeasonPage = ({ item, config }: EpisodePageProps) => {
             : '');
 
     return (
-        <BaseMediaPage itemId={item.SeriesId || ''} name={item.SeriesName || item.Name || ''}>
+        <BaseMediaPage
+            itemId={item.SeriesId || ''}
+            name={item.SeriesName || item.Name || ''}
+            logoTag={item.ParentLogoImageTag || undefined}
+        >
             <div className="flex flex-col md:flex-row gap-6 max-w-7xl">
                 <div className="relative w-60 min-w-60 h-90 sm:w-72 sm:min-w-72 sm:h-108 hidden sm:block">
                     {!posterFailed ? (
