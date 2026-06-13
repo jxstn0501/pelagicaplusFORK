@@ -176,21 +176,61 @@ const SearchPage = () => {
     const hasAnyResults =
         (results && results.length > 0) || (seerrResults && seerrResults.length > 0);
 
-    const sortedResults = useMemo(() => {
-        if (!results || !debouncedQuery) return results;
+    const scoreItem = (name: string | null | undefined, q: string) => {
+        if (!name) return 0;
+        const n = name.toLowerCase();
+        if (n === q) return 4;
+        if (n.startsWith(q)) return 3;
+        if (n.includes(q)) return 2;
+        if (q.split(' ').every((w) => n.includes(w))) return 1;
+        return 0;
+    };
+
+    const SECTIONS = useMemo(
+        () =>
+            [
+                {
+                    key: 'moviesTv',
+                    labelKey: 'group_moviesTv',
+                    types: ['Movie', 'Series'] as BaseItemKind[],
+                    showFor: ['all', 'movies-tv'] as SearchTypeFilter[],
+                },
+                {
+                    key: 'episodes',
+                    labelKey: 'group_episodes',
+                    types: ['Episode'] as BaseItemKind[],
+                    showFor: ['all'] as SearchTypeFilter[],
+                },
+                {
+                    key: 'music',
+                    labelKey: 'group_music',
+                    types: ['MusicAlbum'] as BaseItemKind[],
+                    showFor: ['all', 'music'] as SearchTypeFilter[],
+                },
+                {
+                    key: 'people',
+                    labelKey: 'group_people',
+                    types: ['Person'] as BaseItemKind[],
+                    showFor: ['all'] as SearchTypeFilter[],
+                },
+            ] as const,
+        []
+    );
+
+    const sectionItems = useMemo(() => {
+        if (!results) return {};
         const q = debouncedQuery.toLowerCase().trim();
-        const score = (name: string | null | undefined) => {
-            if (!name) return 0;
-            const n = name.toLowerCase();
-            if (n === q) return 4;
-            if (n.startsWith(q)) return 3;
-            if (n.includes(q)) return 2;
-            // word-boundary match
-            if (q.split(' ').every((w) => n.includes(w))) return 1;
-            return 0;
-        };
-        return [...results].sort((a, b) => score(b.Name) - score(a.Name));
-    }, [results, debouncedQuery]);
+        const out: Record<string, typeof results> = {};
+        for (const section of SECTIONS) {
+            const filtered = results.filter((item) =>
+                section.types.includes(item.Type as BaseItemKind)
+            );
+            out[section.key] = q
+                ? [...filtered].sort((a, b) => scoreItem(b.Name, q) - scoreItem(a.Name, q))
+                : filtered;
+        }
+        return out;
+    }, [results, debouncedQuery, SECTIONS]);
 
     return (
         <Page title="Search" className="flex-1 flex flex-col items-center">
@@ -256,11 +296,17 @@ const SearchPage = () => {
                     </EmptyHeader>
                 </Empty>
             )}
-            {sortedResults && sortedResults.length > 0 && typeFilter !== 'seerr' && (
-                <div className="mt-4 w-full max-w-7xl">
-                    <UnifiedGrid items={sortedResults} />
-                </div>
-            )}
+            {typeFilter !== 'seerr' &&
+                SECTIONS.filter((s) => s.showFor.includes(typeFilter)).map((section) => {
+                    const items = sectionItems[section.key];
+                    if (!items || items.length === 0) return null;
+                    return (
+                        <div key={section.key} className="mt-4 w-full max-w-7xl text-left">
+                            <h2 className="text-xl font-semibold mb-2">{t(section.labelKey)}</h2>
+                            <UnifiedGrid items={items} />
+                        </div>
+                    );
+                })}
             {seerrResults.length > 0 && (typeFilter === 'all' || typeFilter === 'seerr') && (
                 <div className="mt-4 w-full max-w-7xl text-left">
                     <h2 className="text-xl font-semibold mb-2">Seerr</h2>
