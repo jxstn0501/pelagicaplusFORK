@@ -54,8 +54,7 @@ const UnifiedItem = ({ item }: { item: BaseItemDto }) => {
                     {
                         id: item.Id || '',
                         title: item.Name || '',
-                        artist:
-                            item.AlbumArtist || (item.Artists && item.Artists[0]) || 'Unknown',
+                        artist: item.AlbumArtist || (item.Artists && item.Artists[0]) || 'Unknown',
                         albumId: item.AlbumId || '',
                         albumName: item.Album || '',
                     },

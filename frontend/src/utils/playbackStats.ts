@@ -6,6 +6,8 @@ interface PlaybackInfo {
     player: string;
     transcoding: boolean;
     protocol: 'http' | 'https' | 'data' | 'unknown';
+    estimatedBandwidthKbps: number | null;
+    currentAbrHeight: number | null;
 }
 
 interface VideoInfo {
@@ -49,6 +51,10 @@ export const getRuntimePlaybackStats = (
     const videoEl = tech?.el() as HTMLVideoElement | undefined;
     if (!videoEl) return null;
 
+    const vhs = (tech as any)?.vhs ?? (tech as any)?.hls;
+    const estimatedBandwidthKbps = vhs?.bandwidth ? Math.round(vhs.bandwidth / 1000) : null;
+    const currentAbrHeight = videoEl.videoHeight || null;
+
     const quality = videoEl.getVideoPlaybackQuality?.() ?? {
         droppedVideoFrames: (videoEl as any).webkitDroppedFrameCount ?? 0,
         corruptedVideoFrames: (videoEl as any).webkitCorruptedFrameCount ?? 0,
@@ -80,6 +86,8 @@ export const getRuntimePlaybackStats = (
             player: 'Html Video Player',
             protocol: protocol,
             transcoding: session.TranscodingInfo !== null && session.TranscodingInfo !== undefined,
+            estimatedBandwidthKbps,
+            currentAbrHeight,
         },
         videoInfo: {
             playerDimensions: {
