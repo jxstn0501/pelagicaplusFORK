@@ -32,6 +32,9 @@ export function useMarkItemUnplayed() {
             queryClient.invalidateQueries({
                 queryKey: ['episodes', itemId],
             });
+            queryClient.invalidateQueries({
+                queryKey: ['continueWatchingAndNextUp', userId],
+            });
         },
     });
 }

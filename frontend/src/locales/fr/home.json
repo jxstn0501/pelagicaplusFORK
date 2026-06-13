@@ -33,5 +33,6 @@
   "track_count_plural": "{{count}} Pistes",
   "genres": "Genres",
   "libraries": "Bibliothèque",
-  "trailers": "Bandes-annonces"
+  "trailers": "Bandes-annonces",
+  "remove_from_continue_watching": "Retirer de la liste En cours"
 }
