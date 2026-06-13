@@ -1,4 +1,4 @@
-import { Fragment, memo, useEffect, useMemo, useState, useTransition, type JSX } from 'react';
+import { memo, useEffect, useState, useTransition, type JSX } from 'react';
 import { useSearchParams } from 'react-router';
 import Page from '../Page';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
@@ -21,10 +21,7 @@ import {
     XIcon,
 } from 'lucide-react';
 import { ButtonGroup } from '@/components/ui/button-group';
-import MovieTvGrid from './MovieTvGrid';
-import MusicGrid from './MusicGrid';
-import PeopleGrid from './PeopleGrid';
-import EpisodesGrid from './EpisodesGrid';
+import UnifiedGrid from './UnifiedGrid';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -47,36 +44,18 @@ import { Input } from '@/components/ui/input';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-const ITEM_TYPE_GROUPS = {
-    episodes: ['Episode'] as BaseItemKind[],
-    moviesTv: ['Movie', 'Series'] as BaseItemKind[],
-    music: ['MusicAlbum'] as BaseItemKind[],
-    people: ['Person'] as BaseItemKind[],
-} as const;
-
-const ITEM_GROUP_GRIDS = {
-    episodes: EpisodesGrid,
-    moviesTv: MovieTvGrid,
-    music: MusicGrid,
-    people: PeopleGrid,
-} as const;
 
 const LoadingSkeleton = memo(() => (
-    <div className="space-y-8 mt-4 w-full max-w-7xl">
-        {[1, 2].map((section) => (
-            <div key={section} className="w-full text-left">
-                <Skeleton className="h-7 w-40 mb-4" />
-                <div className="w-full gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => (
-                        <div key={item} className="space-y-2">
-                            <Skeleton className="aspect-[2/3] w-full rounded-lg" />
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-3 w-1/2" />
-                        </div>
-                    ))}
+    <div className="mt-4 w-full max-w-7xl">
+        <div className="w-full gap-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
+            {Array.from({ length: 20 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                    <Skeleton className="aspect-[2/3] w-full rounded-lg" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
                 </div>
-            </div>
-        ))}
+            ))}
+        </div>
     </div>
 ));
 
@@ -197,44 +176,6 @@ const SearchPage = () => {
     const hasAnyResults =
         (results && results.length > 0) || (seerrResults && seerrResults.length > 0);
 
-    const orderedGroups = useMemo(() => {
-        const groupKeys = ['moviesTv', 'episodes', 'music', 'people'] as const;
-        if (!results) return groupKeys;
-        return [...groupKeys].sort((a, b) => {
-            const idxA = results.findIndex((item) =>
-                ITEM_TYPE_GROUPS[a].includes(item.Type as BaseItemKind)
-            );
-            const idxB = results.findIndex((item) =>
-                ITEM_TYPE_GROUPS[b].includes(item.Type as BaseItemKind)
-            );
-            return (idxA === -1 ? Infinity : idxA) - (idxB === -1 ? Infinity : idxB);
-        });
-    }, [results]);
-
-    const renderItemGroup = (groupKey: keyof typeof ITEM_TYPE_GROUPS) => {
-        if (!results || typeFilter === 'seerr') return null;
-        if (
-            typeFilter !== 'all' &&
-            ((typeFilter === 'music' && groupKey !== 'music') ||
-                (typeFilter === 'movies-tv' && groupKey === 'music'))
-        ) {
-            return null;
-        }
-
-        const groupResults = results.filter((item) =>
-            ITEM_TYPE_GROUPS[groupKey].includes(item.Type as BaseItemKind)
-        );
-        if (groupResults.length === 0) return null;
-
-        const Grid = ITEM_GROUP_GRIDS[groupKey];
-        return (
-            <div className="mt-4 w-full max-w-7xl text-left">
-                <h2 className="text-xl font-semibold mb-2">{t('group_' + groupKey)}</h2>
-                <Grid items={groupResults} />
-            </div>
-        );
-    };
-
     return (
         <Page title="Search" className="flex-1 flex flex-col items-center">
             <ButtonGroup className="w-full mt-0.5 max-w-2xl mb-1">
@@ -299,9 +240,11 @@ const SearchPage = () => {
                     </EmptyHeader>
                 </Empty>
             )}
-            {orderedGroups.map((groupKey) => (
-                <Fragment key={groupKey}>{renderItemGroup(groupKey)}</Fragment>
-            ))}
+            {results && results.length > 0 && typeFilter !== 'seerr' && (
+                <div className="mt-4 w-full max-w-7xl">
+                    <UnifiedGrid items={results} />
+                </div>
+            )}
             {seerrResults.length > 0 && (typeFilter === 'all' || typeFilter === 'seerr') && (
                 <div className="mt-4 w-full max-w-7xl text-left">
                     <h2 className="text-xl font-semibold mb-2">Seerr</h2>
