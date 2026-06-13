@@ -172,6 +172,7 @@ export function getVideoStreamUrl(
         url.searchParams.append('MaxFramerate', '60');
 
         url.searchParams.append('TranscodingProtocol', 'hls');
+        url.searchParams.append('EnableAdaptiveBitrateStreaming', 'true');
 
         if (options.playSessionId !== undefined)
             url.searchParams.append('PlaySessionId', options.playSessionId);

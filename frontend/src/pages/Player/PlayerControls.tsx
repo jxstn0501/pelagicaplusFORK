@@ -787,6 +787,24 @@ const PlayerControls = ({
                                     {stats.playbackInfo.protocol}
                                 </span>
                             </p>
+                            {stats.playbackInfo.estimatedBandwidthKbps !== null && (
+                                <p>
+                                    <span>Est. Bandwidth</span>{' '}
+                                    <span className="text-muted-foreground">
+                                        {stats.playbackInfo.estimatedBandwidthKbps >= 1000
+                                            ? `${(stats.playbackInfo.estimatedBandwidthKbps / 1000).toFixed(1)} Mbps`
+                                            : `${stats.playbackInfo.estimatedBandwidthKbps} kbps`}
+                                    </span>
+                                </p>
+                            )}
+                            {stats.playbackInfo.currentAbrHeight !== null && (
+                                <p>
+                                    <span>ABR Quality</span>{' '}
+                                    <span className="text-muted-foreground">
+                                        {stats.playbackInfo.currentAbrHeight}p
+                                    </span>
+                                </p>
+                            )}
                         </div>
                         <h4 className="mb-1 mt-3">Video Info</h4>
                         <div className="ml-2">
@@ -1081,7 +1099,9 @@ const PlayerControls = ({
                                     {VIDEO_QUALITY_OPTIONS.map((option) => (
                                         <DropdownMenuRadioItem key={option.id} value={option.id}>
                                             {option.id === AUTO_QUALITY_ID
-                                                ? t('auto')
+                                                ? stats?.playbackInfo.currentAbrHeight
+                                                    ? `${t('auto')} (${stats.playbackInfo.currentAbrHeight}p)`
+                                                    : t('auto')
                                                 : option.label}
                                         </DropdownMenuRadioItem>
                                     ))}

@@ -58,8 +58,27 @@ const VideoPlayer = ({
             errorDisplay: false,
             html5: {
                 nativeControlsForTouch: false,
-                hls: { overrideNative: true },
                 nativeTextTracks: false,
+                vhs: {
+                    overrideNative: true,
+                    // Start with a conservative bandwidth estimate so playback
+                    // begins at a manageable quality and ramps up, rather than
+                    // immediately requesting the highest rendition and stalling.
+                    bandwidth: 4_000_000,
+                    // Begin at the lowest available rendition and upgrade as
+                    // measured throughput permits (Netflix-style ramp-up).
+                    enableLowInitialPlaylist: true,
+                    // Switch quality at segment boundaries so there is no
+                    // visible rebuffer during an upshift or downshift.
+                    smoothQualityChange: true,
+                    // Let the browser's Network Information API inform the
+                    // initial bandwidth estimate on supported devices.
+                    useNetworkInformationApi: true,
+                    // Use the buffer-based ABR algorithm which reacts faster
+                    // to buffer drain than the pure throughput algorithm.
+                    experimentalBufferBasedABR: true,
+                },
+                hls: { overrideNative: true },
             },
         });
 
