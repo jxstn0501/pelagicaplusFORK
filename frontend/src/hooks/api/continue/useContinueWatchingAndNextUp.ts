@@ -57,14 +57,6 @@ export function useContinueWatchingAndNextUp(
             const nextUpItems = nextUpResponse.data.Items || [];
             const nextUpIds = new Set(nextUpItems.map((i) => i.Id!).filter(Boolean));
             const continueWatchingItems = [...resumeItems, ...nextUpItems];
-            console.log(
-                'Continue Watching & Next Up Items:',
-                continueWatchingItems.map((i) => ({
-                    id: i.Id,
-                    name: i.Name,
-                    lastPlayed: i.UserData?.LastPlayedDate,
-                }))
-            );
 
             if (accurateSorting) {
                 // For episodes without LastPlayedDate, try to infer it from the previous episode

@@ -36,8 +36,7 @@ const SeasonPage = ({ item, config }: EpisodePageProps) => {
     const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
     const { data: seasons, isLoading: isLoadingSeasons } = useSeasons(item.SeriesId || '');
     const [posterFailed, setPosterFailed] = useState(false);
-    const { data: upcomingEpisodes } = useUpcomingEpisodes(item.Id || '');
-    console.log('Upcoming Episodes:', upcomingEpisodes);
+    const { data: upcomingEpisodes } = useUpcomingEpisodes(item.SeriesId || '');
 
     const effectiveSelectedSeason =
         selectedSeason ||
