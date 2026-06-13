@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useTransition, type JSX } from 'react';
+import { memo, useEffect, useMemo, useState, useTransition, type JSX } from 'react';
 import { useSearchParams } from 'react-router';
 import Page from '../Page';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
@@ -176,6 +176,22 @@ const SearchPage = () => {
     const hasAnyResults =
         (results && results.length > 0) || (seerrResults && seerrResults.length > 0);
 
+    const sortedResults = useMemo(() => {
+        if (!results || !debouncedQuery) return results;
+        const q = debouncedQuery.toLowerCase().trim();
+        const score = (name: string | null | undefined) => {
+            if (!name) return 0;
+            const n = name.toLowerCase();
+            if (n === q) return 4;
+            if (n.startsWith(q)) return 3;
+            if (n.includes(q)) return 2;
+            // word-boundary match
+            if (q.split(' ').every((w) => n.includes(w))) return 1;
+            return 0;
+        };
+        return [...results].sort((a, b) => score(b.Name) - score(a.Name));
+    }, [results, debouncedQuery]);
+
     return (
         <Page title="Search" className="flex-1 flex flex-col items-center">
             <ButtonGroup className="w-full mt-0.5 max-w-2xl mb-1">
@@ -240,9 +256,9 @@ const SearchPage = () => {
                     </EmptyHeader>
                 </Empty>
             )}
-            {results && results.length > 0 && typeFilter !== 'seerr' && (
+            {sortedResults && sortedResults.length > 0 && typeFilter !== 'seerr' && (
                 <div className="mt-4 w-full max-w-7xl">
-                    <UnifiedGrid items={results} />
+                    <UnifiedGrid items={sortedResults} />
                 </div>
             )}
             {seerrResults.length > 0 && (typeFilter === 'all' || typeFilter === 'seerr') && (
