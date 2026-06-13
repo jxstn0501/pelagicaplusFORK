@@ -163,7 +163,7 @@ export function BaseContinueRow({
                                                   >
                                                       <Play className="w-4 h-4 text-white fill-white translate-x-px" />
                                                   </div>
-                                                  {item.SeriesId && userId && (
+                                                  {userId && (
                                                       <div
                                                           className="flex items-center justify-center backdrop-blur-md bg-black/40 border border-white/15 rounded-full w-9 h-9 cursor-pointer hover:bg-black/60"
                                                           role="button"
