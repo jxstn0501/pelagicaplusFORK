@@ -17,6 +17,8 @@ interface BaseMediaPageProps {
     topPadding?: boolean;
     topPaddingMinHeight?: string;
     logo?: React.ReactNode;
+    /** Actual Jellyfin image tag for the logo — used for correct cache-busting */
+    logoTag?: string;
     /** When provided (and enabled in config), auto-plays the item's trailer over the backdrop */
     trailerItem?: BaseItemDto;
 }
@@ -29,6 +31,7 @@ const BaseMediaPage = ({
     topPadding = true,
     topPaddingMinHeight = '45dvh',
     logo,
+    logoTag,
     trailerItem,
 }: BaseMediaPageProps) => {
     const { setBackground } = usePageBackground();
@@ -119,11 +122,11 @@ const BaseMediaPage = ({
                     className={`flex items-center justify-center`}
                     style={{ minHeight: `calc(${topPaddingMinHeight} - 2rem)` }}
                 >
-                    {showLogo && !failedLogo && (
+                    {showLogo && !failedLogo && (logoTag || logo) && (
                         <>
                             {logo || (
                                 <img
-                                    src={getLogoUrl(itemId || '')}
+                                    src={getLogoUrl(itemId || '', undefined, logoTag)}
                                     alt={name + ' Logo'}
                                     className="relative mx-auto px-4 h-32 object-contain"
                                     onError={() => setFailedLogo(true)}
