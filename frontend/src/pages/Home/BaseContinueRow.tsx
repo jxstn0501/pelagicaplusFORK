@@ -15,7 +15,6 @@ interface BaseContinueRowProps {
     titleLine?: ContinueWatchingTitleLine;
     detailLine?: ContinueWatchingDetailLine[];
     items: BaseItemDto[];
-    nextUpIds?: Set<string>;
     isLoading: boolean;
     error: unknown;
 }
@@ -25,7 +24,6 @@ export function BaseContinueRow({
     titleLine,
     detailLine,
     items,
-    nextUpIds,
     isLoading,
     error,
 }: BaseContinueRowProps) {
@@ -67,7 +65,6 @@ export function BaseContinueRow({
                                   const runtime = item.RunTimeTicks ?? 0;
                                   const progress = runtime > 0 ? (watched / runtime) * 100 : 0;
 
-                                  const isNextUp = nextUpIds?.has(item.Id!) ?? false;
                                   // Use ParentLogoItemId + ParentLogoImageTag so the logo
                                   // URL contains the real cache tag and disappears when deleted
                                   const seriesLogoUrl =
@@ -142,14 +139,7 @@ export function BaseContinueRow({
                                                           )}
                                                   </>
                                               )}
-                                              {/* Next-up badge */}
-                                              {isNextUp && (
-                                                  <div className="absolute top-2 left-2 z-30 px-2 py-0.5 rounded-full bg-brand text-white text-[10px] font-semibold tracking-wide shadow">
-                                                      {t('next_episode', {
-                                                          defaultValue: 'Nächste Folge',
-                                                      })}
-                                                  </div>
-                                              )}
+
                                               {progress > 0 && (
                                                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/60 rounded-b-md overflow-hidden z-15">
                                                       <div
