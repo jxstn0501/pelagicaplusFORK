@@ -30,8 +30,6 @@ import { getUserId } from '@/utils/localstorageCredentials';
 import ItemAdminButton from '@/components/ItemAdminButton';
 import { TrailerButton } from '../../components/TrailerButton';
 import UserRatingButton from '../../components/UserRatingButton';
-import { useUpcomingEpisodes } from '../../hooks/api/useUpcomingEpisodes';
-import UpcomingEpisodeComponent from './UpcomingEpisodeComponent';
 import { Badge } from '@/components/ui/badge';
 
 interface SeriesPageProps {
@@ -46,9 +44,6 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
     const [posterFailed, setPosterFailed] = useState(false);
     const [isPosterLoaded, setIsPosterLoaded] = useState(false);
     const [failedLogo, setFailedLogo] = useState(false);
-
-    const { data: upcomingEpisodes } = useUpcomingEpisodes(item.Id || '');
-    console.log('Upcoming Episodes:', upcomingEpisodes);
 
     const effectiveSelectedSeason =
         selectedSeason ||
@@ -309,21 +304,6 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                         </div>
                     </div>
                 </div>
-
-                {upcomingEpisodes && upcomingEpisodes.length > 0 && (
-                    <div className="flex flex-col gap-4">
-                        <h3 className="text-3xl font-bold">{t('upcoming_episodes')}</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-                            {upcomingEpisodes.map((episode) => (
-                                <UpcomingEpisodeComponent
-                                    key={episode.Id}
-                                    episode={episode}
-                                    t={t}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
 
                 <div className="flex flex-col gap-4">
                     <EpisodesDisplay

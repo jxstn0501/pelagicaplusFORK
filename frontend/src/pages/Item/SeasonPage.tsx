@@ -23,8 +23,6 @@ import ItemAdminButton from '@/components/ItemAdminButton';
 import { ImageOff } from 'lucide-react';
 import { getUserId } from '../../utils/localstorageCredentials';
 import PlayStateButton from '../../components/PlayStateButton';
-import { useUpcomingEpisodes } from '../../hooks/api/useUpcomingEpisodes';
-import UpcomingEpisodeComponent from './UpcomingEpisodeComponent';
 
 interface EpisodePageProps {
     item: BaseItemDto;
@@ -36,7 +34,6 @@ const SeasonPage = ({ item, config }: EpisodePageProps) => {
     const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
     const { data: seasons, isLoading: isLoadingSeasons } = useSeasons(item.SeriesId || '');
     const [posterFailed, setPosterFailed] = useState(false);
-    const { data: upcomingEpisodes } = useUpcomingEpisodes(item.SeriesId || '');
 
     const effectiveSelectedSeason =
         selectedSeason ||
@@ -95,16 +92,6 @@ const SeasonPage = ({ item, config }: EpisodePageProps) => {
                     <p>{item.Overview}</p>
                 </div>
             </div>
-            {upcomingEpisodes && upcomingEpisodes.length > 0 && (
-                <div>
-                    <h3 className="text-3xl font-bold mb-3">{t('upcoming_episodes')}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-                        {upcomingEpisodes.map((episode) => (
-                            <UpcomingEpisodeComponent key={episode.Id} episode={episode} t={t} />
-                        ))}
-                    </div>
-                </div>
-            )}
             <EpisodesDisplay
                 title={
                     <div className="flex items-center gap-4">
