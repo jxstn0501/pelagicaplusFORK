@@ -17,8 +17,12 @@
     animation: shimmer 1.8s infinite;
 }
 
-html {
-    overflow-y: scroll !important;
+/* Prevent layout shift on desktop when scrollbar appears/disappears.
+   Hidden on touch devices (mobile) where there is no persistent scrollbar. */
+@media (pointer: fine) {
+    html {
+        overflow-y: scroll !important;
+    }
 }
 
 body {

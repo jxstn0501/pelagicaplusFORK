@@ -72,7 +72,8 @@ const BaseMediaPage = ({
             <Button
                 variant="ghost"
                 size="icon"
-                className="fixed top-20 left-4 z-50 bg-background/50 hover:bg-background/80 backdrop-blur-md rounded-full shadow-md"
+                className="fixed left-4 z-50 bg-background/50 hover:bg-background/80 backdrop-blur-md rounded-full shadow-md"
+                style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
                 onClick={() => navigate(-1)}
             >
                 <ArrowLeft className="w-5 h-5" />
