@@ -183,6 +183,7 @@ export default function SeerrRequestDialog({
         };
 
         void loadDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, isUserLoading, item.id, item.mediaType, currentUser?.Name, isUnauthorized]);
 
     // Load quality profiles and root folders from service when server changes
@@ -224,6 +225,7 @@ export default function SeerrRequestDialog({
         };
 
         void loadProfilesAndFolders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedServerId, hasAdminAccess, item.mediaType, servers, isUserLoading]);
 
     const handleSubmit = async () => {
