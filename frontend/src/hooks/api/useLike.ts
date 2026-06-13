@@ -30,6 +30,9 @@ export function useLike(itemId: string | null | undefined) {
         onSuccess: (newLikeState) => {
             queryClient.setQueryData(['like', itemId], newLikeState);
             queryClient.invalidateQueries({ queryKey: ['item', itemId] });
+            // Invalidate watchlist-related queries so home screen sections and MyList update
+            queryClient.invalidateQueries({ queryKey: ['mediaBarItems'] });
+            queryClient.invalidateQueries({ queryKey: ['generic-items'] });
         },
     });
 

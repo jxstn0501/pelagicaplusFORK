@@ -108,7 +108,7 @@ const SearchPage = () => {
     const [query, setQuery] = useState(searchParams.get('q') || '');
     const [debouncedQuery, setDebouncedQuery] = useState(searchParams.get('q') || '');
     const [typeFilter, setTypeFilter] = useState<SearchTypeFilter>(
-        (searchParams.get('type') as SearchTypeFilter) || 'movies-tv'
+        (searchParams.get('type') as SearchTypeFilter) || 'all'
     );
     const [, startTransition] = useTransition();
 
@@ -119,7 +119,7 @@ const SearchPage = () => {
     useEffect(() => {
         if (!isSeerrEnabled && typeFilter === 'seerr') {
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setTypeFilter('movies-tv');
+            setTypeFilter('all');
         }
     }, [isSeerrEnabled, typeFilter]);
 
@@ -285,8 +285,8 @@ const SearchPage = () => {
                     </EmptyHeader>
                 </Empty>
             )}
-            {renderItemGroup('episodes')}
             {renderItemGroup('moviesTv')}
+            {renderItemGroup('episodes')}
             {renderItemGroup('music')}
             {seerrResults.length > 0 && (typeFilter === 'all' || typeFilter === 'seerr') && (
                 <div className="mt-4 w-full max-w-7xl text-left">
