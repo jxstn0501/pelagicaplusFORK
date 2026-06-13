@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
-import { Volume2, VolumeX, X } from 'lucide-react';
 
 interface BackdropTrailerProps {
     item: BaseItemDto;
@@ -34,7 +33,7 @@ function extractYouTubeId(url?: string | null): string | null {
  * nothing when the title has no embeddable trailer. Layered behind the page
  * content; only its mute / close controls are interactive.
  */
-const BackdropTrailer = ({ item, delay = 2500 }: BackdropTrailerProps) => {
+const BackdropTrailer = ({ item, delay = 6000 }: BackdropTrailerProps) => {
     const videoId = (() => {
         for (const trailer of item.RemoteTrailers ?? []) {
             const id = extractYouTubeId(trailer.Url);
@@ -44,8 +43,6 @@ const BackdropTrailer = ({ item, delay = 2500 }: BackdropTrailerProps) => {
     })();
 
     const [started, setStarted] = useState(false);
-    const [muted, setMuted] = useState(true);
-    const [dismissed, setDismissed] = useState(false);
     const [loaded, setLoaded] = useState(false);
 
     // Arm the fade-in timer. The parent remounts this component per item (via
@@ -56,11 +53,11 @@ const BackdropTrailer = ({ item, delay = 2500 }: BackdropTrailerProps) => {
         return () => clearTimeout(timer);
     }, [videoId, delay]);
 
-    if (!videoId || dismissed) return null;
+    if (!videoId) return null;
 
     const src =
         `https://www.youtube-nocookie.com/embed/${videoId}` +
-        `?autoplay=1&mute=${muted ? 1 : 0}&controls=0&loop=1&playlist=${videoId}` +
+        `?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}` +
         `&playsinline=1&modestbranding=1&rel=0&disablekb=1&fs=0&iv_load_policy=3`;
 
     return (
@@ -88,27 +85,6 @@ const BackdropTrailer = ({ item, delay = 2500 }: BackdropTrailerProps) => {
                 />
             </div>
 
-            {/* Controls — interactive, sit above the backdrop in the safe top-right area */}
-            {started && loaded && (
-                <div className="pointer-events-auto fixed top-20 right-4 z-50 flex items-center gap-2">
-                    <button
-                        type="button"
-                        aria-label={muted ? 'Unmute trailer' : 'Mute trailer'}
-                        onClick={() => setMuted((m) => !m)}
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-background/50 text-foreground shadow-md backdrop-blur-md hover:bg-background/80"
-                    >
-                        {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                    </button>
-                    <button
-                        type="button"
-                        aria-label="Stop trailer"
-                        onClick={() => setDismissed(true)}
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-background/50 text-foreground shadow-md backdrop-blur-md hover:bg-background/80"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                </div>
-            )}
         </>
     );
 };

@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
     SidebarMenuSub,
 } from '@/components/ui/sidebar';
-import { ChartLine, ChevronRight, Home, Library, Search } from 'lucide-react';
+import { ChartLine, ChevronRight, Earth, Home, Library, Search } from 'lucide-react';
 import { Link } from 'react-router';
 import { NavUser } from './NavUser';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -187,6 +187,16 @@ const AppSidebar = () => {
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
+                            {config && config.seerrUrl && (
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton asChild>
+                                        <Link to={'/seerr'}>
+                                            <Earth />
+                                            Seerr
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            )}
                             {config && config.streamystatsUrl && config.showStreamystatsButton && (
                                 <SidebarMenuButton
                                     className="cursor-pointer"
