@@ -161,7 +161,7 @@ export function getVideoStreamUrl(
         url.searchParams.append('VideoCodec', getSupportedVideoCodecs());
         url.searchParams.append('AudioCodec', 'aac');
         url.searchParams.append('SegmentContainer', 'mp4');
-        url.searchParams.append('MinSegments', '2');
+        url.searchParams.append('MinSegments', '3');
         url.searchParams.append('BreakOnNonKeyFrames', 'true');
         url.searchParams.append('RequireAvc', 'false');
 

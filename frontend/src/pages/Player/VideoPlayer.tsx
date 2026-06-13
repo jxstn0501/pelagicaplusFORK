@@ -84,11 +84,45 @@ const VideoPlayer = ({
 
         playerRef.current = player;
 
-        const handleWaiting = () => setIsBuffering(true);
-        const handlePlaying = () => setIsBuffering(false);
-        const handleSeeking = () => setIsBuffering(true);
-        const handleSeeked = () => setIsBuffering(false);
-        const handleLoadStart = () => setIsBuffering(true);
+        // Delay before showing the spinner — avoids a flash for micro-stalls
+        // that resolve within half a second (common during ABR quality switches
+        // and seeks into already-buffered ranges).
+        const SPINNER_DELAY_MS = 500;
+        let spinnerTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const showSpinner = () => {
+            if (spinnerTimer) return;
+            spinnerTimer = setTimeout(() => {
+                setIsBuffering(true);
+                spinnerTimer = null;
+            }, SPINNER_DELAY_MS);
+        };
+
+        const hideSpinner = () => {
+            if (spinnerTimer) {
+                clearTimeout(spinnerTimer);
+                spinnerTimer = null;
+            }
+            setIsBuffering(false);
+        };
+
+        const isSeekTargetBuffered = () => {
+            const currentTime = player.currentTime() ?? 0;
+            const buffered = player.buffered();
+            for (let i = 0; i < (buffered?.length ?? 0); i++) {
+                if (currentTime >= buffered.start(i) && currentTime <= buffered.end(i)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        const handleWaiting = () => showSpinner();
+        const handlePlaying = () => hideSpinner();
+        // Only show spinner for seeks that land outside the buffered range.
+        const handleSeeking = () => { if (!isSeekTargetBuffered()) showSpinner(); };
+        const handleSeeked = () => hideSpinner();
+        const handleLoadStart = () => showSpinner();
 
         player.on('waiting', handleWaiting);
         player.on('playing', handlePlaying);
@@ -104,6 +138,7 @@ const VideoPlayer = ({
         });
 
         return () => {
+            if (spinnerTimer) clearTimeout(spinnerTimer);
             if (playerRef.current) {
                 const p = playerRef.current;
                 p.off('waiting', handleWaiting);
