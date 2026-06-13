@@ -26,6 +26,7 @@ import AllStudiosPage from './pages/Studios/AllStudiosPage.tsx';
 import AllItemsPage from './pages/Items/AllItemsPage.tsx';
 import MyListPage from './pages/MyList/MyListPage.tsx';
 import SeerrPage from './pages/Seerr/SeerrPage.tsx';
+import IPTVPage from './pages/IPTV/IPTVPage.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import StatsConsentModal from './components/StatsConsentModal.tsx';
 import { AppPreloader } from './components/AppPreloader.tsx';
@@ -66,6 +67,7 @@ createRoot(document.getElementById('root')!).render(
                                 <Route path="/browse-themes" element={<ThemeBrowserPage />} />
                                 <Route path="/search" element={<SearchPage />} />
                                 <Route path="/seerr" element={<SeerrPage />} />
+                                <Route path="/iptv" element={<IPTVPage />} />
                                 <Route path="*" element={<NotFoundPage />} />
                             </Routes>
                         </AppPreloader>

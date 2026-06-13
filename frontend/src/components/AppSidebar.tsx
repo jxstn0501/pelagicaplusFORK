@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
     SidebarMenuSub,
 } from '@/components/ui/sidebar';
-import { ChartLine, ChevronRight, Earth, Home, Library, Search } from 'lucide-react';
+import { ChartLine, ChevronRight, Earth, Home, Library, Search, Tv2 } from 'lucide-react';
 import { Link } from 'react-router';
 import { NavUser } from './NavUser';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -197,6 +197,14 @@ const AppSidebar = () => {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             )}
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <Link to={'/iptv'}>
+                                        <Tv2 />
+                                        IPTV
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                             {config && config.streamystatsUrl && config.showStreamystatsButton && (
                                 <SidebarMenuButton
                                     className="cursor-pointer"

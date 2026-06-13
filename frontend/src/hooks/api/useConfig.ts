@@ -293,6 +293,10 @@ export interface AppConfig {
     logoDarkUrl?: string;
     /** Links to display in the UI */
     links?: ConfigLink[];
+    /** IPTV M3U playlist URL */
+    iptvM3uUrl?: string;
+    /** IPTV EPG (XMLTV) URL */
+    iptvEpgUrl?: string;
 }
 
 const DEFAULT_ITEM_PAGE_SETTINGS: ItemPageSettings = {
