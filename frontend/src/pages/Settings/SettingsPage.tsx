@@ -699,6 +699,8 @@ const SettingsPage = () => {
     const [showThemeUploadDialog, setShowThemeUploadDialog] = useState(false);
     const { mutate: createTheme, isPending: isCreatingTheme } = useCreateTheme();
     const [links, setLinks] = useState<ConfigLink[]>([]);
+    const [iptvM3uUrl, setIptvM3uUrl] = useState('');
+    const [iptvEpgUrl, setIptvEpgUrl] = useState('');
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = searchParams.get('tab') || 'general';
 
@@ -748,6 +750,8 @@ const SettingsPage = () => {
         setLogoLightUrl(config?.logoLightUrl || '');
         setLogoDarkUrl(config?.logoDarkUrl || '');
         setLinks(config?.links || []);
+        setIptvM3uUrl(config?.iptvM3uUrl || '');
+        setIptvEpgUrl(config?.iptvEpgUrl || '');
     }, [
         config?.serverAddress,
         config?.streamystatsUrl,
@@ -774,6 +778,8 @@ const SettingsPage = () => {
         config?.logoLightUrl,
         config?.logoDarkUrl,
         config?.links,
+        config?.iptvM3uUrl,
+        config?.iptvEpgUrl,
     ]);
 
     const handleBrandingLogoUpload = async (mode: 'light' | 'dark', file: File) => {
@@ -868,6 +874,8 @@ const SettingsPage = () => {
                     links: links.map((link) => ({
                         ...link,
                     })),
+                    iptvM3uUrl: iptvM3uUrl || undefined,
+                    iptvEpgUrl: iptvEpgUrl || undefined,
                 });
                 setSaveSuccess(true);
                 setTimeout(() => setSaveSuccess(false), 2000);
@@ -957,6 +965,7 @@ const SettingsPage = () => {
                     <TabsTrigger value="branding">{t('category_branding')}</TabsTrigger>
                     <TabsTrigger value="themes">{t('category_themes')}</TabsTrigger>
                     <TabsTrigger value="links">{t('category_links')}</TabsTrigger>
+                    <TabsTrigger value="iptv">IPTV</TabsTrigger>
                 </TabsList>
                 <TabsContent value="branding" className="max-w-200">
                     <h1 className="mb-2 mt-2 text-2xl font-bold leading-none tracking-tight">
@@ -1448,6 +1457,30 @@ const SettingsPage = () => {
                         <Plus />
                         {t('add_link')}
                     </Button>
+                </TabsContent>
+                <TabsContent value="iptv" className="max-w-200">
+                    <h1 className="mb-2 mt-2 text-2xl font-bold leading-none tracking-tight">
+                        IPTV
+                    </h1>
+                    <p className="mb-4 text-sm text-muted-foreground">
+                        Konfiguriere eine M3U-Playlist-URL und optional eine EPG-URL (XMLTV-Format)
+                        für den integrierten IPTV-Player. Du kannst alternativ auch direkt auf der
+                        IPTV-Seite eine lokale M3U-Datei öffnen.
+                    </p>
+                    <StringInput
+                        label="M3U-Playlist-URL"
+                        value={iptvM3uUrl}
+                        onChange={setIptvM3uUrl}
+                        placeholder="http://example.com/playlist.m3u8"
+                        description="URL zu einer M3U- oder M3U8-Playlist. Wird beim Öffnen des IPTV-Players automatisch geladen."
+                    />
+                    <StringInput
+                        label="EPG-URL (XMLTV)"
+                        value={iptvEpgUrl}
+                        onChange={setIptvEpgUrl}
+                        placeholder="http://example.com/epg.xml"
+                        description="URL zur XMLTV-EPG-Datei für die Programm-Info im TV-Guide. Optional."
+                    />
                 </TabsContent>
             </Tabs>
             <SectionEditor
