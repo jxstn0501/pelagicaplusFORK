@@ -16,6 +16,7 @@ import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
 import TopTenRow from './TopTenRow';
 import BecauseYouWatchedRows from './BecauseYouWatchedRows';
+import RecentPersonsRow from './RecentPersonsRow';
 import LazyRow from '@/components/LazyRow';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -307,6 +308,19 @@ const HomePage = () => {
                                     seedLimit={section.seedLimit}
                                     limit={section.limit}
                                 />
+                            );
+
+                        case 'recentPersons':
+                            return (
+                                <LazyRow key={index} placeholderHeight="180px">
+                                    <RecentPersonsRow
+                                        title={
+                                            <h2 className="text-2xl font-bold">
+                                                {section.title || 'Zuletzt gesehene Personen'}
+                                            </h2>
+                                        }
+                                    />
+                                </LazyRow>
                             );
 
                         case 'genres':

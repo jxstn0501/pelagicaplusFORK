@@ -6,6 +6,7 @@ import PeopleRow from './PeopleRow';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import MoreLikeThisRow from './MoreLikeThisRow';
+import RatingBasedRow from '@/components/RatingBasedRow';
 import type { AppConfig } from '@/hooks/api/useConfig';
 import DetailBadges from './DetailBadges';
 import MediaInfoDialog from '../../components/MediaInfoDialog';
@@ -15,7 +16,7 @@ import PlayStateButton from '../../components/PlayStateButton';
 import { getUserId } from '@/utils/localstorageCredentials';
 import ItemAdminButton from '@/components/ItemAdminButton';
 import { useState } from 'react';
-import { TrailerButton } from '../../components/TrailerButton';
+import { InlineTrailerPlayer } from '../../components/InlineTrailerPlayer';
 import ItemDownloadButton from '../../components/ItemDownloadButton';
 import UserRatingButton from '../../components/UserRatingButton';
 import SourcePickerButton from '@/components/SourcePickerButton';
@@ -118,7 +119,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                                 resumePositionTicks={item.UserData?.PlaybackPositionTicks || 0}
                                 runtimeTicks={item.RunTimeTicks || 0}
                             />
-                            <TrailerButton item={item} />
+                            <InlineTrailerPlayer item={item} />
                             <FavoriteButton
                                 item={item}
                                 showFavoriteButton={
@@ -254,6 +255,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                     title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
                     itemId={item.Id || ''}
                 />
+                <RatingBasedRow excludeItemId={item.Id} />
             </div>
         </BaseMediaPage>
     );

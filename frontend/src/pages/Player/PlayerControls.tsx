@@ -16,6 +16,7 @@ import {
     Timer,
     Settings2,
     X,
+    BookMarked,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Link, useNavigate } from 'react-router';
@@ -35,6 +36,7 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import {
     formatPlayTime,
@@ -1028,6 +1030,54 @@ const PlayerControls = ({
                     </div>
 
                     <div className="flex items-center gap-2">
+                        {(item.Chapters?.length ?? 0) > 0 && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon-lg"
+                                        className="cursor-pointer"
+                                        title="Kapitel"
+                                    >
+                                        <BookMarked size={20} />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    container={container}
+                                    className="w-64 max-h-80 overflow-y-auto"
+                                >
+                                    <DropdownMenuLabel>Kapitel</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    {item.Chapters!.map((chapter, i) => {
+                                        const startSec = ticksToSeconds(
+                                            chapter.StartPositionTicks ?? 0
+                                        );
+                                        const nextStartSec =
+                                            item.Chapters![i + 1]
+                                                ? ticksToSeconds(
+                                                      item.Chapters![i + 1].StartPositionTicks ?? 0
+                                                  )
+                                                : Infinity;
+                                        const isActive =
+                                            currentTime >= startSec && currentTime < nextStartSec;
+                                        return (
+                                            <DropdownMenuItem
+                                                key={i}
+                                                className={`cursor-pointer flex justify-between gap-3 ${isActive ? 'bg-white/10 text-white' : ''}`}
+                                                onClick={() => player?.currentTime(startSec)}
+                                            >
+                                                <span className="flex-1 truncate">
+                                                    {chapter.Name || `Kapitel ${i + 1}`}
+                                                </span>
+                                                <span className="text-muted-foreground text-xs shrink-0">
+                                                    {formatPlayTime(startSec)}
+                                                </span>
+                                            </DropdownMenuItem>
+                                        );
+                                    })}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
