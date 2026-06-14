@@ -36,7 +36,7 @@ export const SearchCommand = () => {
         limit: 15,
     });
 
-    const { data: genreTagResults } = useSearchByGenreOrTag(debouncedQuery, {
+    const { data: genreTagResults } = useSearchByGenreOrTag(query, {
         itemTypes: ['Movie', 'Series'],
         limit: 15,
     });
