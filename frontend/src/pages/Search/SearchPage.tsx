@@ -37,6 +37,7 @@ import GenresGrid from './GenresGrid';
 import { getUserId, getPassword, setPassword } from '@/utils/localstorageCredentials';
 import { useConfig } from '@/hooks/api/useConfig';
 import { useSeerrSearch } from '@/hooks/api/useSeerrSearch';
+import { useSearchByGenreOrTag } from '@/hooks/api/useSearchByGenreOrTag';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import SeerrGrid from './SeerrGrid';
 import { Earth, Loader2 } from 'lucide-react';
@@ -104,7 +105,7 @@ const SearchPage = () => {
     const itemTypes: BaseItemKind[] | undefined = ITEM_TYPE_FILTER_MAP[typeFilter];
 
     const {
-        data: results,
+        data: titleResults,
         isLoading: isJellyfinLoading,
         error: jellyfinError,
     } = useSearchItems(debouncedQuery, {
@@ -113,6 +114,24 @@ const SearchPage = () => {
         userId: getUserId() || undefined,
         enabled: typeFilter !== 'seerr',
     });
+
+    const { data: genreTagResults } = useSearchByGenreOrTag(debouncedQuery, {
+        itemTypes,
+        limit: 50,
+        userId: getUserId() || undefined,
+        enabled: typeFilter !== 'seerr',
+    });
+
+    const results = (() => {
+        if (!titleResults && !genreTagResults) return undefined;
+        const combined = [...(titleResults ?? []), ...(genreTagResults ?? [])];
+        const seen = new Set<string>();
+        return combined.filter((item) => {
+            if (!item.Id || seen.has(item.Id)) return false;
+            seen.add(item.Id);
+            return true;
+        });
+    })();
 
     const { data: currentUser } = useCurrentUser();
     const {
