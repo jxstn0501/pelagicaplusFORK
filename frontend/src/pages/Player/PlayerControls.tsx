@@ -663,12 +663,15 @@ const PlayerControls = ({
         : (item.ParentBackdropItemId ?? item.Id);
 
     const timeRemaining = duration - currentTime;
+    const outroStart =
+        outtroSegment?.StartTicks != null ? ticksToSeconds(outtroSegment.StartTicks) : null;
     const showNextItemPrompt =
         nextItem &&
         duration > 0 &&
         !dismissedNextItemPrompt &&
-        (timeRemaining <= 30 || // 30 sec remaining
-            (duration > 0 && currentTime / duration >= 0.95)); // or 95% complete
+        (outroStart != null
+            ? currentTime >= outroStart // show when Outro/credits start
+            : timeRemaining <= 30 || currentTime / duration >= 0.95); // fallback
 
     return (
         <>

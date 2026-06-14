@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SkipForward, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
@@ -17,15 +17,17 @@ interface NextEpisodeOverlayProps {
 
 const NextEpisodeOverlay = ({ nextItem, onPlay, onDismiss }: NextEpisodeOverlayProps) => {
     const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
+    const onPlayRef = useRef(onPlay);
+    useEffect(() => { onPlayRef.current = onPlay; }, [onPlay]);
 
     useEffect(() => {
         if (countdown <= 0) {
-            onPlay();
+            onPlayRef.current();
             return;
         }
         const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
         return () => clearTimeout(timer);
-    }, [countdown, onPlay]);
+    }, [countdown]);
 
     const progress = (countdown / COUNTDOWN_SECONDS) * CIRCUMFERENCE;
 
