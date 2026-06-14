@@ -40,8 +40,8 @@ const RatingBasedRow = ({ excludeItemId }: RatingBasedRowProps) => {
             title={
                 <h3 className="text-3xl font-bold flex items-center gap-2">
                     <Heart className="w-6 h-6 text-red-400 fill-red-400" />
-                    Weil dir{' '}
-                    <span className="text-muted-foreground italic">{seed.Name}</span> gefallen hat
+                    Weil dir <span className="text-muted-foreground italic">{seed.Name}</span>{' '}
+                    gefallen hat
                 </h3>
             }
             items={displayItems.map((item) => (

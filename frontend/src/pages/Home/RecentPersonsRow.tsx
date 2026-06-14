@@ -60,13 +60,14 @@ const RecentPersonsRow = memo(({ title }: { title?: React.ReactNode }) => {
                     <div className="aspect-square w-full rounded-full overflow-hidden bg-muted">
                         {imgErrors[person.Id!] ? (
                             <div className="w-full h-full flex items-center justify-center text-lg font-semibold text-muted-foreground">
-                                {person.Name
-                                    ? person.Name
-                                          .split(' ')
-                                          .map((n) => n[0])
-                                          .join('')
-                                          .toUpperCase()
-                                    : <ImageOff className="w-8 h-8" />}
+                                {person.Name ? (
+                                    person.Name.split(' ')
+                                        .map((n) => n[0])
+                                        .join('')
+                                        .toUpperCase()
+                                ) : (
+                                    <ImageOff className="w-8 h-8" />
+                                )}
                             </div>
                         ) : (
                             <img

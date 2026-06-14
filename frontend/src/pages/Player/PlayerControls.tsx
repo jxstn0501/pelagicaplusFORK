@@ -1052,12 +1052,11 @@ const PlayerControls = ({
                                         const startSec = ticksToSeconds(
                                             chapter.StartPositionTicks ?? 0
                                         );
-                                        const nextStartSec =
-                                            item.Chapters![i + 1]
-                                                ? ticksToSeconds(
-                                                      item.Chapters![i + 1].StartPositionTicks ?? 0
-                                                  )
-                                                : Infinity;
+                                        const nextStartSec = item.Chapters![i + 1]
+                                            ? ticksToSeconds(
+                                                  item.Chapters![i + 1].StartPositionTicks ?? 0
+                                              )
+                                            : Infinity;
                                         const isActive =
                                             currentTime >= startSec && currentTime < nextStartSec;
                                         return (

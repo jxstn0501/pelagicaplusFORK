@@ -2,11 +2,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models';
 import { Button } from './ui/button';
 import { Film, X } from 'lucide-react';
 import { useState } from 'react';
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 function extractYouTubeId(url: string): string | null {
     try {
