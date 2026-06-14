@@ -11,43 +11,29 @@ import {
 import { useSearch } from '@/context/SearchContext';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
 import { useNavigate } from 'react-router';
-import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
-import { getApi } from '@/api/getApi';
 import { Skeleton } from './ui/skeleton';
 import { Calendar, Clock, Star, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import JellyfinItemKindIcon from './JellyfinItemKindIcon';
 import { Badge } from './ui/badge';
 import { useSearchHistory } from '@/hooks/useSearchHistory';
+import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 
 export const SearchCommand = () => {
     const { t } = useTranslation('search');
     const { isOpen, closeSearch } = useSearch();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
-    const [debouncedQuery, setDebouncedQuery] = useState('');
     const [, startTransition] = useTransition();
     const { history, addEntry, removeEntry } = useSearchHistory();
     const {
         data: results,
         isLoading,
         error,
-    } = useSearchItems(debouncedQuery, {
+    } = useSearchItems(query, {
         itemTypes: ['Movie', 'Series'],
         limit: 15,
     });
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            startTransition(() => {
-                setDebouncedQuery(query);
-            });
-        }, 300);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [query]);
 
     useEffect(() => {
         if (!isOpen) {
@@ -59,19 +45,13 @@ export const SearchCommand = () => {
 
     const posterUrls = useMemo(() => {
         if (!results) return {};
-        try {
-            const imageApi = getImageApi(getApi());
-            return results.reduce(
-                (acc, item) => {
-                    acc[item.Id!] = imageApi.getItemImageUrl({ Id: item.Id }) || '';
-                    return acc;
-                },
-                {} as Record<string, string>
-            );
-        } catch {
-            // if not authenticated return empty object
-            return {};
-        }
+        return results.reduce(
+            (acc, item) => {
+                acc[item.Id!] = getPrimaryImageUrl(item.Id!, { width: 96, height: 144 });
+                return acc;
+            },
+            {} as Record<string, string>
+        );
     }, [results]);
 
     return (
@@ -154,7 +134,7 @@ export const SearchCommand = () => {
                                 <div className="flex items-start gap-3 w-full">
                                     <div className="relative w-13 h-20 overflow-hidden rounded-md shrink-0">
                                         <img
-                                            src={`${posterUrls[item.Id!]}&maxWidth=96&maxHeight=144&quality=85`}
+                                            src={posterUrls[item.Id!]}
                                             alt={item.Name || ''}
                                             className="w-full h-full object-cover rounded-md"
                                             loading="lazy"
