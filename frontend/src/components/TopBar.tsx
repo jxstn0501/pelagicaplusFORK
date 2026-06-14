@@ -22,6 +22,7 @@ import {
     Shuffle,
     Sun,
     TriangleAlert,
+    Tv2,
     X,
 } from 'lucide-react';
 import { useRandomItem } from '@/hooks/api/useRandomItem';
@@ -648,6 +649,13 @@ const TopBar = (_props: { overlay?: boolean }) => {
                         </Link>
                     </Button>
 
+                    <Button asChild variant="ghost" size="sm">
+                        <Link to="/iptv">
+                            <Tv2 className="h-4 w-4" />
+                            IPTV
+                        </Link>
+                    </Button>
+
                     {config?.streamystatsUrl && config?.showStreamystatsButton && (
                         <Button
                             variant="ghost"
@@ -765,6 +773,17 @@ const TopBar = (_props: { overlay?: boolean }) => {
                         <Link to="/search">
                             <Search className="h-4 w-4" />
                             {t('search')}
+                        </Link>
+                    </Button>
+                    <Button
+                        asChild
+                        variant="ghost"
+                        className="justify-start"
+                        onClick={() => setMobileOpen(false)}
+                    >
+                        <Link to="/iptv">
+                            <Tv2 className="h-4 w-4" />
+                            IPTV
                         </Link>
                     </Button>
                     {config?.streamystatsUrl && config?.showStreamystatsButton && (
