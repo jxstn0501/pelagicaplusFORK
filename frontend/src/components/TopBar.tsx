@@ -583,7 +583,6 @@ const TopBar = (_props: { overlay?: boolean }) => {
         setRandomEnabled(true);
     };
 
-
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', onScroll, { passive: true });
@@ -696,7 +695,9 @@ const TopBar = (_props: { overlay?: boolean }) => {
                 >
                     <Search className="h-3.5 w-3.5 shrink-0" />
                     <span className="flex-1 text-left">{t('search')}</span>
-                    <kbd className="text-xs bg-background/60 border border-muted rounded px-1">⌘K</kbd>
+                    <kbd className="text-xs bg-background/60 border border-muted rounded px-1">
+                        ⌘K
+                    </kbd>
                 </button>
 
                 {/* Random item button */}
