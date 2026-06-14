@@ -10,12 +10,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Loader2, Film, Tv, Layers, Play } from 'lucide-react';
+import { Loader2, Film, Tv, Layers, Play, Earth } from 'lucide-react';
 import { getUsername, getPassword, setPassword } from '@/utils/localstorageCredentials';
 import { useCurrentUser } from '@/hooks/api/useCurrentUser';
+import { useConfig } from '@/hooks/api/useConfig';
 import { toast } from 'sonner';
 import type { SeerrResult } from '@/hooks/api/useSeerrSearch';
 import SeerrCollectionDialog from './SeerrCollectionDialog';
+import SeerrIframeDialog from './SeerrIframeDialog';
 
 interface SeerrInfoDialogProps {
     item: SeerrResult;
@@ -35,8 +37,11 @@ export default function SeerrInfoDialog({
     const [isCollectionOpen, setIsCollectionOpen] = useState(false);
     const [isUnauthorized, setIsUnauthorized] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
+    const [isSeerrIframeOpen, setIsSeerrIframeOpen] = useState(false);
 
     const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
+    const { config } = useConfig();
+    const seerrLink = config?.seerrUrl ? `${config.seerrUrl}/${item.mediaType}/${item.id}` : null;
 
     const fetchSeerr = async (path: string) => {
         const username = currentUser?.Name || getUsername() || '';
@@ -263,6 +268,18 @@ export default function SeerrInfoDialog({
                                     <Play className="h-4 w-4 fill-current animate-pulse" />
                                     Request Options
                                 </Button>
+
+                                {/* Open in Seerr Button */}
+                                {seerrLink && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setIsSeerrIframeOpen(true)}
+                                        className="w-full font-semibold gap-1.5 h-9 text-xs"
+                                    >
+                                        <Earth className="h-4 w-4" />
+                                        In Seerr öffnen
+                                    </Button>
+                                )}
                             </div>
 
                             {/* Right column: Content Details */}
@@ -358,6 +375,14 @@ export default function SeerrInfoDialog({
                     </>
                 )}
             </DialogContent>
+
+            {seerrLink && (
+                <SeerrIframeDialog
+                    url={seerrLink}
+                    open={isSeerrIframeOpen}
+                    onOpenChange={setIsSeerrIframeOpen}
+                />
+            )}
         </Dialog>
     );
 }

@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import SeerrRequestDialog from './SeerrRequestDialog';
 import SeerrInfoDialog from './SeerrInfoDialog';
+import SeerrIframeDialog from './SeerrIframeDialog';
 import { Button } from './ui/button';
 
 interface SeerrItemProps {
@@ -50,6 +51,7 @@ export default function SeerrItem({ item }: SeerrItemProps) {
     const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [isRequestOpen, setIsRequestOpen] = useState(false);
     const [isInfoOpen, setIsInfoOpen] = useState(false);
+    const [isIframeOpen, setIsIframeOpen] = useState(false);
 
     const imagePath = item.posterPath || item.profilePath;
     const posterUrl = imagePath ? `https://image.tmdb.org/t/p/w300${imagePath}` : null;
@@ -66,50 +68,55 @@ export default function SeerrItem({ item }: SeerrItemProps) {
 
     if (item.mediaType === 'person') {
         return (
-            <a
-                href={seerrLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-0 m-0 group relative text-left block cursor-pointer"
-            >
-                <div className="p-0 m-0 text-left">
-                    <div
-                        className={cn(
-                            'relative w-full overflow-hidden rounded-md group',
-                            `aspect-[${posterAspectRatio}]`
-                        )}
-                    >
-                        {posterUrl && !posterError ? (
-                            <>
-                                <img
-                                    src={posterUrl}
-                                    alt={title}
-                                    className={cn(
-                                        'w-full h-full object-cover rounded-md transform-gpu will-change-transform z-10 poster-image transition-all duration-300',
-                                        isImageLoaded
-                                            ? 'blur-0 opacity-100 scale-100'
-                                            : 'blur-md opacity-40 scale-95',
-                                        isImageLoaded && 'group-hover:scale-105'
-                                    )}
-                                    loading="lazy"
-                                    onLoad={() => setIsImageLoaded(true)}
-                                    onError={() => setPosterError(true)}
-                                />
-                                <Skeleton className="absolute bottom-0 left-0 right-0 top-0 -z-1" />
-                                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-30" />
-                            </>
-                        ) : (
-                            <div className="w-full h-full aspect-[2/3] bg-muted flex items-center justify-center rounded-md">
-                                <User className="text-4xl text-muted-foreground" />
-                                <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-30" />
-                            </div>
-                        )}
+            <>
+                <div
+                    className="p-0 m-0 group relative text-left block cursor-pointer"
+                    onClick={() => setIsIframeOpen(true)}
+                >
+                    <div className="p-0 m-0 text-left">
+                        <div
+                            className={cn(
+                                'relative w-full overflow-hidden rounded-md group',
+                                `aspect-[${posterAspectRatio}]`
+                            )}
+                        >
+                            {posterUrl && !posterError ? (
+                                <>
+                                    <img
+                                        src={posterUrl}
+                                        alt={title}
+                                        className={cn(
+                                            'w-full h-full object-cover rounded-md transform-gpu will-change-transform z-10 poster-image transition-all duration-300',
+                                            isImageLoaded
+                                                ? 'blur-0 opacity-100 scale-100'
+                                                : 'blur-md opacity-40 scale-95',
+                                            isImageLoaded && 'group-hover:scale-105'
+                                        )}
+                                        loading="lazy"
+                                        onLoad={() => setIsImageLoaded(true)}
+                                        onError={() => setPosterError(true)}
+                                    />
+                                    <Skeleton className="absolute bottom-0 left-0 right-0 top-0 -z-1" />
+                                    <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-30" />
+                                </>
+                            ) : (
+                                <div className="w-full h-full aspect-[2/3] bg-muted flex items-center justify-center rounded-md">
+                                    <User className="text-4xl text-muted-foreground" />
+                                    <div className="absolute inset-0 rounded-md pointer-events-none poster-card-outline z-30" />
+                                </div>
+                            )}
+                        </div>
+                        <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all group-hover:text-primary transition-colors font-medium">
+                            {title}
+                        </p>
                     </div>
-                    <p className="mt-2 text-sm line-clamp-1 text-ellipsis break-all group-hover:text-primary transition-colors font-medium">
-                        {title}
-                    </p>
                 </div>
-            </a>
+                <SeerrIframeDialog
+                    url={seerrLink}
+                    open={isIframeOpen}
+                    onOpenChange={setIsIframeOpen}
+                />
+            </>
         );
     }
 
