@@ -75,8 +75,8 @@ jobs:
           build-args: |
             APP_VERSION=${{ env.IMAGE_TAG }}
           outputs: type=registry
-          cache-from: type=gha,scope=${{ github.repository }}-${{ env.IMAGE_TAG }}-${{ env.PLATFORM_PAIR }}
-          cache-to: type=gha,scope=${{ github.repository }}-${{ env.IMAGE_TAG }}-${{ env.PLATFORM_PAIR }},mode=max
+          cache-from: type=gha,scope=${{ github.repository }}-${{ env.IMAGE_TAG }}-${{ env.PLATFORM_PAIR }}-v2
+          cache-to: type=gha,scope=${{ github.repository }}-${{ env.IMAGE_TAG }}-${{ env.PLATFORM_PAIR }}-v2,mode=max
 
       - name: Export digest
         run: |
