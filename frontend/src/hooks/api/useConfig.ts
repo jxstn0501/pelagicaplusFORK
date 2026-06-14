@@ -190,6 +190,11 @@ export interface BecauseYouWatchedSection extends BaseHomeScreenSection {
     limit?: number;
 }
 
+export interface RecentPersonsSection extends BaseHomeScreenSection {
+    type: 'recentPersons';
+    title?: string;
+}
+
 export type HomeScreenSection =
     | MediaBarSection
     | RecentlyAddedSection
@@ -205,7 +210,8 @@ export type HomeScreenSection =
     | TrailersSection
     | MoodBarSection
     | Top10Section
-    | BecauseYouWatchedSection;
+    | BecauseYouWatchedSection
+    | RecentPersonsSection;
 
 export const EPISODE_DISPLAYS = ['grid', 'row'] as const;
 export type EpisodeDisplay = (typeof EPISODE_DISPLAYS)[number];
