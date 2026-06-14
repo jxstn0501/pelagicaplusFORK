@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
     Bookmark,
@@ -581,6 +581,19 @@ const TopBar = (_props: { overlay?: boolean }) => {
         setRandomEnabled(true);
     };
 
+    const [navSearchQuery, setNavSearchQuery] = useState('');
+    const handleNavSearch = useCallback(
+        (e: React.FormEvent) => {
+            e.preventDefault();
+            if (navSearchQuery.trim()) {
+                navigate(`/search?q=${encodeURIComponent(navSearchQuery.trim())}`);
+            } else {
+                navigate('/search');
+            }
+        },
+        [navSearchQuery, navigate]
+    );
+
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', onScroll, { passive: true });
@@ -643,13 +656,6 @@ const TopBar = (_props: { overlay?: boolean }) => {
                     </Button>
 
                     <Button asChild variant="ghost" size="sm">
-                        <Link to="/search">
-                            <Search className="h-4 w-4" />
-                            {t('search')}
-                        </Link>
-                    </Button>
-
-                    <Button asChild variant="ghost" size="sm">
                         <Link to="/iptv">
                             <Tv2 className="h-4 w-4" />
                             IPTV
@@ -692,6 +698,19 @@ const TopBar = (_props: { overlay?: boolean }) => {
                 </nav>
 
                 <div className="flex-1" />
+
+                {/* Navbar search */}
+                <form onSubmit={handleNavSearch} className="hidden md:flex items-center">
+                    <div className="relative flex items-center">
+                        <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                        <Input
+                            value={navSearchQuery}
+                            onChange={(e) => setNavSearchQuery(e.target.value)}
+                            placeholder={t('search')}
+                            className="h-8 w-44 pl-8 text-sm bg-muted/50 border-muted focus-visible:w-56 transition-all duration-200"
+                        />
+                    </div>
+                </form>
 
                 {/* Random item button */}
                 <Button
