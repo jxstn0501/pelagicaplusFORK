@@ -83,7 +83,7 @@ import JellyfinLibraryIcon from './JellyfinLibraryIcon';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { useTranslation } from 'react-i18next';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
-import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
+import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { getUserId } from '@/utils/localstorageCredentials';
 import i18n from 'i18next';
 import { useUpdateUserConfiguration } from '@/hooks/api/playbackPreferences/useUpdateUserConfiguration';
@@ -772,15 +772,10 @@ const TopBar = (_props: { overlay?: boolean }) => {
                                 <>
                                     <div className="flex flex-col">
                                         {navResults.map((item) => {
-                                            const imageUrl = (() => {
-                                                try {
-                                                    return getImageApi(getApi()).getItemImageUrl({
-                                                        Id: item.Id,
-                                                    });
-                                                } catch {
-                                                    return '';
-                                                }
-                                            })();
+                                            const imageUrl = getPrimaryImageUrl(item.Id!, {
+                                                width: 64,
+                                                height: 96,
+                                            });
                                             return (
                                                 <button
                                                     key={item.Id}
@@ -793,13 +788,16 @@ const TopBar = (_props: { overlay?: boolean }) => {
                                                     }}
                                                 >
                                                     <div className="w-8 h-12 rounded overflow-hidden shrink-0 bg-muted">
-                                                        {imageUrl && (
-                                                            <img
-                                                                src={`${imageUrl}&maxWidth=64&maxHeight=96&quality=80`}
-                                                                alt={item.Name || ''}
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        )}
+                                                        <img
+                                                            src={imageUrl}
+                                                            alt={item.Name || ''}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                (
+                                                                    e.target as HTMLImageElement
+                                                                ).style.display = 'none';
+                                                            }}
+                                                        />
                                                     </div>
                                                     <div className="flex flex-col min-w-0">
                                                         <span className="text-sm font-medium truncate">
