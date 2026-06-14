@@ -9,6 +9,7 @@ import {
     type EPGProgram,
 } from '@/utils/xmltvParser';
 import { useConfig } from '@/hooks/api/useConfig';
+import { useCurrentUser } from '@/hooks/api/useCurrentUser';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ import {
     Loader2,
     AlertCircle,
     Clock,
+    Lock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Page from '../Page';
@@ -564,6 +566,8 @@ const STORAGE_KEY_M3U = 'iptv_m3u_content';
 
 export default function IPTVPage() {
     const { config } = useConfig();
+    const { data: currentUser } = useCurrentUser();
+    const isAdmin = currentUser?.Policy?.IsAdministrator === true;
     const [channels, setChannels] = useState<M3UChannel[]>([]);
     const [epgData, setEpgData] = useState<EPGData | null>(null);
     const [activeChannel, setActiveChannel] = useState<M3UChannel | null>(null);
@@ -647,6 +651,30 @@ export default function IPTVPage() {
     const noConfig = !config?.iptvM3uUrl;
     const noChannels = channels.length === 0;
 
+    // Non-admin users without a configured M3U URL see a locked state
+    if (!isAdmin && noConfig) {
+        return (
+            <Page
+                title="IPTV"
+                requiresAuth
+                pagePadding={false}
+                showPlayerBar={false}
+                className="flex flex-col"
+            >
+                <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-6 h-full">
+                    <Lock className="h-16 w-16 text-muted-foreground" />
+                    <div>
+                        <h2 className="text-xl font-semibold mb-1">IPTV nicht konfiguriert</h2>
+                        <p className="text-muted-foreground text-sm max-w-sm">
+                            Der Administrator hat noch keine IPTV-Playlist eingerichtet. Bitte wende
+                            dich an einen Administrator.
+                        </p>
+                    </div>
+                </div>
+            </Page>
+        );
+    }
+
     return (
         <Page
             title="IPTV"
@@ -684,7 +712,7 @@ export default function IPTVPage() {
                         )}
                     </div>
                     <div className="flex items-center gap-2">
-                        {noConfig && (
+                        {isAdmin && noConfig && (
                             <label className="cursor-pointer">
                                 <input
                                     type="file"
@@ -746,23 +774,25 @@ export default function IPTVPage() {
                         <div>
                             <h2 className="text-xl font-semibold mb-1">IPTV einrichten</h2>
                             <p className="text-muted-foreground text-sm max-w-sm">
-                                {noConfig
+                                {noConfig && isAdmin
                                     ? 'Lade eine M3U-Datei hoch oder hinterlege eine M3U-URL in den Einstellungen unter dem Tab "IPTV".'
                                     : 'Die M3U-Playlist wird geladen…'}
                             </p>
                         </div>
                         <div className="flex gap-3 flex-wrap justify-center">
-                            <label className="cursor-pointer">
-                                <input
-                                    type="file"
-                                    accept=".m3u,.m3u8"
-                                    className="hidden"
-                                    onChange={handleFileUpload}
-                                />
-                                <Button variant="outline" asChild>
-                                    <span>M3U-Datei öffnen</span>
-                                </Button>
-                            </label>
+                            {isAdmin && noConfig && (
+                                <label className="cursor-pointer">
+                                    <input
+                                        type="file"
+                                        accept=".m3u,.m3u8"
+                                        className="hidden"
+                                        onChange={handleFileUpload}
+                                    />
+                                    <Button variant="outline" asChild>
+                                        <span>M3U-Datei öffnen</span>
+                                    </Button>
+                                </label>
+                            )}
                             {config?.iptvM3uUrl && (
                                 <Button onClick={() => loadM3U('config')} disabled={loadingM3U}>
                                     {loadingM3U && (
