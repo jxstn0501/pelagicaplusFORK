@@ -253,7 +253,9 @@ function IPTVPlayer({ channel, epgData }: { channel: M3UChannel | null; epgData:
         const video = videoRef.current;
         if (!video || !channel) return;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setError(null);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
 
         if (hlsRef.current) {
