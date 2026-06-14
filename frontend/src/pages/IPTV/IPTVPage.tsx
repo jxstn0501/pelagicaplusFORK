@@ -1,12 +1,28 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Hls from 'hls.js';
 import { parseM3U, groupChannels, type M3UChannel } from '@/utils/m3uParser';
-import { parseXMLTV, getCurrentProgram, getProgramsForChannel, type EPGData, type EPGProgram } from '@/utils/xmltvParser';
+import {
+    parseXMLTV,
+    getCurrentProgram,
+    getProgramsForChannel,
+    type EPGData,
+    type EPGProgram,
+} from '@/utils/xmltvParser';
 import { useConfig } from '@/hooks/api/useConfig';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Tv2, ChevronRight, ChevronDown, Calendar, X, Loader2, AlertCircle, Clock } from 'lucide-react';
+import {
+    Search,
+    Tv2,
+    ChevronRight,
+    ChevronDown,
+    Calendar,
+    X,
+    Loader2,
+    AlertCircle,
+    Clock,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Page from '../Page';
 
@@ -113,8 +129,10 @@ function EPGGuide({
     const resolveEpgId = useCallback(
         (ch: M3UChannel): string | null => {
             if (!epgData) return null;
-            if (epgChannelMap.has(ch.id.toLowerCase())) return epgChannelMap.get(ch.id.toLowerCase())!;
-            if (epgChannelMap.has(ch.name.toLowerCase())) return epgChannelMap.get(ch.name.toLowerCase())!;
+            if (epgChannelMap.has(ch.id.toLowerCase()))
+                return epgChannelMap.get(ch.id.toLowerCase())!;
+            if (epgChannelMap.has(ch.name.toLowerCase()))
+                return epgChannelMap.get(ch.name.toLowerCase())!;
             return null;
         },
         [epgData, epgChannelMap]
@@ -135,7 +153,12 @@ function EPGGuide({
                             </p>
                         )}
                     </div>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => setActiveProgram(null)}>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 shrink-0"
+                        onClick={() => setActiveProgram(null)}
+                    >
                         <X className="h-3 w-3" />
                     </Button>
                 </div>
@@ -174,7 +197,10 @@ function EPGGuide({
                 <div ref={scrollRef} className="overflow-x-auto flex-1 overflow-y-hidden">
                     <div style={{ width: totalWidth, minWidth: totalWidth }}>
                         {/* Time header */}
-                        <div className="flex border-b sticky top-0 bg-background z-10" style={{ height: 32 }}>
+                        <div
+                            className="flex border-b sticky top-0 bg-background z-10"
+                            style={{ height: 32 }}
+                        >
                             {timeLabels.map((t, i) => (
                                 <div
                                     key={i}
@@ -201,9 +227,8 @@ function EPGGuide({
                         {/* Rows */}
                         {channels.map((ch) => {
                             const epgId = resolveEpgId(ch);
-                            const progs = epgId && epgData
-                                ? getProgramsForChannel(epgData, epgId)
-                                : [];
+                            const progs =
+                                epgId && epgData ? getProgramsForChannel(epgData, epgId) : [];
 
                             return (
                                 <div
@@ -344,12 +369,7 @@ function IPTVPlayer({ channel, epgData }: { channel: M3UChannel | null; epgData:
                     </Button>
                 </div>
             )}
-            <video
-                ref={videoRef}
-                className="w-full h-full object-contain"
-                controls
-                playsInline
-            />
+            <video ref={videoRef} className="w-full h-full object-contain" controls playsInline />
             {/* Now playing overlay */}
             <div className="absolute bottom-16 left-4 right-4 pointer-events-none">
                 <div className="inline-flex flex-col gap-0.5 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 max-w-sm">
@@ -372,7 +392,8 @@ function IPTVPlayer({ channel, epgData }: { channel: M3UChannel | null; epgData:
                         <div className="text-white/80 text-xs flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             <span>
-                                {currentProg.title} • {formatTime(currentProg.start)} – {formatTime(currentProg.stop)}
+                                {currentProg.title} • {formatTime(currentProg.start)} –{' '}
+                                {formatTime(currentProg.stop)}
                             </span>
                         </div>
                     )}
@@ -424,7 +445,7 @@ function ChannelList({
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setOpenGroups(new Set([groupNames[0]]));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [groupNames.length]);
 
     const getCurrentProg = useCallback(
@@ -444,7 +465,10 @@ function ChannelList({
     );
 
     return (
-        <div className="flex flex-col h-full border-r bg-background overflow-hidden" style={{ width: 260 }}>
+        <div
+            className="flex flex-col h-full border-r bg-background overflow-hidden"
+            style={{ width: 260 }}
+        >
             <div className="p-3 border-b shrink-0">
                 <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -494,7 +518,8 @@ function ChannelList({
                                                 alt=""
                                                 className="h-7 w-10 object-contain rounded shrink-0 bg-muted/30"
                                                 onError={(e) => {
-                                                    (e.target as HTMLImageElement).style.display = 'none';
+                                                    (e.target as HTMLImageElement).style.display =
+                                                        'none';
                                                 }}
                                             />
                                         ) : (
@@ -503,7 +528,12 @@ function ChannelList({
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <p className={cn('text-sm truncate', isActive && 'font-semibold text-primary')}>
+                                            <p
+                                                className={cn(
+                                                    'text-sm truncate',
+                                                    isActive && 'font-semibold text-primary'
+                                                )}
+                                            >
                                                 {ch.name}
                                             </p>
                                             {prog && (
@@ -543,29 +573,32 @@ export default function IPTVPage() {
     const [m3uError, setM3UError] = useState<string | null>(null);
 
     // Load M3U
-    const loadM3U = useCallback(async (source: string | 'config') => {
-        setLoadingM3U(true);
-        setM3UError(null);
-        try {
-            let content: string;
-            if (source === 'config') {
-                const url = config?.iptvM3uUrl;
-                if (!url) throw new Error('Keine M3U-URL konfiguriert');
-                const res = await fetch(url);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                content = await res.text();
-            } else {
-                content = source;
+    const loadM3U = useCallback(
+        async (source: string | 'config') => {
+            setLoadingM3U(true);
+            setM3UError(null);
+            try {
+                let content: string;
+                if (source === 'config') {
+                    const url = config?.iptvM3uUrl;
+                    if (!url) throw new Error('Keine M3U-URL konfiguriert');
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    content = await res.text();
+                } else {
+                    content = source;
+                }
+                sessionStorage.setItem(STORAGE_KEY_M3U, content);
+                const parsed = parseM3U(content);
+                setChannels(parsed);
+            } catch (e) {
+                setM3UError(e instanceof Error ? e.message : 'Fehler beim Laden der Playlist');
+            } finally {
+                setLoadingM3U(false);
             }
-            sessionStorage.setItem(STORAGE_KEY_M3U, content);
-            const parsed = parseM3U(content);
-            setChannels(parsed);
-        } catch (e) {
-            setM3UError(e instanceof Error ? e.message : 'Fehler beim Laden der Playlist');
-        } finally {
-            setLoadingM3U(false);
-        }
-    }, [config]);
+        },
+        [config]
+    );
 
     // Load EPG
     const loadEPG = useCallback(async () => {
@@ -596,7 +629,7 @@ export default function IPTVPage() {
         if (config?.iptvEpgUrl) {
             void loadEPG();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -622,7 +655,10 @@ export default function IPTVPage() {
             showPlayerBar={false}
             className="flex flex-col"
         >
-            <div className="flex flex-col h-full overflow-hidden" style={{ height: 'calc(100dvh - 3.5rem)' }}>
+            <div
+                className="flex flex-col h-full overflow-hidden"
+                style={{ height: 'calc(100dvh - 3.5rem)' }}
+            >
                 {/* Header bar */}
                 <div className="flex items-center justify-between px-4 py-2 border-b shrink-0 gap-3 bg-background">
                     <div className="flex items-center gap-2">
@@ -639,7 +675,10 @@ export default function IPTVPage() {
                             </Badge>
                         )}
                         {epgData && !loadingEPG && (
-                            <Badge variant="outline" className="text-xs gap-1 text-green-600 border-green-600/30">
+                            <Badge
+                                variant="outline"
+                                className="text-xs gap-1 text-green-600 border-green-600/30"
+                            >
                                 <Calendar className="h-3 w-3" /> EPG geladen
                             </Badge>
                         )}
@@ -647,7 +686,12 @@ export default function IPTVPage() {
                     <div className="flex items-center gap-2">
                         {noConfig && (
                             <label className="cursor-pointer">
-                                <input type="file" accept=".m3u,.m3u8" className="hidden" onChange={handleFileUpload} />
+                                <input
+                                    type="file"
+                                    accept=".m3u,.m3u8"
+                                    className="hidden"
+                                    onChange={handleFileUpload}
+                                />
                                 <Button size="sm" variant="outline" asChild>
                                     <span>M3U-Datei öffnen</span>
                                 </Button>
@@ -709,14 +753,21 @@ export default function IPTVPage() {
                         </div>
                         <div className="flex gap-3 flex-wrap justify-center">
                             <label className="cursor-pointer">
-                                <input type="file" accept=".m3u,.m3u8" className="hidden" onChange={handleFileUpload} />
+                                <input
+                                    type="file"
+                                    accept=".m3u,.m3u8"
+                                    className="hidden"
+                                    onChange={handleFileUpload}
+                                />
                                 <Button variant="outline" asChild>
                                     <span>M3U-Datei öffnen</span>
                                 </Button>
                             </label>
                             {config?.iptvM3uUrl && (
                                 <Button onClick={() => loadM3U('config')} disabled={loadingM3U}>
-                                    {loadingM3U && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                                    {loadingM3U && (
+                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    )}
                                     Aus URL laden
                                 </Button>
                             )}
