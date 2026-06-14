@@ -198,7 +198,7 @@ export default function SeerrCollectionDialog({
         };
 
         void loadDetails();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, isUserLoading, collectionId, currentUser?.Name, isUnauthorized]);
 
     const title = details?.name || 'Collection';

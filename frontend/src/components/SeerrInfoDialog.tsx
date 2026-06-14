@@ -79,7 +79,7 @@ export default function SeerrInfoDialog({
         };
 
         void loadDetails();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, isUserLoading, item.id, item.mediaType, currentUser?.Name, isUnauthorized]);
 
     const isTv = item.mediaType === 'tv';
