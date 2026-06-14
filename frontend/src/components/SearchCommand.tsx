@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/command';
 import { useSearch } from '@/context/SearchContext';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
+import { useSearchByGenreOrTag } from '@/hooks/api/useSearchByGenreOrTag';
 import { useNavigate } from 'react-router';
 import { Skeleton } from './ui/skeleton';
 import { Calendar, Clock, Star, X } from 'lucide-react';
@@ -27,13 +28,29 @@ export const SearchCommand = () => {
     const [, startTransition] = useTransition();
     const { history, addEntry, removeEntry } = useSearchHistory();
     const {
-        data: results,
+        data: titleResults,
         isLoading,
         error,
     } = useSearchItems(query, {
         itemTypes: ['Movie', 'Series'],
         limit: 15,
     });
+
+    const { data: genreTagResults } = useSearchByGenreOrTag(debouncedQuery, {
+        itemTypes: ['Movie', 'Series'],
+        limit: 15,
+    });
+
+    const results = (() => {
+        if (!titleResults && !genreTagResults) return undefined;
+        const combined = [...(titleResults ?? []), ...(genreTagResults ?? [])];
+        const seen = new Set<string>();
+        return combined.filter((item) => {
+            if (!item.Id || seen.has(item.Id)) return false;
+            seen.add(item.Id);
+            return true;
+        });
+    })();
 
     useEffect(() => {
         if (!isOpen) {
