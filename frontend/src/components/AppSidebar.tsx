@@ -187,6 +187,14 @@ const AppSidebar = () => {
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <Link to={'/iptv'}>
+                                        <Tv2 />
+                                        IPTV
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                             {config && config.seerrUrl && (
                                 <SidebarMenuItem>
                                     <SidebarMenuButton asChild>
@@ -197,14 +205,6 @@ const AppSidebar = () => {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             )}
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <Link to={'/iptv'}>
-                                        <Tv2 />
-                                        IPTV
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
                             {config && config.streamystatsUrl && config.showStreamystatsButton && (
                                 <SidebarMenuButton
                                     className="cursor-pointer"
