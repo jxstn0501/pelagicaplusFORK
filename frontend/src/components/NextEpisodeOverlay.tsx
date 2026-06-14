@@ -18,7 +18,9 @@ interface NextEpisodeOverlayProps {
 const NextEpisodeOverlay = ({ nextItem, onPlay, onDismiss }: NextEpisodeOverlayProps) => {
     const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
     const onPlayRef = useRef(onPlay);
-    useEffect(() => { onPlayRef.current = onPlay; }, [onPlay]);
+    useEffect(() => {
+        onPlayRef.current = onPlay;
+    }, [onPlay]);
 
     useEffect(() => {
         if (countdown <= 0) {
