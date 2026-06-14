@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
     Bookmark,
@@ -82,6 +82,7 @@ import { SUPPORTED_LIBRARY_COLLECTION_TYPES } from '@/utils/supportedLibraryColl
 import JellyfinLibraryIcon from './JellyfinLibraryIcon';
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 import { useTranslation } from 'react-i18next';
+import { useSearch } from '@/context/SearchContext';
 import i18n from 'i18next';
 import { useUpdateUserConfiguration } from '@/hooks/api/playbackPreferences/useUpdateUserConfiguration';
 import { useAuthorizeQuickConnect } from '@/hooks/api/useQuickConnect';
@@ -562,6 +563,7 @@ const TopBar = (_props: { overlay?: boolean }) => {
     const [randomEnabled, setRandomEnabled] = useState(false);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { openSearch } = useSearch();
 
     const { data: randomItem, isFetching: isRandomFetching } = useRandomItem(
         ['Movie', 'Series'],
@@ -581,18 +583,6 @@ const TopBar = (_props: { overlay?: boolean }) => {
         setRandomEnabled(true);
     };
 
-    const [navSearchQuery, setNavSearchQuery] = useState('');
-    const handleNavSearch = useCallback(
-        (e: React.FormEvent) => {
-            e.preventDefault();
-            if (navSearchQuery.trim()) {
-                navigate(`/search?q=${encodeURIComponent(navSearchQuery.trim())}`);
-            } else {
-                navigate('/search');
-            }
-        },
-        [navSearchQuery, navigate]
-    );
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
@@ -700,17 +690,14 @@ const TopBar = (_props: { overlay?: boolean }) => {
                 <div className="flex-1" />
 
                 {/* Navbar search */}
-                <form onSubmit={handleNavSearch} className="hidden md:flex items-center">
-                    <div className="relative flex items-center">
-                        <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-                        <Input
-                            value={navSearchQuery}
-                            onChange={(e) => setNavSearchQuery(e.target.value)}
-                            placeholder={t('search')}
-                            className="h-8 w-44 pl-8 text-sm bg-muted/50 border-muted focus-visible:w-56 transition-all duration-200"
-                        />
-                    </div>
-                </form>
+                <button
+                    onClick={openSearch}
+                    className="hidden md:flex items-center gap-2 h-8 w-44 px-2.5 rounded-md border border-muted bg-muted/50 text-sm text-muted-foreground hover:bg-muted/80 transition-colors"
+                >
+                    <Search className="h-3.5 w-3.5 shrink-0" />
+                    <span className="flex-1 text-left">{t('search')}</span>
+                    <kbd className="text-xs bg-background/60 border border-muted rounded px-1">⌘K</kbd>
+                </button>
 
                 {/* Random item button */}
                 <Button
