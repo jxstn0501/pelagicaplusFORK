@@ -1,6 +1,6 @@
 import { usePageBackground } from '@/hooks/usePageBackground';
 import { getBackdropUrl, getLogoUrl } from '@/utils/jellyfinUrls';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -42,6 +42,17 @@ const BaseMediaPage = ({
     const [isBgLoaded, setIsBgLoaded] = useState(false);
     const [prevItemId, setPrevItemId] = useState(itemId);
     const dominantColor = useDominantColor(itemId ? getBackdropUrl(itemId) : undefined);
+    const parallaxRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const el = parallaxRef.current;
+        if (!el) return;
+        const handler = () => {
+            el.style.transform = `translateY(${window.scrollY * 0.3}px)`;
+        };
+        window.addEventListener('scroll', handler, { passive: true });
+        return () => window.removeEventListener('scroll', handler);
+    }, []);
 
     if (itemId !== prevItemId) {
         setPrevItemId(itemId);
@@ -80,7 +91,11 @@ const BaseMediaPage = ({
             </Button>
             <div className="absolute top-0 left-0 h-[75vh] md:h-[85vh] w-full -z-10 overflow-hidden pointer-events-none select-none">
                 {!failedBackdrop && (
-                    <div className="relative w-full h-full">
+                    <div
+                        ref={parallaxRef}
+                        className="absolute left-0 right-0 will-change-transform"
+                        style={{ top: '-20%', bottom: '-20%' }}
+                    >
                         <img
                             className={[
                                 'h-full w-full object-cover',

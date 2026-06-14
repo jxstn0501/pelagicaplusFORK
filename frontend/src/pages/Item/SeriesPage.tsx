@@ -18,6 +18,7 @@ import { formatPlayTime, ticksToSeconds } from '@/utils/timeConversion';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import PeopleRow from './PeopleRow';
+import RatingBasedRow from '@/components/RatingBasedRow';
 import BaseMediaPage from './BaseMediaPage';
 import MoreLikeThisRow from './MoreLikeThisRow';
 import { type AppConfig } from '@/hooks/api/useConfig';
@@ -28,7 +29,7 @@ import WatchListButton from '../../components/WatchlistButton';
 import PlayStateButton from '../../components/PlayStateButton';
 import { getUserId } from '@/utils/localstorageCredentials';
 import ItemAdminButton from '@/components/ItemAdminButton';
-import { TrailerButton } from '../../components/TrailerButton';
+import { InlineTrailerPlayer } from '../../components/InlineTrailerPlayer';
 import UserRatingButton from '../../components/UserRatingButton';
 import { Badge } from '@/components/ui/badge';
 
@@ -182,7 +183,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                                 </Button>
                             )}
                             <ShuffleButton seriesId={item.Id || ''} />
-                            <TrailerButton item={item} />
+                            <InlineTrailerPlayer item={item} />
                             <FavoriteButton
                                 item={item}
                                 showFavoriteButton={
@@ -348,6 +349,7 @@ const SeriesPage = ({ item, config }: SeriesPageProps) => {
                     title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
                     itemId={item.Id || ''}
                 />
+                <RatingBasedRow excludeItemId={item.Id} />
             </div>
         </BaseMediaPage>
     );
