@@ -674,7 +674,13 @@ const TopBar = (_props: { overlay?: boolean }) => {
                             key={i}
                             variant="ghost"
                             size="sm"
-                            onClick={() => window.open(link.url, '_blank', 'noopener,noreferrer')}
+                            onClick={() => {
+                                if (config?.seerrUrl && link.url === config.seerrUrl) {
+                                    navigate('/seerr');
+                                } else {
+                                    window.open(link.url, '_blank', 'noopener,noreferrer');
+                                }
+                            }}
                         >
                             <DynamicIcon
                                 name={(link.icon || 'link-2') as IconName}
@@ -809,7 +815,11 @@ const TopBar = (_props: { overlay?: boolean }) => {
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
-                                window.open(link.url, '_blank', 'noopener,noreferrer');
+                                if (config?.seerrUrl && link.url === config.seerrUrl) {
+                                    navigate('/seerr');
+                                } else {
+                                    window.open(link.url, '_blank', 'noopener,noreferrer');
+                                }
                                 setMobileOpen(false);
                             }}
                         >
