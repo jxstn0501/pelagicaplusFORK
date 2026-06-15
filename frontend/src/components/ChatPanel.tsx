@@ -99,10 +99,16 @@ export function ChatPanel() {
         setIsStreaming(true);
 
         const token = getAccessToken();
-        const assistantMessage: Message = { role: 'assistant', content: '' };
-        setMessages([...newMessages, assistantMessage]);
+        setMessages([...newMessages, { role: 'assistant', content: '' }]);
 
         abortRef.current = new AbortController();
+
+        const setLastMsg = (content: string) =>
+            setMessages((prev) => {
+                const updated = [...prev];
+                updated[updated.length - 1] = { role: 'assistant', content };
+                return updated;
+            });
 
         try {
             const response = await fetch(`${config.streamystatsUrl}/api/chat`, {
@@ -115,54 +121,69 @@ export function ChatPanel() {
                 signal: abortRef.current.signal,
             });
 
-            if (!response.ok || !response.body) {
-                throw new Error(`HTTP ${response.status}`);
+            if (!response.ok) {
+                const body = await response.text().catch(() => '');
+                throw new Error(`HTTP ${response.status}${body ? ': ' + body.slice(0, 200) : ''}`);
             }
+
+            if (!response.body) throw new Error('No response body');
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
+            // Buffer incomplete lines across chunks
+            let lineBuffer = '';
             let accumulated = '';
+
+            const processLine = (line: string) => {
+                // Strip SSE "data: " prefix if present
+                const raw = line.startsWith('data: ') ? line.slice(6) : line;
+                if (!raw || raw === '[DONE]') return;
+
+                // Vercel AI SDK data stream: `0:"text delta"`
+                if (raw.startsWith('0:')) {
+                    try {
+                        accumulated += JSON.parse(raw.slice(2)) as string;
+                    } catch { /* skip */ }
+                    return;
+                }
+
+                // Plain JSON fallback: { content: "..." } or { text: "..." }
+                if (raw.startsWith('{')) {
+                    try {
+                        const obj = JSON.parse(raw) as Record<string, unknown>;
+                        const text =
+                            (obj.content as string) ??
+                            (obj.text as string) ??
+                            (obj.delta as string) ??
+                            ((obj.choices as { delta?: { content?: string } }[])?.[0]?.delta?.content);
+                        if (typeof text === 'string') accumulated += text;
+                    } catch { /* skip */ }
+                }
+            };
 
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
 
-                const chunk = decoder.decode(value, { stream: true });
-                // Parse Vercel AI SDK data stream protocol: lines like `0:"text"\n`
-                const lines = chunk.split('\n');
-                for (const line of lines) {
-                    if (line.startsWith('0:')) {
-                        try {
-                            // `0:"escaped text"` — JSON string after the prefix
-                            const jsonStr = line.slice(2);
-                            const text = JSON.parse(jsonStr) as string;
-                            accumulated += text;
-                        } catch {
-                            // ignore malformed chunks
-                        }
-                    }
-                }
+                lineBuffer += decoder.decode(value, { stream: true });
+                const lines = lineBuffer.split('\n');
+                // Keep the last (possibly incomplete) fragment in the buffer
+                lineBuffer = lines.pop() ?? '';
 
-                const currentAccumulated = accumulated;
-                setMessages((prev) => {
-                    const updated = [...prev];
-                    updated[updated.length - 1] = {
-                        role: 'assistant',
-                        content: currentAccumulated,
-                    };
-                    return updated;
-                });
+                for (const line of lines) {
+                    processLine(line.trim());
+                }
+                setLastMsg(accumulated);
             }
+
+            // Process any remaining buffered content
+            if (lineBuffer.trim()) processLine(lineBuffer.trim());
+            setLastMsg(accumulated || '_No response received._');
+
         } catch (err) {
             if ((err as Error).name !== 'AbortError') {
-                setMessages((prev) => {
-                    const updated = [...prev];
-                    updated[updated.length - 1] = {
-                        role: 'assistant',
-                        content: '_Error: Could not get a response._',
-                    };
-                    return updated;
-                });
+                const msg = (err as Error).message ?? 'Unknown error';
+                setLastMsg(`_Error: ${msg}_`);
             }
         } finally {
             setIsStreaming(false);
