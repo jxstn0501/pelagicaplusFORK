@@ -89,6 +89,36 @@ export function ChatPanel() {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // Resolve the StreamyStats server ID that matches the user's Jellyfin server URL.
+    // Cached in a ref so we only fetch it once per session.
+    const serverIdRef = useRef<number | null>(null);
+
+    const resolveServerId = useCallback(async (statsUrl: string, token: string | null): Promise<number> => {
+        if (serverIdRef.current !== null) return serverIdRef.current;
+
+        const jellyfinUrl = getServerUrl();
+        try {
+            const res = await fetch(`${statsUrl}/api/servers`, {
+                headers: token ? { Authorization: `MediaBrowser Token="${token}"` } : {},
+            });
+            if (res.ok) {
+                const data = await res.json() as { id: number; url?: string; serverUrl?: string }[];
+                const servers = Array.isArray(data) ? data : (data as { servers?: typeof data }).servers ?? [];
+                const match = jellyfinUrl
+                    ? servers.find((s) => {
+                          const u = s.url ?? s.serverUrl ?? '';
+                          return u.replace(/\/$/, '') === jellyfinUrl.replace(/\/$/, '');
+                      })
+                    : null;
+                const id = match?.id ?? servers[0]?.id ?? 1;
+                serverIdRef.current = id;
+                return id;
+            }
+        } catch { /* fall through to default */ }
+        serverIdRef.current = 1;
+        return 1;
+    }, []);
+
     const sendMessage = useCallback(async () => {
         if (!input.trim() || isStreaming || !config?.streamystatsUrl) return;
 
@@ -111,13 +141,15 @@ export function ChatPanel() {
             });
 
         try {
+            const serverId = await resolveServerId(config.streamystatsUrl, token);
+
             const response = await fetch(`${config.streamystatsUrl}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     ...(token ? { Authorization: `MediaBrowser Token="${token}"` } : {}),
                 },
-                body: JSON.stringify({ messages: newMessages, serverId: 1 }),
+                body: JSON.stringify({ messages: newMessages, serverId }),
                 signal: abortRef.current.signal,
             });
 
