@@ -30,6 +30,7 @@ import IPTVPage from './pages/IPTV/IPTVPage.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import StatsConsentModal from './components/StatsConsentModal.tsx';
 import { AppPreloader } from './components/AppPreloader.tsx';
+import { ChatPanel } from './components/ChatPanel.tsx';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -51,6 +52,7 @@ createRoot(document.getElementById('root')!).render(
                         <PelagicaThemeLoader />
                         <Toaster />
                         <StatsConsentModal />
+                        <ChatPanel />
                         <AppPreloader>
                             <Routes>
                                 <Route path="/" element={<HomePage />} />
