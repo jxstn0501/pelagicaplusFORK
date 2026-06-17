@@ -5,6 +5,7 @@ import {
     GeneralCommandType,
     PlaystateCommand,
 } from '@jellyfin/sdk/lib/generated-client/models';
+import { getUserId } from '@/utils/localstorageCredentials';
 
 export { PlaystateCommand };
 
@@ -25,6 +26,7 @@ export function useRemotePlaystate() {
                 sessionId,
                 command,
                 seekPositionTicks,
+                controllingUserId: getUserId() ?? undefined,
             });
         },
     });
