@@ -1,7 +1,10 @@
 import { getApi } from '@/api/getApi';
 import { getSessionApi } from '@jellyfin/sdk/lib/utils/api/session-api';
 import { useMutation } from '@tanstack/react-query';
-import { PlaystateCommand } from '@jellyfin/sdk/lib/generated-client/models';
+import {
+    GeneralCommandType,
+    PlaystateCommand,
+} from '@jellyfin/sdk/lib/generated-client/models';
 
 export { PlaystateCommand };
 
@@ -34,13 +37,13 @@ export function useRemoteGeneralCommand() {
             commandName,
         }: {
             sessionId: string;
-            commandName: string;
+            commandName: GeneralCommandType;
         }) => {
             const api = getApi();
             const sessionApi = getSessionApi(api);
             await sessionApi.sendGeneralCommand({
                 sessionId,
-                generalCommand: { Name: commandName as never },
+                command: commandName,
             });
         },
     });

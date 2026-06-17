@@ -28,6 +28,7 @@ import {
     PlaystateCommand,
 } from '@/hooks/api/useRemotePlaystate';
 import { useRemotePlay } from '@/hooks/api/useRemotePlay';
+import { GeneralCommandType } from '@jellyfin/sdk/lib/generated-client/models';
 import { useResumeItems } from '@/hooks/api/continue/useResumeItems';
 import { useNextUp } from '@/hooks/api/continue/useNextUp';
 import { useSearchItems } from '@/hooks/api/useSearchItems';
@@ -113,7 +114,7 @@ function SessionPicker({
                             <div className="flex-1 min-w-0">
                                 <div className="truncate font-medium">{s.DeviceName ?? 'Gerät'}</div>
                                 <div className="truncate text-xs text-white/40">
-                                    {s.ClientName} · {s.UserName}
+                                    {s.Client} · {s.UserName}
                                 </div>
                             </div>
                         </button>
@@ -531,7 +532,7 @@ function ControlsTab({
     session: SessionInfoDto | null;
     selectedSessionId: string | null;
     onSendCmd: (cmd: PlaystateCommand, ticks?: number) => void;
-    onSendGen: (name: string) => void;
+    onSendGen: (name: GeneralCommandType) => void;
     onSkip: (seconds: number) => void;
     onSeek: (ticks: number) => void;
 }) {
@@ -646,16 +647,16 @@ function ControlsTab({
             {/* Volume + Stop */}
             <div className="flex items-center justify-center gap-3">
                 <ControlButton
-                    onClick={() => onSendGen('ToggleMute')}
+                    onClick={() => onSendGen(GeneralCommandType.ToggleMute)}
                     label={isMuted ? 'Ton an' : 'Ton aus'}
                     disabled={disabled}
                 >
                     {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </ControlButton>
-                <ControlButton onClick={() => onSendGen('VolumeDown')} label="Leiser" disabled={disabled}>
+                <ControlButton onClick={() => onSendGen(GeneralCommandType.VolumeDown)} label="Leiser" disabled={disabled}>
                     <Volume1 size={20} />
                 </ControlButton>
-                <ControlButton onClick={() => onSendGen('VolumeUp')} label="Lauter" disabled={disabled}>
+                <ControlButton onClick={() => onSendGen(GeneralCommandType.VolumeUp)} label="Lauter" disabled={disabled}>
                     <Volume2 size={20} />
                 </ControlButton>
                 <ControlButton
@@ -717,8 +718,6 @@ const RemotePage = () => {
         if (!isLoggedIn) navigate('/login', { replace: true });
     }, [isLoggedIn, navigate]);
 
-    // Only sessions with active playback appear in session picker
-    const playingSessions = sessions.filter((s) => s.NowPlayingItem);
     // All sessions are selectable as target (even idle ones can receive play commands)
     const allSessions = sessions;
 
@@ -738,7 +737,7 @@ const RemotePage = () => {
         sendCmd({ sessionId: selectedSessionId, command, seekPositionTicks });
     }
 
-    function gen(commandName: string) {
+    function gen(commandName: GeneralCommandType) {
         if (!selectedSessionId) return;
         sendGen({ sessionId: selectedSessionId, commandName });
     }
