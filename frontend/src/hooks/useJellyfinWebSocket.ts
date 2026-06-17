@@ -10,7 +10,6 @@ interface PlaystateData {
 interface PlayData {
     ItemIds: string[];
     StartPositionTicks?: number;
-    PlayCommand?: string;
 }
 
 interface JellyfinMessage {
@@ -20,12 +19,14 @@ interface JellyfinMessage {
 
 interface UseJellyfinWebSocketOptions {
     onPlaystateCommand?: (command: string, seekPositionTicks?: number) => void;
-    onPlayCommand?: (itemIds: string[], startPositionTicks?: number) => void;
+    onPlayCommand?: (itemIds: string[]) => void;
+    onConnected?: () => void;
 }
 
 export function useJellyfinWebSocket({
     onPlaystateCommand,
     onPlayCommand,
+    onConnected,
 }: UseJellyfinWebSocketOptions) {
     const wsRef = useRef<WebSocket | null>(null);
     const keepAliveRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -39,7 +40,13 @@ export function useJellyfinWebSocket({
             const token = getAccessToken();
             const deviceId = getDeviceId();
 
-            if (!serverUrl || !token) return;
+            if (!serverUrl || !token) {
+                // Not logged in yet — retry until credentials are available
+                if (!destroyed) {
+                    reconnectTimeoutRef.current = setTimeout(connect, 3000);
+                }
+                return;
+            }
 
             const wsUrl = serverUrl
                 .replace(/^https/, 'wss')
@@ -51,6 +58,8 @@ export function useJellyfinWebSocket({
             wsRef.current = ws;
 
             ws.onopen = () => {
+                onConnected?.();
+
                 if (keepAliveRef.current) clearInterval(keepAliveRef.current);
                 keepAliveRef.current = setInterval(() => {
                     if (ws.readyState === WebSocket.OPEN) {
@@ -69,7 +78,7 @@ export function useJellyfinWebSocket({
                     } else if (msg.MessageType === 'Play') {
                         const data = msg.Data as PlayData;
                         if (data.ItemIds?.length > 0) {
-                            onPlayCommand?.(data.ItemIds, data.StartPositionTicks);
+                            onPlayCommand?.(data.ItemIds);
                         }
                     }
                 } catch {
@@ -97,5 +106,5 @@ export function useJellyfinWebSocket({
             if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
             wsRef.current?.close();
         };
-    }, [onPlaystateCommand, onPlayCommand]);
+    }, [onPlaystateCommand, onPlayCommand, onConnected]);
 }
