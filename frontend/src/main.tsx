@@ -28,6 +28,7 @@ import MyListPage from './pages/MyList/MyListPage.tsx';
 import SeerrPage from './pages/Seerr/SeerrPage.tsx';
 import IPTVPage from './pages/IPTV/IPTVPage.tsx';
 import RemotePage from './pages/Remote/RemotePage.tsx';
+import { AppJellyfinSocket } from './components/AppJellyfinSocket.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import StatsConsentModal from './components/StatsConsentModal.tsx';
 import { AppPreloader } from './components/AppPreloader.tsx';
@@ -48,6 +49,7 @@ createRoot(document.getElementById('root')!).render(
             <MusicPlaybackProvider>
                 <SearchProvider>
                     <BrowserRouter>
+                        <AppJellyfinSocket />
                         <KeyboardShortcuts />
                         <SearchCommand />
                         <PelagicaThemeLoader />
