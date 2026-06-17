@@ -2,10 +2,11 @@
 import { useReportPlaybackProgress } from '@/hooks/api/usePlaybackProgress';
 import { usePlaybackStart } from '@/hooks/api/usePlaybackStart';
 import { usePlaybackStop } from '@/hooks/api/usePlaybackStop';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import VideoPlayer, { type SubtitleTrack } from '@/pages/Player/VideoPlayer';
 import PlayerControls from '@/pages/Player/PlayerControls';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useJellyfinWebSocket } from '@/hooks/useJellyfinWebSocket';
 import {
     getPrimaryImageUrl,
     getVideoStreamUrl,
@@ -37,9 +38,11 @@ export type VideoJsPlayer = ReturnType<typeof import('video.js').default>;
 const PlayerPage = () => {
     const params = useParams<{ itemId: string }>();
     const itemId = params.itemId;
+    const navigate = useNavigate();
     const hasUserSelectedSubtitleRef = useRef(false);
     const hasUserSelectedAudioRef = useRef(false);
     const [player, setPlayer] = useState<VideoJsPlayer | null>(null);
+    const playerRef = useRef<VideoJsPlayer | null>(null);
     const {
         data: userConfiguration,
         isLoading: isLoadingUserConfiguration,
@@ -47,6 +50,49 @@ const PlayerPage = () => {
     } = useUserConfiguration(getUserId());
     const { data: item, isLoading, error } = usePlayerItem(itemId, true);
     const { config } = useConfig();
+
+    useEffect(() => {
+        playerRef.current = player;
+    }, [player]);
+
+    const handlePlaystateCommand = useCallback((command: string, seekPositionTicks?: number) => {
+        const p = playerRef.current;
+        if (!p || p.isDisposed?.()) return;
+        switch (command) {
+            case 'PlayPause':
+                if (p.paused()) { void p.play(); } else { p.pause(); }
+                break;
+            case 'Unpause':
+                void p.play();
+                break;
+            case 'Pause':
+                p.pause();
+                break;
+            case 'Stop':
+                p.pause();
+                navigate(-1);
+                break;
+            case 'Seek':
+                if (seekPositionTicks !== undefined) {
+                    p.currentTime(seekPositionTicks / 10000000);
+                }
+                break;
+            case 'NextTrack':
+            case 'PreviousTrack':
+                // handled by PlayerControls adjacent-item navigation; no-op here
+                break;
+        }
+    }, [navigate]);
+
+    const handlePlayCommand = useCallback((itemIds: string[], _startPositionTicks?: number) => {
+        if (itemIds.length === 0) return;
+        navigate(`/play/${itemIds[0]}`);
+    }, [navigate]);
+
+    useJellyfinWebSocket({
+        onPlaystateCommand: handlePlaystateCommand,
+        onPlayCommand: handlePlayCommand,
+    });
 
     const resolvedAudio = useMemo(() => {
         if (!item || !userConfiguration) {
