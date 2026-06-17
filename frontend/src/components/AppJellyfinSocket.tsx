@@ -31,9 +31,9 @@ export function AppJellyfinSocket() {
         }
     }, [navigate]);
 
-    const handlePlayCommand = useCallback((_itemIds: string[], _startPositionTicks?: number) => {
-        if (_itemIds.length === 0) return;
-        navigate(`/play/${_itemIds[0]}`);
+    const handlePlayCommand = useCallback((itemIds: string[]) => {
+        if (itemIds.length === 0) return;
+        navigate(`/play/${itemIds[0]}`);
     }, [navigate]);
 
     useJellyfinWebSocket({
