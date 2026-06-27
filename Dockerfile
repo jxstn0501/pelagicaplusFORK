@@ -8,6 +8,10 @@ RUN npm install -g pnpm \
     && pnpm install --frozen-lockfile
 
 COPY frontend .
+
+ARG APP_VERSION
+ENV VITE_APP_VERSION=$APP_VERSION
+
 RUN pnpm run build
 
 
