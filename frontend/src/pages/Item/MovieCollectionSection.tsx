@@ -12,11 +12,7 @@ import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import ScrollableSectionPoster from '@/components/ScrollableSectionPoster';
 import SectionScroller from '@/components/SectionScroller';
 
-interface MovieCollectionSectionProps {
-    item: BaseItemDto;
-}
-
-const CollectionItems = ({
+const BoxSetSection = ({
     boxSet,
     seerrCollectionId,
     hasSeerr,
@@ -26,8 +22,9 @@ const CollectionItems = ({
     hasSeerr: boolean;
 }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const { data: items } = useBoxSetItems(boxSet.Id || null);
+    const { data: items, isLoading } = useBoxSetItems(boxSet.Id || null);
 
+    if (isLoading) return null;
     if (!items || items.length === 0) return null;
 
     return (
@@ -87,58 +84,19 @@ const CollectionItems = ({
     );
 };
 
-const MovieCollectionSection = ({ item }: MovieCollectionSectionProps) => {
-    const { config } = useConfig();
-    const hasSeerr = !!config?.seerrUrl;
-    const tmdbId = item.ProviderIds?.Tmdb;
-
-    const { data: boxSet, isLoading: boxSetLoading } = useMovieBoxSet(item.Id);
-
-    const { data: seerrDetails } = useMovieSeerrDetails(
-        hasSeerr && tmdbId ? tmdbId : null
-    );
-
-    const seerrCollection =
-        seerrDetails?.belongsToCollection ||
-        seerrDetails?.collection ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (seerrDetails as any)?.belongs_to_collection ||
-        null;
-
-    if (boxSetLoading) return null;
-
-    // Case 1: Jellyfin BoxSet found → show it (+ optional Seerr request button)
-    if (boxSet) {
-        return (
-            <CollectionItems
-                boxSet={boxSet}
-                seerrCollectionId={seerrCollection?.id}
-                hasSeerr={hasSeerr}
-            />
-        );
-    }
-
-    // Case 2: No Jellyfin BoxSet, but Seerr knows a collection → show button to browse/request
-    if (hasSeerr && seerrCollection) {
-        return <SeerrOnlyCollection seerrCollection={seerrCollection} />;
-    }
-
-    return null;
-};
-
-const SeerrOnlyCollection = ({
-    seerrCollection,
+const SeerrOnlySection = ({
+    collection,
 }: {
-    seerrCollection: { id: number; name: string };
+    collection: { id: number; name: string };
 }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     return (
-        <div className="px-4 sm:px-12 flex items-center gap-4">
+        <div className="px-4 sm:px-12 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 text-muted-foreground">
                 <Layers className="h-5 w-5" />
-                <span className="text-sm font-medium">Teil einer Sammlung:</span>
-                <span className="font-semibold text-foreground">{seerrCollection.name}</span>
+                <span className="text-sm">Teil einer Sammlung:</span>
+                <span className="font-semibold text-foreground">{collection.name}</span>
             </div>
             <Button
                 variant="outline"
@@ -150,12 +108,56 @@ const SeerrOnlyCollection = ({
                 Sammlung anzeigen &amp; anfragen
             </Button>
             <SeerrCollectionDialog
-                collectionId={seerrCollection.id}
+                collectionId={collection.id}
                 open={dialogOpen}
                 onOpenChange={setDialogOpen}
             />
         </div>
     );
+};
+
+interface MovieCollectionSectionProps {
+    item: BaseItemDto;
+}
+
+const MovieCollectionSection = ({ item }: MovieCollectionSectionProps) => {
+    const { config } = useConfig();
+    const hasSeerr = !!config?.seerrUrl;
+    const tmdbId = item.ProviderIds?.Tmdb;
+
+    const { data: boxSet, isLoading: boxSetLoading } = useMovieBoxSet(item.Id);
+
+    const { data: seerrDetails } = useMovieSeerrDetails(
+        hasSeerr && tmdbId ? tmdbId : null
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const seerrCollection: { id: number; name: string } | null =
+        seerrDetails?.belongsToCollection ||
+        seerrDetails?.collection ||
+        (seerrDetails as any)?.belongs_to_collection ||
+        null;
+
+    // Still searching for BoxSet – render nothing yet
+    if (boxSetLoading) return null;
+
+    // Jellyfin BoxSet found
+    if (boxSet) {
+        return (
+            <BoxSetSection
+                boxSet={boxSet}
+                seerrCollectionId={seerrCollection?.id}
+                hasSeerr={hasSeerr}
+            />
+        );
+    }
+
+    // No local BoxSet, but Seerr knows a collection
+    if (hasSeerr && seerrCollection) {
+        return <SeerrOnlySection collection={seerrCollection} />;
+    }
+
+    return null;
 };
 
 export default MovieCollectionSection;
