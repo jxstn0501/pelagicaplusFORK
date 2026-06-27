@@ -9,8 +9,6 @@ import {
 import { getPrimaryImageUrl } from '@/utils/jellyfinUrls';
 import { Star, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
 import type { BaseItemDto, BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 
 interface RecommendedItemsRowProps {
@@ -26,9 +24,7 @@ const RecommendedItemsRow = ({
     type = 'all',
     limit = 20,
     showSimilarity = true,
-    showBasedOn = false,
 }: RecommendedItemsRowProps) => {
-    const { t } = useTranslation('home');
     const { data: recommendedItems, isLoading, error } = useRecommendedItems({ type, limit });
 
     const posterUrls = useMemo(() => {
@@ -38,22 +34,6 @@ const RecommendedItemsRow = ({
                 acc[item.item.id!] = getPrimaryImageUrl(item.item.id!, {
                     width: 416,
                     height: 640,
-                });
-                return acc;
-            },
-            {} as Record<string, string>
-        );
-    }, [recommendedItems]);
-
-    const basedOnPosterUrls = useMemo(() => {
-        if (!recommendedItems) return {};
-        return recommendedItems.data.reduce(
-            (acc, item) => {
-                item.basedOn.forEach((basedOnItem) => {
-                    acc[basedOnItem.id!] = getPrimaryImageUrl(basedOnItem.id!, {
-                        width: 208,
-                        height: 320,
-                    });
                 });
                 return acc;
             },
@@ -113,40 +93,11 @@ const RecommendedItemsRow = ({
                                               {(item.similarity * 100).toFixed(0)}%
                                           </Badge>
                                       )}
-                                      {showBasedOn && item.basedOn.length > 0 ? (
-                                          <>
-                                              <p className="mb-1 text-xs text-muted-foreground">
-                                                  {t('because_you_watched')}
-                                              </p>
-                                              <div className="flex gap-3">
-                                                  {item.basedOn.map((basedOnItem) => (
-                                                      <Link
-                                                          to={`/item/${basedOnItem.id}`}
-                                                          key={basedOnItem.id}
-                                                          className="w-1/3"
-                                                          title={basedOnItem.name}
-                                                      >
-                                                          <img
-                                                              key={basedOnItem.id}
-                                                              src={
-                                                                  basedOnPosterUrls[basedOnItem.id!]
-                                                              }
-                                                              alt={basedOnItem.name + ' Poster'}
-                                                              className="w-full object-cover rounded"
-                                                          />
-                                                      </Link>
-                                                  ))}
-                                              </div>
-                                          </>
-                                      ) : (
-                                          <div>
-                                              {item.item.communityRating && (
-                                                  <span className="text-xs text-muted-foreground mr-3 flex items-center gap-1">
-                                                      <Star size={14} />
-                                                      {item.item.communityRating.toFixed(1)}
-                                                  </span>
-                                              )}
-                                          </div>
+                                      {item.item.communityRating && (
+                                          <span className="text-xs text-muted-foreground mr-3 flex items-center gap-1">
+                                              <Star size={14} />
+                                              {item.item.communityRating.toFixed(1)}
+                                          </span>
                                       )}
                                   </ScrollableSectionPoster>
                               );

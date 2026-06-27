@@ -549,6 +549,11 @@ const UserMenu = () => {
                     <LogOut />
                     {t('logout')}
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+                <div className="px-2 py-1.5 text-xs text-muted-foreground">
+                    v{import.meta.env.VITE_APP_VERSION ?? 'dev'}
+                </div>
             </DropdownMenuContent>
         </DropdownMenu>
     );
