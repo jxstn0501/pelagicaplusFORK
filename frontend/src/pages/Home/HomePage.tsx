@@ -14,6 +14,7 @@ import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
 import StudiosRow from './StudiosRow';
 import TopTenRow from './TopTenRow';
+import BecauseYouWatchedRows from './BecauseYouWatchedRows';
 import RecentPersonsRow from './RecentPersonsRow';
 import LazyRow from '@/components/LazyRow';
 import { useEffect, useState } from 'react';
@@ -288,6 +289,15 @@ const HomePage = () => {
                                         items={section.items}
                                     />
                                 </LazyRow>
+                            );
+
+                        case 'becauseYouWatched':
+                            return (
+                                <BecauseYouWatchedRows
+                                    key={index}
+                                    seedLimit={section.seedLimit}
+                                    limit={section.limit}
+                                />
                             );
 
                         case 'recentPersons':
