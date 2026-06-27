@@ -130,10 +130,10 @@ const MovieCollectionSection = ({ item }: MovieCollectionSectionProps) => {
         hasSeerr && tmdbId ? tmdbId : null
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const seerrCollection: { id: number; name: string } | null =
         seerrDetails?.belongsToCollection ||
         seerrDetails?.collection ||
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (seerrDetails as any)?.belongs_to_collection ||
         null;
 
