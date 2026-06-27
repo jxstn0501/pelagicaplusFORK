@@ -36,4 +36,4 @@ export default defineConfig(({ mode: _mode }) => ({
             },
         },
     },
-});
+}));
