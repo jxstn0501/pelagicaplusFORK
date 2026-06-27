@@ -9,6 +9,7 @@ import {
     DotIcon,
     Fingerprint,
     Globe,
+    Heart,
     Home,
     House,
     Laptop,
@@ -671,7 +672,14 @@ const TopBar = (_props: { overlay?: boolean }) => {
                     <Button asChild variant="ghost" size="sm">
                         <Link to="/my-list">
                             <Bookmark className="h-4 w-4" />
-                            {t('my_list', { defaultValue: 'My List' })}
+                            Meine Liste
+                        </Link>
+                    </Button>
+
+                    <Button asChild variant="ghost" size="sm">
+                        <Link to="/likes">
+                            <Heart className="h-4 w-4" />
+                            Likes
                         </Link>
                     </Button>
 
@@ -910,7 +918,18 @@ const TopBar = (_props: { overlay?: boolean }) => {
                     >
                         <Link to="/my-list">
                             <Bookmark className="h-4 w-4" />
-                            {t('my_list', { defaultValue: 'My List' })}
+                            Meine Liste
+                        </Link>
+                    </Button>
+                    <Button
+                        asChild
+                        variant="ghost"
+                        className="justify-start"
+                        onClick={() => setMobileOpen(false)}
+                    >
+                        <Link to="/likes">
+                            <Heart className="h-4 w-4" />
+                            Likes
                         </Link>
                     </Button>
                     <Button

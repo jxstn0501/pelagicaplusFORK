@@ -12,10 +12,8 @@ import ResumeRow from './ResumeRow';
 import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
-import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
 import TopTenRow from './TopTenRow';
-import BecauseYouWatchedRows from './BecauseYouWatchedRows';
 import RecentPersonsRow from './RecentPersonsRow';
 import LazyRow from '@/components/LazyRow';
 import { useEffect, useState } from 'react';
@@ -271,15 +269,6 @@ const HomePage = () => {
                                 </LazyRow>
                             );
 
-                        case 'moodBar':
-                            return (
-                                <MoodBar
-                                    key={index}
-                                    title={section.title || 'Wie ist deine Stimmung?'}
-                                    limit={section.limit}
-                                />
-                            );
-
                         case 'genreRecommended':
                             return (
                                 <GenreRecommendedRows
@@ -299,15 +288,6 @@ const HomePage = () => {
                                         items={section.items}
                                     />
                                 </LazyRow>
-                            );
-
-                        case 'becauseYouWatched':
-                            return (
-                                <BecauseYouWatchedRows
-                                    key={index}
-                                    seedLimit={section.seedLimit}
-                                    limit={section.limit}
-                                />
                             );
 
                         case 'recentPersons':

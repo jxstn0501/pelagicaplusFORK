@@ -5,31 +5,27 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models';
 import { useGenericItems } from '@/hooks/api/useGenericItems';
-import { useTranslation } from 'react-i18next';
-import ItemsRow from '../Home/ItemsRow';
 
-const MY_LIST_CONFIG = JSON.stringify({
-    isInKefinTweaksWatchlist: true,
+const LIKES_CONFIG = JSON.stringify({
+    isFavorite: true,
     types: ['Movie', 'Series'],
     sortBy: ['DateCreated'],
     sortOrder: 'Descending',
     limit: 100,
 });
 
-const MyListPage = () => {
-    const { t } = useTranslation('sidebar');
+const LikesPage = () => {
     const navigate = useNavigate();
-    const title = t('my_list', { defaultValue: 'Meine Liste' });
 
     const mockItem = {
-        Id: MY_LIST_CONFIG,
-        Name: title,
+        Id: LIKES_CONFIG,
+        Name: 'Likes',
         Type: 'Folder' as BaseItemKind,
     };
 
     return (
         <Page
-            title={title}
+            title="Likes"
             className="flex-1 flex flex-col pt-16"
             overlayHeader={false}
             pagePadding
@@ -42,20 +38,6 @@ const MyListPage = () => {
             >
                 <ArrowLeft className="w-5 h-5" />
             </Button>
-            <div className="mb-6">
-                <ItemsRow
-                    title="Likes"
-                    allLink="/likes"
-                    items={{
-                        isFavorite: true,
-                        types: ['Movie', 'Series'],
-                        sortBy: ['DateCreated'],
-                        sortOrder: 'Descending',
-                        limit: 20,
-                    }}
-                    detailFields={['ReleaseYear']}
-                />
-            </div>
             <ItemsListPage
                 item={mockItem}
                 useItems={useGenericItems}
@@ -67,4 +49,4 @@ const MyListPage = () => {
     );
 };
 
-export default MyListPage;
+export default LikesPage;

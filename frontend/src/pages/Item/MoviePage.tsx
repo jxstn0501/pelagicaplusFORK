@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import MoreLikeThisRow from './MoreLikeThisRow';
 import RatingBasedRow from '@/components/RatingBasedRow';
 import type { AppConfig } from '@/hooks/api/useConfig';
+import MovieCollectionSection from './MovieCollectionSection';
 import DetailBadges from './DetailBadges';
 import MediaInfoDialog from '../../components/MediaInfoDialog';
 import FavoriteButton from '../../components/FavoriteButton';
@@ -251,6 +252,7 @@ const MoviePage = ({ item, config }: MoviePageProps) => {
                     title={<h3 className="text-3xl font-bold">{t('cast_and_crew')}</h3>}
                     people={item.People || []}
                 />
+                <MovieCollectionSection item={item} />
                 <MoreLikeThisRow
                     title={<h3 className="text-3xl font-bold">{t('more_like_this')}</h3>}
                     itemId={item.Id || ''}

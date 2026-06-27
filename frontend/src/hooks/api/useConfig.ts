@@ -377,12 +377,6 @@ const DEFAULT_CONFIG: AppConfig = {
             showSimilarity: false,
             showBasedOn: false,
         },
-        // 5b. ERINNERUNG — "weil du X geschaut hast", knüpft an die History an
-        {
-            type: 'becauseYouWatched',
-            seedLimit: 3,
-            limit: 12,
-        },
         // 6. FOMO — frisch hinzugefügt, verpasst du das gerade?
         {
             type: 'recentlyAdded',
@@ -409,12 +403,6 @@ const DEFAULT_CONFIG: AppConfig = {
                 types: ['Series'],
             },
             detailFields: ['ReleaseYear'],
-        },
-        // 9. MOOD-FILTER — Entdeckungszone für "ich weiß nicht was ich will"
-        {
-            type: 'moodBar',
-            title: 'Wie ist deine Stimmung?',
-            limit: 20,
         },
         // 10+11. QUALITÄTS-ANKER — "sichere" Auswahl, reduziert Risiko
         {
