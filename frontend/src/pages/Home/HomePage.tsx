@@ -12,7 +12,6 @@ import ResumeRow from './ResumeRow';
 import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models';
 import GenresRow from './GenresRow';
 import LibrariesRow from './LibrariesRow';
-import MoodBar from './MoodBar';
 import StudiosRow from './StudiosRow';
 import TopTenRow from './TopTenRow';
 import BecauseYouWatchedRows from './BecauseYouWatchedRows';
@@ -269,15 +268,6 @@ const HomePage = () => {
                                         showBasedOn={section.showBasedOn}
                                     />
                                 </LazyRow>
-                            );
-
-                        case 'moodBar':
-                            return (
-                                <MoodBar
-                                    key={index}
-                                    title={section.title || 'Wie ist deine Stimmung?'}
-                                    limit={section.limit}
-                                />
                             );
 
                         case 'genreRecommended':

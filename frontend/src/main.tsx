@@ -25,6 +25,7 @@ import ThemeBrowserPage from './pages/ThemeBroser/ThemeBrowserPage.tsx';
 import AllStudiosPage from './pages/Studios/AllStudiosPage.tsx';
 import AllItemsPage from './pages/Items/AllItemsPage.tsx';
 import MyListPage from './pages/MyList/MyListPage.tsx';
+import LikesPage from './pages/Likes/LikesPage.tsx';
 import SeerrPage from './pages/Seerr/SeerrPage.tsx';
 import IPTVPage from './pages/IPTV/IPTVPage.tsx';
 import RemotePage from './pages/Remote/RemotePage.tsx';
@@ -32,7 +33,6 @@ import { AppJellyfinSocket } from './components/AppJellyfinSocket.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import StatsConsentModal from './components/StatsConsentModal.tsx';
 import { AppPreloader } from './components/AppPreloader.tsx';
-import { ChatPanel } from './components/ChatPanel.tsx';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -55,12 +55,12 @@ createRoot(document.getElementById('root')!).render(
                         <PelagicaThemeLoader />
                         <Toaster />
                         <StatsConsentModal />
-                        <ChatPanel />
                         <AppPreloader>
                             <Routes>
                                 <Route path="/" element={<HomePage />} />
                                 <Route path="/library" element={<LibraryPage />} />
                                 <Route path="/my-list" element={<MyListPage />} />
+                                <Route path="/likes" element={<LikesPage />} />
                                 <Route path="/item/:itemId" element={<ItemPage />} />
                                 <Route path="/items" element={<AllItemsPage />} />
                                 <Route path="/studios" element={<AllStudiosPage />} />

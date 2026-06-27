@@ -410,12 +410,6 @@ const DEFAULT_CONFIG: AppConfig = {
             },
             detailFields: ['ReleaseYear'],
         },
-        // 9. MOOD-FILTER — Entdeckungszone für "ich weiß nicht was ich will"
-        {
-            type: 'moodBar',
-            title: 'Wie ist deine Stimmung?',
-            limit: 20,
-        },
         // 10+11. QUALITÄTS-ANKER — "sichere" Auswahl, reduziert Risiko
         {
             type: 'items',
