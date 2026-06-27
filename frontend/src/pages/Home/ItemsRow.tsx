@@ -17,6 +17,7 @@ interface ItemsRowProps {
     allLink?: string;
     items?: SectionItemsConfig;
     detailFields?: DetailField[];
+    contentInset?: boolean;
 }
 
 function getDetailFieldsStringForItem(
@@ -117,7 +118,7 @@ function getDetailFieldsStringForItem(
     }
 }
 
-const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
+const ItemsRow = ({ title, allLink, items, detailFields, contentInset = true }: ItemsRowProps) => {
     const { t } = useTranslation('home');
     const { data: recentItems, isLoading } = useRowItems(items);
     const isSquare = detailFields?.includes('Artist') || detailFields?.includes('TrackCount');
@@ -194,7 +195,7 @@ const ItemsRow = ({ title, allLink, items, detailFields }: ItemsRowProps) => {
                               </div>
                           ))
                 }
-                contentInset={true}
+                contentInset={contentInset}
             />
         )
     );

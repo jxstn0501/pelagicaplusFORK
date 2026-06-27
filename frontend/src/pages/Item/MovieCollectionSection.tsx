@@ -31,7 +31,6 @@ const BoxSetSection = ({
         <div className="flex flex-col gap-4">
             <SectionScroller
                 className="max-w-full"
-                contentInset
                 title={
                     <div className="flex items-center gap-3">
                         <h3 className="text-3xl font-bold">{boxSet.Name}</h3>
@@ -63,7 +62,7 @@ const BoxSetSection = ({
                 ))}
             />
             {hasSeerr && seerrCollectionId && (
-                <div className="px-4 sm:px-12">
+                <div>
                     <Button
                         variant="outline"
                         size="sm"

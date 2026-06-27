@@ -46,6 +46,7 @@ const MyListPage = () => {
                 <ItemsRow
                     title="Likes"
                     allLink="/likes"
+                    contentInset={false}
                     items={{
                         isFavorite: true,
                         types: ['Movie', 'Series'],
