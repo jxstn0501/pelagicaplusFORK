@@ -998,7 +998,7 @@ const PlayerControls = ({
                                 title={t('previousItem')}
                                 asChild
                             >
-                                <Link to={`/play/${previousItem.Id}`}>
+                                <Link to={`/play/${previousItem.Id}`} replace>
                                     <SkipBack size={24} />
                                 </Link>
                             </Button>
@@ -1019,7 +1019,7 @@ const PlayerControls = ({
                                 title={t('nextItem')}
                                 asChild
                             >
-                                <Link to={`/play/${nextItem.Id}`}>
+                                <Link to={`/play/${nextItem.Id}`} replace>
                                     <SkipForward size={24} />
                                 </Link>
                             </Button>
