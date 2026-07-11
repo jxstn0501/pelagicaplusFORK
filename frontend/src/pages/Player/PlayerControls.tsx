@@ -447,7 +447,7 @@ const PlayerControls = ({
         const handleEnded = () => {
             if (!nextItem) return;
             markItemAsCompleted(item.Id);
-            navigate(`/play/${nextItem.Id}`);
+            navigate(`/play/${nextItem.Id}`, { replace: true });
         };
 
         // PiP event listeners
@@ -609,10 +609,10 @@ const PlayerControls = ({
     const msPause = useCallback(() => player?.pause(), [player]);
     const msSeekTo = useCallback((time: number) => player?.currentTime(time), [player]);
     const msNext = useCallback(() => {
-        if (nextItem) navigate(`/play/${nextItem.Id}`);
+        if (nextItem) navigate(`/play/${nextItem.Id}`, { replace: true });
     }, [nextItem, navigate]);
     const msPrevious = useCallback(() => {
-        if (previousItem) navigate(`/play/${previousItem.Id}`);
+        if (previousItem) navigate(`/play/${previousItem.Id}`, { replace: true });
     }, [previousItem, navigate]);
 
     useVideoMediaSession({
@@ -756,7 +756,7 @@ const PlayerControls = ({
                             if (!player || !nextItem) return;
                             player.pause();
                             markItemAsCompleted(item.Id);
-                            navigate(`/play/${nextItem.Id}`);
+                            navigate(`/play/${nextItem.Id}`, { replace: true });
                         }}
                         onDismiss={() => setDismissedNextItemPrompt(true)}
                     />
