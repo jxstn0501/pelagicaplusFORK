@@ -81,10 +81,10 @@ const PosterPlayButton = ({ item, itemId, inline = false }: PosterPlayButtonProp
                 }
 
                 if (episodeId) {
-                    navigate(`/play/${episodeId}`);
+                    navigate(`/play/${episodeId}`, { viewTransition: true });
                 } else {
                     // Fallback: open series page
-                    navigate(`/item/${id}`);
+                    navigate(`/item/${id}`, { viewTransition: true });
                 }
                 return;
             }
@@ -133,11 +133,11 @@ const PosterPlayButton = ({ item, itemId, inline = false }: PosterPlayButtonProp
             }
 
             // ── Everything else (Movie, BoxSet, …) ────────────────────
-            navigate(`/play/${id}`);
+            navigate(`/play/${id}`, { viewTransition: true });
         } catch (err) {
             console.error('[PosterPlayButton] Error resolving play target:', err);
             // Best-effort fallback
-            navigate(`/item/${id}`);
+            navigate(`/item/${id}`, { viewTransition: true });
         } finally {
             setIsLoading(false);
         }

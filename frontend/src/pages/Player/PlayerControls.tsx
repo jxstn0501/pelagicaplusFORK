@@ -447,7 +447,7 @@ const PlayerControls = ({
         const handleEnded = () => {
             if (!nextItem) return;
             markItemAsCompleted(item.Id);
-            navigate(`/play/${nextItem.Id}`, { replace: true });
+            navigate(`/play/${nextItem.Id}`, { replace: true, viewTransition: true });
         };
 
         // PiP event listeners
@@ -609,10 +609,11 @@ const PlayerControls = ({
     const msPause = useCallback(() => player?.pause(), [player]);
     const msSeekTo = useCallback((time: number) => player?.currentTime(time), [player]);
     const msNext = useCallback(() => {
-        if (nextItem) navigate(`/play/${nextItem.Id}`, { replace: true });
+        if (nextItem) navigate(`/play/${nextItem.Id}`, { replace: true, viewTransition: true });
     }, [nextItem, navigate]);
     const msPrevious = useCallback(() => {
-        if (previousItem) navigate(`/play/${previousItem.Id}`, { replace: true });
+        if (previousItem)
+            navigate(`/play/${previousItem.Id}`, { replace: true, viewTransition: true });
     }, [previousItem, navigate]);
 
     useVideoMediaSession({
@@ -694,7 +695,7 @@ const PlayerControls = ({
                         if (window.history.state && window.history.state.idx > 0) {
                             navigate(-1);
                         } else {
-                            navigate(`/item/${item.Id}`, { replace: true });
+                            navigate(`/item/${item.Id}`, { replace: true, viewTransition: true });
                         }
                     }}
                 >
@@ -756,7 +757,7 @@ const PlayerControls = ({
                             if (!player || !nextItem) return;
                             player.pause();
                             markItemAsCompleted(item.Id);
-                            navigate(`/play/${nextItem.Id}`, { replace: true });
+                            navigate(`/play/${nextItem.Id}`, { replace: true, viewTransition: true });
                         }}
                         onDismiss={() => setDismissedNextItemPrompt(true)}
                     />
@@ -998,7 +999,7 @@ const PlayerControls = ({
                                 title={t('previousItem')}
                                 asChild
                             >
-                                <Link to={`/play/${previousItem.Id}`} replace>
+                                <Link to={`/play/${previousItem.Id}`} replace viewTransition>
                                     <SkipBack size={24} />
                                 </Link>
                             </Button>
@@ -1019,7 +1020,7 @@ const PlayerControls = ({
                                 title={t('nextItem')}
                                 asChild
                             >
-                                <Link to={`/play/${nextItem.Id}`} replace>
+                                <Link to={`/play/${nextItem.Id}`} replace viewTransition>
                                     <SkipForward size={24} />
                                 </Link>
                             </Button>
@@ -1362,7 +1363,10 @@ const PlayerControls = ({
                             if (window.history.state && window.history.state.idx > 0) {
                                 navigate(-1);
                             } else {
-                                navigate(`/item/${item.Id}`, { replace: true });
+                                navigate(`/item/${item.Id}`, {
+                                    replace: true,
+                                    viewTransition: true,
+                                });
                             }
                         }}
                     >

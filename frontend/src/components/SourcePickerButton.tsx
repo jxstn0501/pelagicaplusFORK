@@ -61,7 +61,7 @@ const SourcePickerButton = ({
                 )}
                 asChild
             >
-                <Link to={`/play/${selectedSource?.Id ?? itemId}`}>
+                <Link to={`/play/${selectedSource?.Id ?? itemId}`} viewTransition>
                     <Play />
                     {showResumeInfo
                         ? `${resumeLabel} · ${resumeClock}`

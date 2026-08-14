@@ -85,6 +85,7 @@ const ScrollableSectionPoster = ({
                 key={itemId || item?.Id}
                 className={cn('group block', className)}
                 onClick={handleClick}
+                viewTransition
             >
                 <div
                     className={`relative overflow-hidden rounded-md ${posterClasses} bg-muted flex items-center justify-center`}
@@ -111,6 +112,7 @@ const ScrollableSectionPoster = ({
             className={cn('group block', className)}
             onClick={handleClick}
             style={{ contain: 'layout style' }}
+            viewTransition
         >
             <div className={`relative overflow-hidden rounded-md ${posterClasses}`}>
                 <img

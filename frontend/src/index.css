@@ -211,6 +211,21 @@ body {
         scale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Root-level crossfade for navigations opted into viewTransition (see react-router Link/navigate calls) */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.25s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+}
+
 .studio-hover-glare {
     position: relative;
     overflow: hidden;
